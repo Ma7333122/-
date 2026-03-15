@@ -1,21 +1,911 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>نظام إدارة الحسابات المالية</title>
-    <meta name="description" content="نظام احترافي لإدارة حسابات العملاء وتتبع المعاملات المالية" />
-    <meta name="author" content="نظام الحسابات" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-    <meta property="og:title" content="نظام إدارة الحسابات المالية" />
-    <meta property="og:description" content="نظام احترافي لإدارة حسابات العملاء" />
-    <meta property="og:type" content="website" />
-  </head>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة العملاء المالي المتكامل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+        body {
+            background-color: #030712;
+            color: #f3f4f6;
+        }
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+        /* إخفاء أزرار increase/decrease في input number */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        /* أنيميشن بسيط */
+        .modal-overlay {
+            animation: fadeIn 0.2s ease-out;
+        }
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<div id="app" class="min-h-screen bg-gray-950 text-gray-100" dir="rtl">
+    <!-- شريط التنقل -->
+    <nav class="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex space-x-8 space-x-reverse">
+                    <button onclick="showPage('dashboard')" 
+                            class="inline-flex items-center px-3 py-2 text-sm font-medium transition-colors nav-link" 
+                            id="nav-dashboard">
+                        البيان الرئيسي
+                    </button>
+                    <button onclick="showPage('add')" 
+                            class="inline-flex items-center px-3 py-2 text-sm font-medium transition-colors nav-link text-gray-300 hover:text-gray-100" 
+                            id="nav-add">
+                        إضافة / بحث
+                    </button>
+                </div>
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-emerald-400">نظام إدارة العملاء المالي</h1>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- صفحة البيان الرئيسي -->
+            <div id="dashboard-page" class="page">
+                <!-- بطاقات الإحصائيات -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="stats-cards">
+                    <!-- تملأ بواسطة JavaScript -->
+                </div>
+
+                <!-- شريط البحث في البيان -->
+                <div class="mb-8">
+                    <div class="relative">
+                        <input type="text" 
+                               id="dashboard-search"
+                               oninput="searchInDashboard(this.value)"
+                               placeholder="ابحث عن عميل في البيان..." 
+                               class="w-full bg-gray-900 border border-gray-800 rounded-xl py-4 px-6 pr-12 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-colors">
+                        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- قائمة العملاء -->
+                <div>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-100">قائمة العملاء</h2>
+                        <span class="text-sm text-gray-500 bg-gray-900 px-4 py-2 rounded-xl" id="clients-count">إجمالي العملاء: 0</span>
+                    </div>
+                    <div id="clients-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- تملأ بواسطة JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- صفحة إضافة/بحث -->
+            <div id="add-page" class="page hidden">
+                <div class="max-w-3xl mx-auto">
+                    <!-- قسم إضافة عميل -->
+                    <div class="bg-gray-900/30 rounded-2xl border border-gray-800 p-8 mb-8">
+                        <h2 class="text-2xl font-bold text-gray-100 mb-6">إضافة عميل جديد</h2>
+                        
+                        <div id="add-form" class="space-y-6">
+                            <div id="add-error" class="bg-rose-900/20 border border-rose-800 rounded-xl p-4 text-rose-400 hidden"></div>
+                            <div id="add-success" class="bg-emerald-900/20 border border-emerald-800 rounded-xl p-4 text-emerald-400 hidden"></div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    اسم العميل <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="text" 
+                                       id="client-name"
+                                       class="w-full bg-gray-900 border border-gray-800 rounded-xl py-4 px-6 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                                       placeholder="أدخل الاسم الكامل">
+                                <p class="text-xs text-gray-600 mt-2">الاسم يجب أن يكون فريداً ولا يمكن تكراره</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">
+                                    رقم الجوال (اختياري)
+                                </label>
+                                <input type="tel" 
+                                       id="client-phone"
+                                       class="w-full bg-gray-900 border border-gray-800 rounded-xl py-4 px-6 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                                       placeholder="05xxxxxxxx"
+                                       dir="ltr">
+                            </div>
+
+                            <button onclick="addNewClient()"
+                                    class="w-full bg-emerald-600 text-white py-4 px-6 rounded-xl hover:bg-emerald-700 transition-colors text-lg font-medium shadow-lg shadow-emerald-600/20">
+                                إضافة العميل
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- قسم البحث -->
+                    <div class="bg-gray-900/30 rounded-2xl border border-gray-800 p-8">
+                        <h2 class="text-2xl font-bold text-gray-100 mb-6">البحث عن عميل</h2>
+                        <div class="relative">
+                            <input type="text" 
+                                   id="search-client"
+                                   oninput="searchClients(this.value)"
+                                   placeholder="ابحث بالاسم للانتقال المباشر..."
+                                   class="w-full bg-gray-900 border border-gray-800 rounded-xl py-4 px-6 pr-12 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <div id="search-results" class="mt-4 space-y-2">
+                            <!-- نتائج البحث تظهر هنا -->
+                        </div>
+                        <p class="text-sm text-gray-600 mt-4">اكتب اسم العميل واختره من القائمة للانتقال إلى صفحته</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- صفحة تفاصيل العميل -->
+            <div id="client-page" class="page hidden">
+                <div class="mb-6">
+                    <button onclick="showPage('dashboard')" class="text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-2">
+                        <span>←</span>
+                        العودة إلى البيان
+                    </button>
+                </div>
+
+                <!-- بطاقة معلومات العميل -->
+                <div id="client-header" class="bg-gradient-to-br from-gray-900 to-gray-950 rounded-2xl border border-gray-800 p-8 mb-8">
+                    <!-- تملأ بواسطة JavaScript -->
+                </div>
+
+                <!-- زر إضافة معاملة -->
+                <div class="mb-6">
+                    <button onclick="openTransactionModal()" 
+                            class="bg-emerald-600 text-white px-6 py-3 rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+                        <span>+</span>
+                        إضافة معاملة جديدة
+                    </button>
+                </div>
+
+                <!-- جدول المعاملات -->
+                <div class="bg-gray-900/30 rounded-2xl border border-gray-800 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-900/70 border-b border-gray-800">
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400">التاريخ</th>
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400">النوع</th>
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400">المبلغ</th>
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400">المسؤول</th>
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400">الرصيد التراكمي</th>
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400">ملاحظات</th>
+                                    <th class="text-right py-4 px-6 text-sm font-medium text-gray-400"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-table">
+                                <!-- تملأ بواسطة JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- مودال إضافة معاملة -->
+<div id="transaction-modal" class="fixed inset-0 z-50 overflow-y-auto hidden modal-overlay">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 transition-opacity" onclick="closeTransactionModal()">
+            <div class="absolute inset-0 bg-gray-950/80 backdrop-blur-sm"></div>
+        </div>
+
+        <div class="inline-block align-bottom bg-gray-900 rounded-2xl text-right overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-800 modal-content">
+            <div class="px-6 py-5 bg-gradient-to-l from-emerald-900/20 to-gray-900 border-b border-gray-800">
+                <h3 class="text-xl font-semibold text-gray-100" id="modal-title">
+                    إضافة معاملة جديدة
+                </h3>
+            </div>
+
+            <div class="p-6">
+                <div class="space-y-5">
+                    <!-- نوع المعاملة -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">نوع المعاملة</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button id="transaction-type-out" onclick="setTransactionType('out')" 
+                                    class="py-3 px-4 rounded-xl text-sm font-medium transition-all bg-amber-600 text-white shadow-lg shadow-amber-600/20">
+                                💸 تسليم (له)
+                            </button>
+                            <button id="transaction-type-in" onclick="setTransactionType('in')" 
+                                    class="py-3 px-4 rounded-xl text-sm font-medium transition-all bg-gray-800 text-gray-400 hover:bg-gray-700">
+                                💰 استلام (عليه)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- المبلغ -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">المبلغ (ريال)</label>
+                        <input type="number" id="transaction-amount" 
+                               class="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 px-4 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                               placeholder="أدخل المبلغ" min="0" step="0.01">
+                    </div>
+
+                    <!-- المسؤول -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">المسؤول</label>
+                        <input type="text" id="transaction-responsible" 
+                               class="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 px-4 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                               placeholder="اسم المسؤول عن المعاملة">
+                    </div>
+
+                    <!-- ملاحظات -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">ملاحظات</label>
+                        <textarea id="transaction-note" rows="3"
+                                  class="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 px-4 text-gray-100 placeholder-gray-600 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                                  placeholder="ملاحظات إضافية (اختياري)"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-3 space-x-reverse">
+                    <button onclick="closeTransactionModal()" 
+                            class="px-6 py-2.5 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700 transition-colors">
+                        إلغاء
+                    </button>
+                    <button onclick="saveTransaction()" 
+                            class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20">
+                        حفظ المعاملة
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال تأكيد الحذف -->
+<div id="delete-modal" class="fixed inset-0 z-50 overflow-y-auto hidden modal-overlay">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0" onclick="closeDeleteModal()">
+            <div class="absolute inset-0 bg-gray-950/80 backdrop-blur-sm"></div>
+        </div>
+        <div class="bg-gray-900 rounded-2xl p-6 border border-gray-800 max-w-md w-full modal-content">
+            <h3 class="text-xl font-bold text-gray-100 mb-4">تأكيد الحذف</h3>
+            <p class="text-gray-400 mb-6" id="delete-message">هل أنت متأكد من حذف هذا العنصر؟</p>
+            <div class="flex justify-end space-x-3 space-x-reverse">
+                <button onclick="closeDeleteModal()" class="px-6 py-2 bg-gray-800 text-gray-300 rounded-xl hover:bg-gray-700">إلغاء</button>
+                <button onclick="confirmDelete()" class="px-6 py-2 bg-rose-600 text-white rounded-xl hover:bg-rose-700">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== إدارة التخزين ====================
+    const STORAGE_KEY = 'financial-crm-data';
+    
+    // بيانات افتراضية
+    const defaultData = {
+        clients: [
+            {
+                id: '1',
+                name: 'أحمد محمد',
+                phone: '0501234567',
+                createdAt: new Date().toISOString(),
+                transactions: [
+                    {
+                        id: 't1',
+                        date: new Date(Date.now() - 86400000 * 2).toISOString(),
+                        type: 'out',
+                        amount: 5000,
+                        responsible: 'المدير',
+                        note: 'دفعة مقدمة',
+                        runningBalance: 5000
+                    },
+                    {
+                        id: 't2',
+                        date: new Date(Date.now() - 86400000).toISOString(),
+                        type: 'in',
+                        amount: 2000,
+                        responsible: 'المحاسب',
+                        note: 'استلام دفعة',
+                        runningBalance: 3000
+                    }
+                ]
+            },
+            {
+                id: '2',
+                name: 'سارة خالد',
+                phone: '0567890123',
+                createdAt: new Date().toISOString(),
+                transactions: [
+                    {
+                        id: 't3',
+                        date: new Date().toISOString(),
+                        type: 'in',
+                        amount: 10000,
+                        responsible: 'المدير',
+                        note: 'استثمار',
+                        runningBalance: -10000
+                    }
+                ]
+            }
+        ]
+    };
+
+    // تحميل البيانات
+    function loadData() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                return JSON.parse(saved);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
+            return defaultData;
+        } catch {
+            return defaultData;
+        }
+    }
+
+    // حفظ البيانات
+    function saveData(data) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    // حساب ملخص العميل
+    function getClientSummary(client) {
+        const totalForClient = client.transactions
+            .filter(t => t.type === 'out')
+            .reduce((sum, t) => sum + t.amount, 0);
+        
+        const totalOnClient = client.transactions
+            .filter(t => t.type === 'in')
+            .reduce((sum, t) => sum + t.amount, 0);
+        
+        const netBalance = totalForClient - totalOnClient;
+        
+        let status = 'صفر';
+        if (netBalance > 0) status = 'له';
+        else if (netBalance < 0) status = 'عليه';
+        
+        return { totalForClient, totalOnClient, netBalance, status };
+    }
+
+    // حساب ملخص جميع العملاء
+    function getAllClientsSummary(clients) {
+        const totalForAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalForClient, 0);
+        const totalOnAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalOnClient, 0);
+        const netTotal = totalForAll - totalOnAll;
+        
+        return { totalForAll, totalOnAll, netTotal };
+    }
+
+    // تنسيق المبلغ
+    function formatMoney(amount) {
+        return amount.toLocaleString() + ' ريال';
+    }
+
+    // تنسيق التاريخ
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ar-SA', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // ==================== إدارة الصفحات ====================
+    let currentPage = 'dashboard';
+    let currentClientId = null;
+    let deleteCallback = null;
+    let currentTransactionType = 'out';
+
+    function showPage(page) {
+        // إخفاء كل الصفحات
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`${page}-page`).classList.remove('hidden');
+        
+        // تحديث شريط التنقل
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('text-emerald-400', 'border-b-2', 'border-emerald-400');
+            link.classList.add('text-gray-300', 'hover:text-gray-100');
+        });
+        const activeNav = document.getElementById(`nav-${page}`);
+        activeNav.classList.remove('text-gray-300', 'hover:text-gray-100');
+        activeNav.classList.add('text-emerald-400', 'border-b-2', 'border-emerald-400');
+        
+        currentPage = page;
+        
+        // تحديث البيانات حسب الصفحة
+        if (page === 'dashboard') {
+            renderDashboard();
+        } else if (page === 'add') {
+            clearAddForm();
+        }
+    }
+
+    // ==================== صفحة البيان ====================
+    function renderDashboard() {
+        const data = loadData();
+        const clients = data.clients;
+        const summary = getAllClientsSummary(clients);
+        
+        // تحديث بطاقات الإحصائيات
+        document.getElementById('stats-cards').innerHTML = `
+            <div class="bg-gradient-to-br from-emerald-900/50 to-emerald-950/50 rounded-xl p-6 border border-emerald-800/30">
+                <h3 class="text-emerald-400 text-sm font-medium mb-2">إجمالي ما لنا (علينا)</h3>
+                <p class="text-3xl font-bold text-emerald-300">${formatMoney(summary.totalOnAll)}</p>
+                <p class="text-xs text-emerald-600 mt-2">المبالغ المستلمة من العملاء</p>
+            </div>
+            <div class="bg-gradient-to-br from-amber-900/50 to-amber-950/50 rounded-xl p-6 border border-amber-800/30">
+                <h3 class="text-amber-400 text-sm font-medium mb-2">إجمالي ما لهم (لهم)</h3>
+                <p class="text-3xl font-bold text-amber-300">${formatMoney(summary.totalForAll)}</p>
+                <p class="text-xs text-amber-600 mt-2">المبالغ المدفوعة للعملاء</p>
+            </div>
+            <div class="bg-gradient-to-br ${summary.netTotal >= 0 ? 'from-emerald-900/50 to-emerald-950/50 border-emerald-800/30' : 'from-rose-900/50 to-rose-950/50 border-rose-800/30'} rounded-xl p-6 border">
+                <h3 class="${summary.netTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'} text-sm font-medium mb-2">صافي الرصيد</h3>
+                <p class="text-3xl font-bold ${summary.netTotal >= 0 ? 'text-emerald-300' : 'text-rose-300'}">${formatMoney(Math.abs(summary.netTotal))}</p>
+                <p class="text-xs ${summary.netTotal >= 0 ? 'text-emerald-600' : 'text-rose-600'} mt-2">
+                    ${summary.netTotal >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}
+                </p>
+            </div>
+        `;
+
+        // تحديث عدد العملاء
+        document.getElementById('clients-count').textContent = `إجمالي العملاء: ${clients.length}`;
+
+        // عرض العملاء
+        renderClientsList(clients);
+    }
+
+    function renderClientsList(clients) {
+        const grid = document.getElementById('clients-grid');
+        
+        if (clients.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-16 bg-gray-900/30 rounded-2xl border border-gray-800">
+                    <p class="text-gray-500 text-lg">لا يوجد عملاء بعد</p>
+                    <button onclick="showPage('add')" class="inline-block mt-4 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors">
+                        إضافة أول عميل
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = clients.map(client => {
+            const summary = getClientSummary(client);
+            return `
+                <div onclick="viewClient('${client.id}')" class="cursor-pointer block bg-gray-900/50 hover:bg-gray-900 rounded-xl p-6 border border-gray-800 transition-all duration-200 hover:border-emerald-800/50 hover:shadow-lg hover:shadow-emerald-900/10">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-100">${client.name}</h3>
+                            ${client.phone ? `<p class="text-sm text-gray-500 mt-1">${client.phone}</p>` : ''}
+                        </div>
+                        <div class="px-3 py-1 rounded-full text-sm ${
+                            summary.status === 'له' ? 'bg-amber-900/30 text-amber-400' :
+                            summary.status === 'عليه' ? 'bg-emerald-900/30 text-emerald-400' :
+                            'bg-gray-800 text-gray-400'
+                        }">
+                            ${summary.status === 'له' ? '💰 له' : summary.status === 'عليه' ? '💳 عليه' : '⚖️ متوازن'}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">له (ما دفعناه)</p>
+                            <p class="text-lg font-medium text-amber-400">${formatMoney(summary.totalForClient)}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">عليه (ما استلمناه)</p>
+                            <p class="text-lg font-medium text-emerald-400">${formatMoney(summary.totalOnClient)}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-800">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">الصافي</span>
+                            <span class="text-lg font-bold ${
+                                summary.netBalance > 0 ? 'text-amber-400' :
+                                summary.netBalance < 0 ? 'text-emerald-400' :
+                                'text-gray-400'
+                            }">
+                                ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function searchInDashboard(query) {
+        const data = loadData();
+        if (!query.trim()) {
+            renderClientsList(data.clients);
+            return;
+        }
+        
+        const filtered = data.clients.filter(client =>
+            client.name.toLowerCase().includes(query.toLowerCase())
+        );
+        renderClientsList(filtered);
+    }
+
+    // ==================== صفحة الإضافة والبحث ====================
+    function clearAddForm() {
+        document.getElementById('client-name').value = '';
+        document.getElementById('client-phone').value = '';
+        document.getElementById('add-error').classList.add('hidden');
+        document.getElementById('add-success').classList.add('hidden');
+        document.getElementById('search-client').value = '';
+        document.getElementById('search-results').innerHTML = '';
+    }
+
+    function addNewClient() {
+        const nameInput = document.getElementById('client-name');
+        const phoneInput = document.getElementById('client-phone');
+        const errorDiv = document.getElementById('add-error');
+        const successDiv = document.getElementById('add-success');
+        
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        
+        errorDiv.classList.add('hidden');
+        successDiv.classList.add('hidden');
+        
+        if (!name) {
+            errorDiv.textContent = 'الرجاء إدخال اسم العميل';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+        
+        const data = loadData();
+        
+        // التحقق من عدم تكرار الاسم
+        if (data.clients.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+            errorDiv.textContent = 'هذا الاسم موجود مسبقاً، الرجاء استخدام اسم آخر';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+        
+        // إنشاء عميل جديد
+        const newClient = {
+            id: Date.now().toString(),
+            name: name,
+            phone: phone || undefined,
+            transactions: [],
+            createdAt: new Date().toISOString()
+        };
+        
+        data.clients.push(newClient);
+        
+        if (saveData(data)) {
+            successDiv.textContent = `تم إضافة العميل ${name} بنجاح`;
+            successDiv.classList.remove('hidden');
+            nameInput.value = '';
+            phoneInput.value = '';
+            
+            // الانتقال إلى صفحة العميل الجديد بعد ثانية
+            setTimeout(() => {
+                viewClient(newClient.id);
+            }, 1000);
+        }
+    }
+
+    function searchClients(query) {
+        const resultsDiv = document.getElementById('search-results');
+        
+        if (!query.trim()) {
+            resultsDiv.innerHTML = '';
+            return;
+        }
+        
+        const data = loadData();
+        const results = data.clients.filter(client =>
+            client.name.toLowerCase().includes(query.toLowerCase())
+        );
+        
+        if (results.length === 0) {
+            resultsDiv.innerHTML = `
+                <div class="bg-gray-900/50 rounded-xl p-4 text-center text-gray-500">
+                    لا توجد نتائج لـ "${query}"
+                </div>
+            `;
+            return;
+        }
+        
+        resultsDiv.innerHTML = results.map(client => `
+            <div onclick="viewClient('${client.id}')" class="cursor-pointer bg-gray-900/50 hover:bg-gray-900 rounded-xl p-4 border border-gray-800 transition-colors">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium text-gray-200">${client.name}</span>
+                    <span class="text-sm text-gray-500">
+                        ${client.transactions.length > 0 ? `${client.transactions.length} معاملة` : 'عميل جديد'}
+                    </span>
+                </div>
+                ${client.phone ? `<span class="text-sm text-gray-600">${client.phone}</span>` : ''}
+            </div>
+        `).join('');
+    }
+
+    // ==================== صفحة العميل ====================
+    function viewClient(clientId) {
+        currentClientId = clientId;
+        const data = loadData();
+        const client = data.clients.find(c => c.id === clientId);
+        
+        if (!client) {
+            showPage('dashboard');
+            return;
+        }
+        
+        const summary = getClientSummary(client);
+        
+        // تحديث رأس صفحة العميل
+        document.getElementById('client-header').innerHTML = `
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-100">${client.name}</h1>
+                    ${client.phone ? `<p class="text-gray-500 mt-2">${client.phone}</p>` : ''}
+                </div>
+                <div class="px-6 py-3 rounded-xl text-lg font-medium ${
+                    summary.status === 'له' ? 'bg-amber-900/30 text-amber-400' :
+                    summary.status === 'عليه' ? 'bg-emerald-900/30 text-emerald-400' :
+                    'bg-gray-800 text-gray-400'
+                }">
+                    ${summary.status === 'له' ? '💰 له' : summary.status === 'عليه' ? '💳 عليه' : '⚖️ متوازن'}
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-800/50 rounded-xl p-6">
+                    <p class="text-sm text-gray-500 mb-2">إجمالي ما له (تسليم)</p>
+                    <p class="text-2xl font-bold text-amber-400">${formatMoney(summary.totalForClient)}</p>
+                </div>
+                <div class="bg-gray-800/50 rounded-xl p-6">
+                    <p class="text-sm text-gray-500 mb-2">إجمالي ما عليه (استلام)</p>
+                    <p class="text-2xl font-bold text-emerald-400">${formatMoney(summary.totalOnClient)}</p>
+                </div>
+                <div class="bg-gray-800/50 rounded-xl p-6">
+                    <p class="text-sm text-gray-500 mb-2">صافي الرصيد</p>
+                    <p class="text-2xl font-bold ${
+                        summary.netBalance > 0 ? 'text-amber-400' :
+                        summary.netBalance < 0 ? 'text-emerald-400' :
+                        'text-gray-400'
+                    }">
+                        ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        // تحديث جدول المعاملات
+        renderTransactions(client.transactions);
+        
+        // تحديث عنوان المودال
+        document.getElementById('modal-title').textContent = `إضافة معاملة جديدة - ${client.name}`;
+        
+        showPage('client');
+    }
+
+    function renderTransactions(transactions) {
+        const tbody = document.getElementById('transactions-table');
+        
+        if (transactions.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-12 text-gray-500">
+                        لا توجد معاملات بعد
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        tbody.innerHTML = transactions.map(transaction => `
+            <tr class="border-b border-gray-800/50 hover:bg-gray-800/30">
+                <td class="py-4 px-6 text-gray-300">${formatDate(transaction.date)}</td>
+                <td class="py-4 px-6">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs ${
+                        transaction.type === 'out'
+                            ? 'bg-amber-900/30 text-amber-400'
+                            : 'bg-emerald-900/30 text-emerald-400'
+                    }">
+                        ${transaction.type === 'out' ? 'تسليم (له)' : 'استلام (عليه)'}
+                    </span>
+                </td>
+                <td class="py-4 px-6 font-medium text-gray-200">${formatMoney(transaction.amount)}</td>
+                <td class="py-4 px-6 text-gray-400">${transaction.responsible}</td>
+                <td class="py-4 px-6">
+                    <span class="font-medium ${
+                        transaction.runningBalance > 0 ? 'text-amber-400' :
+                        transaction.runningBalance < 0 ? 'text-emerald-400' :
+                        'text-gray-500'
+                    }">
+                        ${transaction.runningBalance > 0 ? '+' : ''}${formatMoney(transaction.runningBalance)}
+                    </span>
+                </td>
+                <td class="py-4 px-6 text-gray-500 max-w-xs truncate">${transaction.note || '-'}</td>
+                <td class="py-4 px-6">
+                    <button onclick="deleteTransaction('${transaction.id}')" class="text-gray-600 hover:text-rose-500 transition-colors">
+                        ✕
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // ==================== إدارة المعاملات ====================
+    function openTransactionModal() {
+        document.getElementById('transaction-modal').classList.remove('hidden');
+        document.getElementById('transaction-amount').value = '';
+        document.getElementById('transaction-responsible').value = '';
+        document.getElementById('transaction-note').value = '';
+        setTransactionType('out');
+    }
+
+    function closeTransactionModal() {
+        document.getElementById('transaction-modal').classList.add('hidden');
+    }
+
+    function setTransactionType(type) {
+        currentTransactionType = type;
+        const outBtn = document.getElementById('transaction-type-out');
+        const inBtn = document.getElementById('transaction-type-in');
+        
+        if (type === 'out') {
+            outBtn.className = 'py-3 px-4 rounded-xl text-sm font-medium transition-all bg-amber-600 text-white shadow-lg shadow-amber-600/20';
+            inBtn.className = 'py-3 px-4 rounded-xl text-sm font-medium transition-all bg-gray-800 text-gray-400 hover:bg-gray-700';
+        } else {
+            outBtn.className = 'py-3 px-4 rounded-xl text-sm font-medium transition-all bg-gray-800 text-gray-400 hover:bg-gray-700';
+            inBtn.className = 'py-3 px-4 rounded-xl text-sm font-medium transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/20';
+        }
+    }
+
+    function saveTransaction() {
+        const amount = parseFloat(document.getElementById('transaction-amount').value);
+        const responsible = document.getElementById('transaction-responsible').value.trim();
+        const note = document.getElementById('transaction-note').value.trim();
+        
+        if (isNaN(amount) || amount <= 0) {
+            alert('الرجاء إدخال مبلغ صحيح');
+            return;
+        }
+        
+        if (!responsible) {
+            alert('الرجاء إدخال اسم المسؤول');
+            return;
+        }
+        
+        const data = loadData();
+        const clientIndex = data.clients.findIndex(c => c.id === currentClientId);
+        
+        if (clientIndex === -1) return;
+        
+        const client = data.clients[clientIndex];
+        
+        // حساب الرصيد التراكمي
+        const lastBalance = client.transactions.length > 0 
+            ? client.transactions[client.transactions.length - 1].runningBalance 
+            : 0;
+        
+        const newRunningBalance = currentTransactionType === 'out' 
+            ? lastBalance + amount 
+            : lastBalance - amount;
+        
+        const newTransaction = {
+            id: Date.now().toString(),
+            date: new Date().toISOString(),
+            type: currentTransactionType,
+            amount: amount,
+            responsible: responsible,
+            note: note,
+            runningBalance: newRunningBalance
+        };
+        
+        client.transactions.push(newTransaction);
+        
+        if (saveData(data)) {
+            closeTransactionModal();
+            viewClient(currentClientId); // إعادة تحميل صفحة العميل
+        }
+    }
+
+    // ==================== إدارة الحذف ====================
+    function deleteTransaction(transactionId) {
+        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف هذه المعاملة؟';
+        document.getElementById('delete-modal').classList.remove('hidden');
+        deleteCallback = () => {
+            const data = loadData();
+            const clientIndex = data.clients.findIndex(c => c.id === currentClientId);
+            
+            if (clientIndex === -1) return;
+            
+            const client = data.clients[clientIndex];
+            
+            // حذف المعاملة
+            client.transactions = client.transactions.filter(t => t.id !== transactionId);
+            
+            // إعادة حساب الرصيد التراكمي
+            let runningBalance = 0;
+            client.transactions = client.transactions.map(t => {
+                if (t.type === 'out') {
+                    runningBalance += t.amount;
+                } else {
+                    runningBalance -= t.amount;
+                }
+                return { ...t, runningBalance };
+            });
+            
+            if (saveData(data)) {
+                closeDeleteModal();
+                viewClient(currentClientId);
+            }
+        };
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.add('hidden');
+        deleteCallback = null;
+    }
+
+    function confirmDelete() {
+        if (deleteCallback) {
+            deleteCallback();
+        }
+    }
+
+    // ==================== التهيئة ====================
+    // تهيئة الصفحة الرئيسية
+    renderDashboard();
+</script>
+
+</body>
 </html>
