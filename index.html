@@ -889,7 +889,7 @@
             <div>
                 <label class="input-label">نوع المعاملة</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setTransactionType('out')" id="type-out" class="btn-secondary">تسليم (له)</button>
+                    <button onclick="setTransactionType('out')" id="type-out" class="btn-primary">تسليم (له)</button>
                     <button onclick="setTransactionType('in')" id="type-in" class="btn-secondary">استلام (عليه)</button>
                 </div>
             </div>
@@ -931,6 +931,7 @@
 
 <script>
     // ==================== Firebase Configuration ====================
+    // ملاحظة: هذا تكوين تجريبي - يجب استبداله بمشروع Firebase حقيقي
     const firebaseConfig = {
         apiKey: "AIzaSyDummyKeyForDemonstration123456789",
         authDomain: "financial-system-demo.firebaseapp.com",
@@ -1031,6 +1032,7 @@
         document.getElementById('login-container').style.display = 'flex';
     }
 
+    // دالة تسجيل الدخول بالبريد الإلكتروني
     async function handleEmailLogin() {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
@@ -1056,6 +1058,7 @@
         }
     }
 
+    // دالة تسجيل الدخول بحساب Google
     async function handleGoogleLogin() {
         showLoading();
         
@@ -1066,13 +1069,31 @@
             });
             
             const result = await auth.signInWithPopup(provider);
+            
+            // التحقق من وجود المستخدم في قاعدة البيانات
+            const userDoc = await db.collection('users').doc(result.user.uid).get();
+            
+            if (!userDoc.exists) {
+                // إذا كان المستخدم جديداً، نقوم بإنشاء ملف له
+                await db.collection('users').doc(result.user.uid).set({
+                    name: result.user.displayName || result.user.email.split('@')[0],
+                    email: result.user.email,
+                    photoURL: result.user.photoURL || null,
+                    createdAt: new Date().toISOString(),
+                    clients: [],
+                    provider: 'google'
+                });
+            }
+            
             await handleAuthenticatedUser(result.user);
         } catch (error) {
             hideLoading();
-            showToast('فشل تسجيل الدخول بحساب Google', 'error');
+            console.error('Google login error:', error);
+            showToast('فشل تسجيل الدخول بحساب Google: ' + error.message, 'error');
         }
     }
 
+    // دالة تسجيل الدخول بحساب Microsoft
     async function handleMicrosoftLogin() {
         showLoading();
         
@@ -1084,13 +1105,31 @@
             });
             
             const result = await auth.signInWithPopup(provider);
+            
+            // التحقق من وجود المستخدم في قاعدة البيانات
+            const userDoc = await db.collection('users').doc(result.user.uid).get();
+            
+            if (!userDoc.exists) {
+                // إذا كان المستخدم جديداً، نقوم بإنشاء ملف له
+                await db.collection('users').doc(result.user.uid).set({
+                    name: result.user.displayName || result.user.email.split('@')[0],
+                    email: result.user.email,
+                    photoURL: result.user.photoURL || null,
+                    createdAt: new Date().toISOString(),
+                    clients: [],
+                    provider: 'microsoft'
+                });
+            }
+            
             await handleAuthenticatedUser(result.user);
         } catch (error) {
             hideLoading();
-            showToast('فشل تسجيل الدخول بحساب Microsoft', 'error');
+            console.error('Microsoft login error:', error);
+            showToast('فشل تسجيل الدخول بحساب Microsoft: ' + error.message, 'error');
         }
     }
 
+    // دالة إنشاء حساب جديد
     async function handleRegister() {
         const name = document.getElementById('register-name').value;
         const email = document.getElementById('register-email').value;
@@ -1124,12 +1163,13 @@
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             await userCredential.user.updateProfile({ displayName: name });
             
-            // Create user profile in Firestore
+            // إنشاء ملف المستخدم في Firestore
             await db.collection('users').doc(userCredential.user.uid).set({
                 name: name,
                 email: email,
                 createdAt: new Date().toISOString(),
-                clients: []
+                clients: [],
+                provider: 'email'
             });
             
             await handleAuthenticatedUser(userCredential.user);
@@ -1140,31 +1180,21 @@
         }
     }
 
+    // دالة معالجة المستخدم المصادق عليه
     async function handleAuthenticatedUser(user) {
         try {
-            // Get or create user data in Firestore
-            let userDoc = await db.collection('users').doc(user.uid).get();
-            
-            if (!userDoc.exists) {
-                // Create user profile for social logins
-                await db.collection('users').doc(user.uid).set({
-                    name: user.displayName || user.email.split('@')[0],
-                    email: user.email,
-                    photoURL: user.photoURL || null,
-                    createdAt: new Date().toISOString(),
-                    clients: []
-                });
-                userDoc = await db.collection('users').doc(user.uid).get();
-            }
+            // الحصول على بيانات المستخدم من Firestore
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            const userData = userDoc.data();
             
             currentUser = {
                 uid: user.uid,
-                name: user.displayName || userDoc.data().name,
+                name: user.displayName || userData?.name || user.email.split('@')[0],
                 email: user.email,
                 photoURL: user.photoURL
             };
             
-            // Update UI
+            // تحديث واجهة المستخدم
             document.getElementById('user-name').textContent = currentUser.name;
             document.getElementById('user-email').textContent = currentUser.email;
             document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
@@ -1176,7 +1206,7 @@
             hideLoading();
             showToast(`مرحباً بك ${currentUser.name}`, 'success');
             
-            // Load user data
+            // تحميل بيانات المستخدم
             await loadUserData();
             
         } catch (error) {
@@ -1186,33 +1216,44 @@
         }
     }
 
+    // دالة تسجيل الخروج
     async function logout() {
         try {
             await auth.signOut();
             currentUser = null;
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('login-container').style.display = 'flex';
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
             showToast('تم تسجيل الخروج بنجاح', 'success');
         } catch (error) {
             showToast('حدث خطأ في تسجيل الخروج', 'error');
         }
     }
 
+    // دالة ترجمة أخطاء Firebase
     function getErrorMessage(error) {
         switch (error.code) {
             case 'auth/user-not-found':
+                return 'لا يوجد حساب بهذا البريد الإلكتروني';
             case 'auth/wrong-password':
-                return 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+                return 'كلمة المرور غير صحيحة';
             case 'auth/email-already-in-use':
                 return 'البريد الإلكتروني مستخدم بالفعل';
             case 'auth/weak-password':
-                return 'كلمة المرور ضعيفة';
+                return 'كلمة المرور ضعيفة (يجب أن تكون 6 أحرف على الأقل)';
             case 'auth/invalid-email':
                 return 'البريد الإلكتروني غير صالح';
             case 'auth/account-exists-with-different-credential':
-                return 'هذا البريد مرتبط بحساب آخر';
+                return 'هذا البريد مرتبط بحساب آخر. الرجاء استخدام طريقة تسجيل دخول مختلفة';
+            case 'auth/popup-closed-by-user':
+                return 'تم إغلاق نافذة تسجيل الدخول';
+            case 'auth/cancelled-popup-request':
+                return 'تم إلغاء طلب تسجيل الدخول';
+            case 'auth/popup-blocked':
+                return 'تم حظر النافذة المنبثقة. الرجاء السماح بالنوافذ المنبثقة';
             default:
-                return 'حدث خطأ. الرجاء المحاولة مرة أخرى';
+                return 'حدث خطأ. الرجاء المحاولة مرة أخرى: ' + error.message;
         }
     }
 
@@ -1224,7 +1265,7 @@
             const userDoc = await db.collection('users').doc(currentUser.uid).get();
             const userData = userDoc.data();
             
-            // Load clients from user's data
+            // تحميل العملاء من بيانات المستخدم
             const clients = userData.clients || [];
             renderDashboard(clients);
             
@@ -1243,13 +1284,13 @@
                 lastUpdated: new Date().toISOString()
             });
             
-            // Also save locally for offline access
+            // حفظ محلياً للعمل دون اتصال
             localStorage.setItem(`clients_${currentUser.uid}`, JSON.stringify(clients));
             
         } catch (error) {
             console.error('Error saving user data:', error);
             
-            // Save locally if offline
+            // حفظ محلياً إذا كان غير متصل
             localStorage.setItem(`clients_${currentUser.uid}`, JSON.stringify(clients));
             
             if (!navigator.onLine) {
@@ -1263,13 +1304,13 @@
     async function getClients() {
         if (!currentUser) return [];
         
-        // Try to get from local storage first (for offline)
+        // محاولة الحصول من التخزين المحلي أولاً (للعمل دون اتصال)
         const localClients = localStorage.getItem(`clients_${currentUser.uid}`);
         if (localClients) {
             return JSON.parse(localClients);
         }
         
-        // If online, get from Firestore
+        // إذا كان متصلاً، الحصول من Firestore
         if (navigator.onLine) {
             try {
                 const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -1304,8 +1345,10 @@
         return { totalForClient, totalOnClient, netBalance, status };
     }
 
-    async function renderDashboard() {
-        const clients = await getClients();
+    async function renderDashboard(clients = null) {
+        if (!clients) {
+            clients = await getClients();
+        }
         
         const totalForAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalForClient, 0);
         const totalOnAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalOnClient, 0);
@@ -1408,7 +1451,7 @@
         
         const filtered = clients.filter(c => 
             c.name.toLowerCase().includes(query) || 
-            (c.phone && c.phone.includes(query))
+            (c.phone && c.phone.toLowerCase().includes(query))
         );
         
         renderClientsList(filtered);
@@ -1437,7 +1480,7 @@
 
         const clients = await getClients();
         
-        if (clients.some(c => c.name === name)) {
+        if (clients.some(c => c.name.toLowerCase() === name.toLowerCase())) {
             showToast('هذا الاسم موجود مسبقاً', 'error');
             return;
         }
@@ -1459,7 +1502,7 @@
         document.getElementById('client-name').value = '';
         document.getElementById('client-phone').value = '';
         
-        renderDashboard();
+        renderDashboard(clients);
     }
 
     async function viewClient(clientId) {
@@ -1552,6 +1595,9 @@
     // ==================== Transaction Functions ====================
     function openTransactionModal() {
         document.getElementById('transaction-modal').classList.add('active');
+        document.getElementById('transaction-amount').value = '';
+        document.getElementById('transaction-responsible').value = '';
+        document.getElementById('transaction-note').value = '';
         setTransactionType('out');
     }
 
@@ -1636,7 +1682,7 @@
             
             client.transactions = client.transactions.filter(t => t.id !== transactionId);
             
-            // Recalculate running balance
+            // إعادة حساب الرصيد التراكمي
             let runningBalance = 0;
             client.transactions = client.transactions.map(t => {
                 if (t.type === 'out') {
@@ -1662,7 +1708,10 @@
             item.classList.remove('active');
         });
         
-        document.querySelector(`[data-page="${page}"]`).classList.add('active');
+        const navItem = document.querySelector(`[data-page="${page}"]`);
+        if (navItem) {
+            navItem.classList.add('active');
+        }
         
         if (page === 'dashboard') renderDashboard();
         if (page === 'reports') renderReportStats();
@@ -1867,32 +1916,39 @@
     // ==================== Auth State Observer ====================
     auth.onAuthStateChanged(async (user) => {
         if (user) {
-            // User is signed in
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            
-            currentUser = {
-                uid: user.uid,
-                name: user.displayName || userDoc.data()?.name || user.email.split('@')[0],
-                email: user.email,
-                photoURL: user.photoURL
-            };
-            
-            document.getElementById('user-name').textContent = currentUser.name;
-            document.getElementById('user-email').textContent = currentUser.email;
-            document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
-            
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('register-container').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            
-            renderDashboard();
-            showToast(`مرحباً بك ${currentUser.name}`, 'success');
+            // المستخدم مسجل الدخول
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                currentUser = {
+                    uid: user.uid,
+                    name: user.displayName || userData?.name || user.email.split('@')[0],
+                    email: user.email,
+                    photoURL: user.photoURL
+                };
+                
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-email').textContent = currentUser.email;
+                document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
+                
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('register-container').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                
+                await renderDashboard();
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('حدث خطأ في تحميل بيانات المستخدم', 'error');
+            }
             
         } else {
-            // User is signed out
+            // المستخدم غير مسجل الدخول
             currentUser = null;
             document.getElementById('main-app').style.display = 'none';
             document.getElementById('login-container').style.display = 'flex';
+            document.getElementById('register-container').style.display = 'none';
         }
     });
 
@@ -1900,7 +1956,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         updateConnectionStatus();
         
-        // Check if user was previously logged in
+        // التحقق من وجود مستخدم مسجل الدخول مسبقاً
         if (auth.currentUser) {
             document.getElementById('login-container').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
