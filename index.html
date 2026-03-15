@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام المالي السحابي - إدارة العملاء</title>
+    <title>النظام المالي المتكامل - إدارة العملاء</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,11 +18,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
     <style>
         * {
@@ -63,7 +58,6 @@
             --border-color: #e5e7eb;
         }
 
-        /* Connection Status */
         .connection-status {
             position: fixed;
             top: 20px;
@@ -95,7 +89,6 @@
             color: white;
         }
 
-        /* Toast Notifications */
         .toast {
             position: fixed;
             top: 20px;
@@ -123,7 +116,6 @@
         .toast.info { background: var(--info); }
         .toast.warning { background: var(--warning); }
 
-        /* Loading Spinner */
         .loading-spinner {
             position: fixed;
             top: 0;
@@ -159,7 +151,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Login Container */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -301,10 +292,6 @@
             transform: translateY(-2px);
         }
 
-        .social-btn.google:hover { border-color: #ea4335; }
-        .social-btn.microsoft:hover { border-color: #00a4ef; }
-
-        /* Vertical Navigation */
         .vertical-nav {
             position: fixed;
             top: 20px;
@@ -359,19 +346,6 @@
             background: rgba(16, 185, 129, 0.1);
         }
 
-        .vertical-nav-item.active::before {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 20px;
-            background: var(--accent-primary);
-            border-radius: 0 3px 3px 0;
-        }
-
-        /* User Menu */
         .user-menu {
             position: fixed;
             top: 20px;
@@ -423,14 +397,12 @@
             color: var(--text-secondary);
         }
 
-        /* Main Content */
         .main-content {
             margin-right: 80px;
             padding: 20px;
             transition: margin-right 0.3s ease;
         }
 
-        /* Cards */
         .stat-card {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -459,7 +431,6 @@
             border-color: var(--accent-primary);
         }
 
-        /* Badges */
         .badge {
             padding: 4px 12px;
             border-radius: 50px;
@@ -477,12 +448,6 @@
             color: var(--warning);
         }
 
-        .badge-danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-        }
-
-        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -522,7 +487,6 @@
             transform: scale(1);
         }
 
-        /* Table */
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -542,11 +506,6 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .table tr:hover {
-            background: var(--bg-tertiary);
-        }
-
-        /* Filters */
         .filter-btn {
             padding: 8px 16px;
             border-radius: 50px;
@@ -567,14 +526,12 @@
             border-color: var(--accent-primary);
         }
 
-        /* Grid */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .vertical-nav {
                 bottom: 20px;
@@ -622,8 +579,8 @@
         <div class="login-logo">
             <i class="fas fa-cloud-upload-alt"></i>
         </div>
-        <h1 class="login-title">النظام المالي السحابي</h1>
-        <p class="login-subtitle">سجل دخولك للمزامنة مع السحابة</p>
+        <h1 class="login-title">النظام المالي المتكامل</h1>
+        <p class="login-subtitle">سجل دخولك لإدارة عملائك</p>
 
         <div id="login-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3">
             <i class="fas fa-exclamation-circle"></i>
@@ -650,11 +607,11 @@
         <div class="social-login">
             <button onclick="handleGoogleLogin()" class="social-btn google">
                 <i class="fab fa-google"></i>
-                Google
+                Google (محاكاة)
             </button>
             <button onclick="handleMicrosoftLogin()" class="social-btn microsoft">
                 <i class="fab fa-microsoft"></i>
-                Microsoft
+                Microsoft (محاكاة)
             </button>
         </div>
 
@@ -662,6 +619,10 @@
             <button onclick="showRegister()" class="text-emerald-400 hover:text-emerald-300">
                 ليس لديك حساب؟ سجل الآن
             </button>
+        </div>
+        
+        <div class="mt-4 text-center text-sm text-gray-500">
+            <p>للتجربة: admin@demo.com / 123456</p>
         </div>
     </div>
 </div>
@@ -677,6 +638,11 @@
 
         <div id="register-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3">
             <i class="fas fa-exclamation-circle"></i>
+            <span></span>
+        </div>
+
+        <div id="register-success" class="bg-green-900/20 border border-green-800 rounded-xl p-4 text-green-400 mb-6 hidden items-center gap-3">
+            <i class="fas fa-check-circle"></i>
             <span></span>
         </div>
 
@@ -719,1250 +685,4 @@
     <div class="user-menu" id="user-menu">
         <div class="user-avatar" id="user-avatar"></div>
         <div class="user-info">
-            <div class="user-name" id="user-name"></div>
-            <div class="user-email" id="user-email"></div>
-        </div>
-    </div>
-
-    <!-- Vertical Navigation -->
-    <div class="vertical-nav">
-        <div class="vertical-nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
-            <i class="fas fa-chart-pie"></i>
-            <span>الرئيسية</span>
-        </div>
-        <div class="vertical-nav-item" onclick="showPage('clients')" data-page="clients">
-            <i class="fas fa-users"></i>
-            <span>العملاء</span>
-        </div>
-        <div class="vertical-nav-item" onclick="showPage('add')" data-page="add">
-            <i class="fas fa-user-plus"></i>
-            <span>إضافة عميل</span>
-        </div>
-        <div class="vertical-nav-item" onclick="showPage('reports')" data-page="reports">
-            <i class="fas fa-file-alt"></i>
-            <span>التقارير</span>
-        </div>
-        <div class="vertical-nav-item" onclick="showPage('settings')" data-page="settings">
-            <i class="fas fa-cog"></i>
-            <span>الإعدادات</span>
-        </div>
-        <div class="vertical-nav-item" onclick="toggleTheme()">
-            <i class="fas fa-moon" id="theme-icon"></i>
-            <span>المظهر</span>
-        </div>
-        <div class="vertical-nav-item" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>خروج</span>
-        </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <!-- Dashboard Page -->
-        <div id="dashboard-page" class="page">
-            <h1 class="text-3xl font-bold mb-8">لوحة التحكم الرئيسية</h1>
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" id="stats-cards"></div>
-
-            <!-- Search and Filters -->
-            <div class="mb-8">
-                <input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل..." oninput="searchClients()">
-            </div>
-
-            <div class="flex gap-3 mb-8" id="filter-buttons">
-                <button class="filter-btn active" onclick="filterClients('all')">الكل</button>
-                <button class="filter-btn" onclick="filterClients('له')">له</button>
-                <button class="filter-btn" onclick="filterClients('عليه')">عليه</button>
-                <button class="filter-btn" onclick="filterClients('صفر')">متوازن</button>
-            </div>
-
-            <!-- Clients Grid -->
-            <div id="clients-grid" class="grid-container"></div>
-        </div>
-
-        <!-- Clients Page -->
-        <div id="clients-page" class="page hidden">
-            <h1 class="text-3xl font-bold mb-8">جميع العملاء</h1>
-            <div id="all-clients-list" class="space-y-4"></div>
-        </div>
-
-        <!-- Add Client Page -->
-        <div id="add-page" class="page hidden">
-            <h1 class="text-3xl font-bold mb-8">إضافة عميل جديد</h1>
-            
-            <div class="max-w-2xl bg-secondary p-8 rounded-2xl border border-border">
-                <div class="space-y-6">
-                    <div>
-                        <label class="input-label">اسم العميل</label>
-                        <input type="text" id="client-name" class="input-field" placeholder="أدخل اسم العميل">
-                    </div>
-                    
-                    <div>
-                        <label class="input-label">رقم الجوال</label>
-                        <input type="tel" id="client-phone" class="input-field" placeholder="أدخل رقم الجوال">
-                    </div>
-                    
-                    <button onclick="addNewClient()" class="btn-primary">
-                        <i class="fas fa-save"></i>
-                        إضافة العميل
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports Page -->
-        <div id="reports-page" class="page hidden">
-            <h1 class="text-3xl font-bold mb-8">التقارير</h1>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="stat-card">
-                    <h3 class="text-lg font-semibold mb-4">تقارير العملاء</h3>
-                    <div class="space-y-3">
-                        <button onclick="exportToExcel()" class="btn-secondary w-full text-right">
-                            <i class="fas fa-file-excel text-green-500 ml-2"></i>
-                            تصدير Excel
-                        </button>
-                        <button onclick="exportToPDF()" class="btn-secondary w-full text-right">
-                            <i class="fas fa-file-pdf text-red-500 ml-2"></i>
-                            تصدير PDF
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <h3 class="text-lg font-semibold mb-4">إحصائيات</h3>
-                    <div id="report-stats" class="space-y-3"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Page -->
-        <div id="settings-page" class="page hidden">
-            <h1 class="text-3xl font-bold mb-8">الإعدادات</h1>
-            
-            <div class="max-w-2xl stat-card">
-                <h3 class="text-lg font-semibold mb-6">تغيير كلمة المرور</h3>
-                
-                <div class="space-y-4">
-                    <input type="password" id="current-password" class="input-field" placeholder="كلمة المرور الحالية">
-                    <input type="password" id="new-password" class="input-field" placeholder="كلمة المرور الجديدة">
-                    <input type="password" id="confirm-password" class="input-field" placeholder="تأكيد كلمة المرور">
-                    
-                    <button onclick="changePassword()" class="btn-primary">
-                        <i class="fas fa-key"></i>
-                        تغيير كلمة المرور
-                    </button>
-                </div>
-                
-                <div class="mt-8 pt-8 border-t border-border">
-                    <button onclick="syncData()" class="btn-secondary ml-3">
-                        <i class="fas fa-sync ml-2"></i>
-                        مزامنة البيانات
-                    </button>
-                    <button onclick="backupData()" class="btn-secondary">
-                        <i class="fas fa-download ml-2"></i>
-                        نسخ احتياطي
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Client Details Page -->
-        <div id="client-page" class="page hidden">
-            <button onclick="showPage('dashboard')" class="btn-secondary mb-6">
-                <i class="fas fa-arrow-right ml-2"></i>
-                العودة
-            </button>
-            
-            <div id="client-details" class="stat-card"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Transaction Modal -->
-<div id="transaction-modal" class="modal">
-    <div class="modal-content">
-        <h3 class="text-xl font-bold mb-6">إضافة معاملة جديدة</h3>
-        
-        <div class="space-y-4">
-            <div>
-                <label class="input-label">نوع المعاملة</label>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setTransactionType('out')" id="type-out" class="btn-primary">تسليم (له)</button>
-                    <button onclick="setTransactionType('in')" id="type-in" class="btn-secondary">استلام (عليه)</button>
-                </div>
-            </div>
-            
-            <div>
-                <label class="input-label">المبلغ</label>
-                <input type="number" id="transaction-amount" class="input-field" placeholder="أدخل المبلغ">
-            </div>
-            
-            <div>
-                <label class="input-label">المسؤول</label>
-                <input type="text" id="transaction-responsible" class="input-field" placeholder="اسم المسؤول">
-            </div>
-            
-            <div>
-                <label class="input-label">ملاحظات</label>
-                <textarea id="transaction-note" class="input-field" rows="3" placeholder="ملاحظات إضافية"></textarea>
-            </div>
-            
-            <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closeTransactionModal()" class="btn-secondary">إلغاء</button>
-                <button onclick="saveTransaction()" class="btn-primary">حفظ</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="delete-modal" class="modal">
-    <div class="modal-content">
-        <h3 class="text-xl font-bold mb-4">تأكيد الحذف</h3>
-        <p class="text-secondary mb-6" id="delete-message">هل أنت متأكد من حذف هذا العنصر؟</p>
-        <div class="flex justify-end gap-3">
-            <button onclick="closeDeleteModal()" class="btn-secondary">إلغاء</button>
-            <button onclick="confirmDelete()" class="bg-red-600 text-white px-6 py-2 rounded-xl hover:bg-red-700">حذف</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // ==================== Firebase Configuration ====================
-    // ملاحظة: هذا تكوين تجريبي - يجب استبداله بمشروع Firebase حقيقي
-    const firebaseConfig = {
-        apiKey: "AIzaSyDummyKeyForDemonstration123456789",
-        authDomain: "financial-system-demo.firebaseapp.com",
-        projectId: "financial-system-demo",
-        storageBucket: "financial-system-demo.appspot.com",
-        messagingSenderId: "123456789012",
-        appId: "1:123456789012:web:abc123def456ghi789"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    // Enable offline persistence
-    db.enablePersistence()
-        .catch((err) => {
-            if (err.code === 'failed-precondition') {
-                console.log('Multiple tabs open, persistence enabled in one tab only');
-            } else if (err.code === 'unimplemented') {
-                console.log('Browser doesn\'t support persistence');
-            }
-        });
-
-    // ==================== Global Variables ====================
-    let currentUser = null;
-    let deleteCallback = null;
-    let currentFilter = 'all';
-    let currentClientId = null;
-    let currentTransactionType = 'out';
-
-    // ==================== Utility Functions ====================
-    function showLoading() {
-        document.getElementById('loading-spinner').classList.add('active');
-    }
-
-    function hideLoading() {
-        document.getElementById('loading-spinner').classList.remove('active');
-    }
-
-    function showToast(message, type = 'info') {
-        const toast = document.getElementById('toast');
-        const icon = type === 'success' ? 'fa-check-circle' : 
-                    type === 'error' ? 'fa-exclamation-circle' : 
-                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
-        
-        toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
-        toast.className = `toast ${type} show`;
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
-
-    function updateConnectionStatus() {
-        const status = document.getElementById('connection-status');
-        const icon = status.querySelector('i');
-        const span = status.querySelector('span');
-        
-        if (navigator.onLine) {
-            icon.className = 'fas fa-wifi';
-            span.textContent = 'متصل بالإنترنت - البيانات محفوظة في السحابة';
-            status.className = 'connection-status online show';
-        } else {
-            icon.className = 'fas fa-wifi-slash';
-            span.textContent = 'غير متصل - العمل دون اتصال';
-            status.className = 'connection-status offline show';
-        }
-        
-        setTimeout(() => {
-            status.classList.remove('show');
-        }, 3000);
-    }
-
-    window.addEventListener('online', updateConnectionStatus);
-    window.addEventListener('offline', updateConnectionStatus);
-
-    function formatMoney(amount) {
-        return amount.toLocaleString() + ' جنيه';
-    }
-
-    function formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString('ar-EG', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    }
-
-    // ==================== Authentication Functions ====================
-    function showRegister() {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('register-container').style.display = 'flex';
-    }
-
-    function showLogin() {
-        document.getElementById('register-container').style.display = 'none';
-        document.getElementById('login-container').style.display = 'flex';
-    }
-
-    // دالة تسجيل الدخول بالبريد الإلكتروني
-    async function handleEmailLogin() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        const errorDiv = document.getElementById('login-error');
-
-        errorDiv.classList.add('hidden');
-
-        if (!email || !password) {
-            errorDiv.querySelector('span').textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
-            errorDiv.classList.remove('hidden');
-            return;
-        }
-
-        showLoading();
-
-        try {
-            const userCredential = await auth.signInWithEmailAndPassword(email, password);
-            await handleAuthenticatedUser(userCredential.user);
-        } catch (error) {
-            hideLoading();
-            errorDiv.querySelector('span').textContent = getErrorMessage(error);
-            errorDiv.classList.remove('hidden');
-        }
-    }
-
-    // دالة تسجيل الدخول بحساب Google
-    async function handleGoogleLogin() {
-        showLoading();
-        
-        try {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            provider.setCustomParameters({
-                prompt: 'select_account'
-            });
-            
-            const result = await auth.signInWithPopup(provider);
-            
-            // التحقق من وجود المستخدم في قاعدة البيانات
-            const userDoc = await db.collection('users').doc(result.user.uid).get();
-            
-            if (!userDoc.exists) {
-                // إذا كان المستخدم جديداً، نقوم بإنشاء ملف له
-                await db.collection('users').doc(result.user.uid).set({
-                    name: result.user.displayName || result.user.email.split('@')[0],
-                    email: result.user.email,
-                    photoURL: result.user.photoURL || null,
-                    createdAt: new Date().toISOString(),
-                    clients: [],
-                    provider: 'google'
-                });
-            }
-            
-            await handleAuthenticatedUser(result.user);
-        } catch (error) {
-            hideLoading();
-            console.error('Google login error:', error);
-            showToast('فشل تسجيل الدخول بحساب Google: ' + error.message, 'error');
-        }
-    }
-
-    // دالة تسجيل الدخول بحساب Microsoft
-    async function handleMicrosoftLogin() {
-        showLoading();
-        
-        try {
-            const provider = new firebase.auth.OAuthProvider('microsoft.com');
-            provider.setCustomParameters({
-                prompt: 'select_account',
-                tenant: 'common'
-            });
-            
-            const result = await auth.signInWithPopup(provider);
-            
-            // التحقق من وجود المستخدم في قاعدة البيانات
-            const userDoc = await db.collection('users').doc(result.user.uid).get();
-            
-            if (!userDoc.exists) {
-                // إذا كان المستخدم جديداً، نقوم بإنشاء ملف له
-                await db.collection('users').doc(result.user.uid).set({
-                    name: result.user.displayName || result.user.email.split('@')[0],
-                    email: result.user.email,
-                    photoURL: result.user.photoURL || null,
-                    createdAt: new Date().toISOString(),
-                    clients: [],
-                    provider: 'microsoft'
-                });
-            }
-            
-            await handleAuthenticatedUser(result.user);
-        } catch (error) {
-            hideLoading();
-            console.error('Microsoft login error:', error);
-            showToast('فشل تسجيل الدخول بحساب Microsoft: ' + error.message, 'error');
-        }
-    }
-
-    // دالة إنشاء حساب جديد
-    async function handleRegister() {
-        const name = document.getElementById('register-name').value;
-        const email = document.getElementById('register-email').value;
-        const password = document.getElementById('register-password').value;
-        const confirm = document.getElementById('register-confirm').value;
-        const errorDiv = document.getElementById('register-error');
-
-        errorDiv.classList.add('hidden');
-
-        if (!name || !email || !password || !confirm) {
-            errorDiv.querySelector('span').textContent = 'الرجاء إدخال جميع البيانات';
-            errorDiv.classList.remove('hidden');
-            return;
-        }
-
-        if (password !== confirm) {
-            errorDiv.querySelector('span').textContent = 'كلمة المرور غير متطابقة';
-            errorDiv.classList.remove('hidden');
-            return;
-        }
-
-        if (password.length < 6) {
-            errorDiv.querySelector('span').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
-            errorDiv.classList.remove('hidden');
-            return;
-        }
-
-        showLoading();
-
-        try {
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            await userCredential.user.updateProfile({ displayName: name });
-            
-            // إنشاء ملف المستخدم في Firestore
-            await db.collection('users').doc(userCredential.user.uid).set({
-                name: name,
-                email: email,
-                createdAt: new Date().toISOString(),
-                clients: [],
-                provider: 'email'
-            });
-            
-            await handleAuthenticatedUser(userCredential.user);
-        } catch (error) {
-            hideLoading();
-            errorDiv.querySelector('span').textContent = getErrorMessage(error);
-            errorDiv.classList.remove('hidden');
-        }
-    }
-
-    // دالة معالجة المستخدم المصادق عليه
-    async function handleAuthenticatedUser(user) {
-        try {
-            // الحصول على بيانات المستخدم من Firestore
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            const userData = userDoc.data();
-            
-            currentUser = {
-                uid: user.uid,
-                name: user.displayName || userData?.name || user.email.split('@')[0],
-                email: user.email,
-                photoURL: user.photoURL
-            };
-            
-            // تحديث واجهة المستخدم
-            document.getElementById('user-name').textContent = currentUser.name;
-            document.getElementById('user-email').textContent = currentUser.email;
-            document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
-            
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('register-container').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            
-            hideLoading();
-            showToast(`مرحباً بك ${currentUser.name}`, 'success');
-            
-            // تحميل بيانات المستخدم
-            await loadUserData();
-            
-        } catch (error) {
-            hideLoading();
-            console.error('Error handling authenticated user:', error);
-            showToast('حدث خطأ في تحميل بيانات المستخدم', 'error');
-        }
-    }
-
-    // دالة تسجيل الخروج
-    async function logout() {
-        try {
-            await auth.signOut();
-            currentUser = null;
-            document.getElementById('main-app').style.display = 'none';
-            document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('login-email').value = '';
-            document.getElementById('login-password').value = '';
-            showToast('تم تسجيل الخروج بنجاح', 'success');
-        } catch (error) {
-            showToast('حدث خطأ في تسجيل الخروج', 'error');
-        }
-    }
-
-    // دالة ترجمة أخطاء Firebase
-    function getErrorMessage(error) {
-        switch (error.code) {
-            case 'auth/user-not-found':
-                return 'لا يوجد حساب بهذا البريد الإلكتروني';
-            case 'auth/wrong-password':
-                return 'كلمة المرور غير صحيحة';
-            case 'auth/email-already-in-use':
-                return 'البريد الإلكتروني مستخدم بالفعل';
-            case 'auth/weak-password':
-                return 'كلمة المرور ضعيفة (يجب أن تكون 6 أحرف على الأقل)';
-            case 'auth/invalid-email':
-                return 'البريد الإلكتروني غير صالح';
-            case 'auth/account-exists-with-different-credential':
-                return 'هذا البريد مرتبط بحساب آخر. الرجاء استخدام طريقة تسجيل دخول مختلفة';
-            case 'auth/popup-closed-by-user':
-                return 'تم إغلاق نافذة تسجيل الدخول';
-            case 'auth/cancelled-popup-request':
-                return 'تم إلغاء طلب تسجيل الدخول';
-            case 'auth/popup-blocked':
-                return 'تم حظر النافذة المنبثقة. الرجاء السماح بالنوافذ المنبثقة';
-            default:
-                return 'حدث خطأ. الرجاء المحاولة مرة أخرى: ' + error.message;
-        }
-    }
-
-    // ==================== Data Management ====================
-    async function loadUserData() {
-        if (!currentUser) return;
-        
-        try {
-            const userDoc = await db.collection('users').doc(currentUser.uid).get();
-            const userData = userDoc.data();
-            
-            // تحميل العملاء من بيانات المستخدم
-            const clients = userData.clients || [];
-            renderDashboard(clients);
-            
-        } catch (error) {
-            console.error('Error loading user data:', error);
-            showToast('حدث خطأ في تحميل البيانات', 'error');
-        }
-    }
-
-    async function saveUserData(clients) {
-        if (!currentUser) return;
-        
-        try {
-            await db.collection('users').doc(currentUser.uid).update({
-                clients: clients,
-                lastUpdated: new Date().toISOString()
-            });
-            
-            // حفظ محلياً للعمل دون اتصال
-            localStorage.setItem(`clients_${currentUser.uid}`, JSON.stringify(clients));
-            
-        } catch (error) {
-            console.error('Error saving user data:', error);
-            
-            // حفظ محلياً إذا كان غير متصل
-            localStorage.setItem(`clients_${currentUser.uid}`, JSON.stringify(clients));
-            
-            if (!navigator.onLine) {
-                showToast('تم الحفظ محلياً - سيتم المزامنة عند الاتصال', 'warning');
-            } else {
-                showToast('حدث خطأ في حفظ البيانات', 'error');
-            }
-        }
-    }
-
-    async function getClients() {
-        if (!currentUser) return [];
-        
-        // محاولة الحصول من التخزين المحلي أولاً (للعمل دون اتصال)
-        const localClients = localStorage.getItem(`clients_${currentUser.uid}`);
-        if (localClients) {
-            return JSON.parse(localClients);
-        }
-        
-        // إذا كان متصلاً، الحصول من Firestore
-        if (navigator.onLine) {
-            try {
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                const clients = userDoc.data().clients || [];
-                localStorage.setItem(`clients_${currentUser.uid}`, JSON.stringify(clients));
-                return clients;
-            } catch (error) {
-                console.error('Error getting clients:', error);
-                return [];
-            }
-        }
-        
-        return [];
-    }
-
-    // ==================== Client Functions ====================
-    function getClientSummary(client) {
-        const totalForClient = client.transactions
-            .filter(t => t.type === 'out')
-            .reduce((sum, t) => sum + t.amount, 0);
-        
-        const totalOnClient = client.transactions
-            .filter(t => t.type === 'in')
-            .reduce((sum, t) => sum + t.amount, 0);
-        
-        const netBalance = totalForClient - totalOnClient;
-        
-        let status = 'صفر';
-        if (netBalance > 0) status = 'له';
-        else if (netBalance < 0) status = 'عليه';
-        
-        return { totalForClient, totalOnClient, netBalance, status };
-    }
-
-    async function renderDashboard(clients = null) {
-        if (!clients) {
-            clients = await getClients();
-        }
-        
-        const totalForAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalForClient, 0);
-        const totalOnAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalOnClient, 0);
-        const netTotal = totalForAll - totalOnAll;
-        
-        document.getElementById('stats-cards').innerHTML = `
-            <div class="stat-card">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-emerald-400">إجمالي ما لنا</h3>
-                    <i class="fas fa-arrow-down text-emerald-400"></i>
-                </div>
-                <p class="text-2xl font-bold text-emerald-400">${formatMoney(totalOnAll)}</p>
-            </div>
-            <div class="stat-card">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-amber-400">إجمالي ما لهم</h3>
-                    <i class="fas fa-arrow-up text-amber-400"></i>
-                </div>
-                <p class="text-2xl font-bold text-amber-400">${formatMoney(totalForAll)}</p>
-            </div>
-            <div class="stat-card">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-rose-400">الفرق</h3>
-                    <i class="fas fa-balance-scale text-rose-400"></i>
-                </div>
-                <p class="text-2xl font-bold text-rose-400">${formatMoney(Math.abs(totalForAll - totalOnAll))}</p>
-            </div>
-            <div class="stat-card">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-blue-400">صافي الرصيد</h3>
-                    <i class="fas fa-chart-line text-blue-400"></i>
-                </div>
-                <p class="text-2xl font-bold text-blue-400">${formatMoney(Math.abs(netTotal))}</p>
-                <p class="text-xs mt-2 ${netTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-                    ${netTotal >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}
-                </p>
-            </div>
-        `;
-
-        renderClientsList(clients);
-    }
-
-    function renderClientsList(clients) {
-        const grid = document.getElementById('clients-grid');
-        
-        let filteredClients = clients;
-        if (currentFilter !== 'all') {
-            filteredClients = clients.filter(c => getClientSummary(c).status === currentFilter);
-        }
-
-        if (filteredClients.length === 0) {
-            grid.innerHTML = `
-                <div class="col-span-full text-center py-12 text-gray-500">
-                    <i class="fas fa-users text-4xl mb-3"></i>
-                    <p>لا يوجد عملاء</p>
-                </div>
-            `;
-            return;
-        }
-
-        grid.innerHTML = filteredClients.map(client => {
-            const summary = getClientSummary(client);
-            return `
-                <div class="client-card" onclick="viewClient('${client.id}')">
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="font-semibold">${client.name}</h3>
-                        <span class="badge ${
-                            summary.status === 'له' ? 'badge-warning' :
-                            summary.status === 'عليه' ? 'badge-success' :
-                            'bg-gray-700 text-gray-400'
-                        }">${summary.status}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <p class="text-xs text-gray-500">له</p>
-                            <p class="font-medium text-amber-400">${formatMoney(summary.totalForClient)}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs text-gray-500">عليه</p>
-                            <p class="font-medium text-emerald-400">${formatMoney(summary.totalOnClient)}</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center text-sm text-gray-500">
-                        <span><i class="fas fa-calendar ml-1"></i>${formatDate(client.createdAt)}</span>
-                        <span><i class="fas fa-list ml-1"></i>${client.transactions.length} معاملات</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    async function searchClients() {
-        const query = document.getElementById('search-input').value.toLowerCase();
-        const clients = await getClients();
-        
-        if (!query) {
-            renderClientsList(clients);
-            return;
-        }
-        
-        const filtered = clients.filter(c => 
-            c.name.toLowerCase().includes(query) || 
-            (c.phone && c.phone.toLowerCase().includes(query))
-        );
-        
-        renderClientsList(filtered);
-    }
-
-    function filterClients(filter) {
-        currentFilter = filter;
-        
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        event.target.classList.add('active');
-        
-        getClients().then(clients => renderClientsList(clients));
-    }
-
-    async function addNewClient() {
-        const name = document.getElementById('client-name').value.trim();
-        const phone = document.getElementById('client-phone').value.trim();
-
-        if (!name) {
-            showToast('الرجاء إدخال اسم العميل', 'error');
-            return;
-        }
-
-        const clients = await getClients();
-        
-        if (clients.some(c => c.name.toLowerCase() === name.toLowerCase())) {
-            showToast('هذا الاسم موجود مسبقاً', 'error');
-            return;
-        }
-
-        const newClient = {
-            id: Date.now().toString(),
-            name,
-            phone,
-            createdBy: currentUser.email,
-            createdAt: new Date().toISOString(),
-            transactions: []
-        };
-
-        clients.push(newClient);
-        
-        await saveUserData(clients);
-        
-        showToast('تم إضافة العميل بنجاح', 'success');
-        document.getElementById('client-name').value = '';
-        document.getElementById('client-phone').value = '';
-        
-        renderDashboard(clients);
-    }
-
-    async function viewClient(clientId) {
-        currentClientId = clientId;
-        const clients = await getClients();
-        const client = clients.find(c => c.id === clientId);
-        
-        if (!client) return;
-        
-        const summary = getClientSummary(client);
-        
-        document.getElementById('client-details').innerHTML = `
-            <div class="flex justify-between items-start mb-6">
-                <div>
-                    <h2 class="text-2xl font-bold">${client.name}</h2>
-                    ${client.phone ? `<p class="text-gray-500 mt-2">${client.phone}</p>` : ''}
-                </div>
-                <span class="badge ${
-                    summary.status === 'له' ? 'badge-warning' :
-                    summary.status === 'عليه' ? 'badge-success' :
-                    'bg-gray-700 text-gray-400'
-                }">${summary.status}</span>
-            </div>
-            
-            <div class="grid grid-cols-3 gap-4 mb-8">
-                <div class="bg-tertiary p-4 rounded-xl">
-                    <p class="text-sm text-gray-500">له</p>
-                    <p class="text-xl font-bold text-amber-400">${formatMoney(summary.totalForClient)}</p>
-                </div>
-                <div class="bg-tertiary p-4 rounded-xl">
-                    <p class="text-sm text-gray-500">عليه</p>
-                    <p class="text-xl font-bold text-emerald-400">${formatMoney(summary.totalOnClient)}</p>
-                </div>
-                <div class="bg-tertiary p-4 rounded-xl">
-                    <p class="text-sm text-gray-500">الصافي</p>
-                    <p class="text-xl font-bold ${summary.netBalance > 0 ? 'text-amber-400' : 'text-emerald-400'}">
-                        ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}
-                    </p>
-                </div>
-            </div>
-            
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">المعاملات</h3>
-                <button onclick="openTransactionModal()" class="btn-primary px-4 py-2 text-sm">
-                    <i class="fas fa-plus ml-2"></i>
-                    إضافة معاملة
-                </button>
-            </div>
-            
-            ${client.transactions.length === 0 ? 
-                '<p class="text-center py-8 text-gray-500">لا توجد معاملات</p>' : 
-                `<table class="table">
-                    <thead>
-                        <tr>
-                            <th>التاريخ</th>
-                            <th>النوع</th>
-                            <th>المبلغ</th>
-                            <th>المسؤول</th>
-                            <th>الملاحظات</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${client.transactions.map(t => `
-                            <tr>
-                                <td>${formatDate(t.date)}</td>
-                                <td>
-                                    <span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">
-                                        ${t.type === 'out' ? 'تسليم' : 'استلام'}
-                                    </span>
-                                </td>
-                                <td>${formatMoney(t.amount)}</td>
-                                <td>${t.responsible}</td>
-                                <td>${t.note || '-'}</td>
-                                <td>
-                                    <button onclick="deleteTransaction('${t.id}')" class="text-rose-500 hover:text-rose-400">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>`
-            }
-        `;
-        
-        showPage('client');
-    }
-
-    // ==================== Transaction Functions ====================
-    function openTransactionModal() {
-        document.getElementById('transaction-modal').classList.add('active');
-        document.getElementById('transaction-amount').value = '';
-        document.getElementById('transaction-responsible').value = '';
-        document.getElementById('transaction-note').value = '';
-        setTransactionType('out');
-    }
-
-    function closeTransactionModal() {
-        document.getElementById('transaction-modal').classList.remove('active');
-    }
-
-    function setTransactionType(type) {
-        currentTransactionType = type;
-        const outBtn = document.getElementById('type-out');
-        const inBtn = document.getElementById('type-in');
-        
-        if (type === 'out') {
-            outBtn.className = 'btn-primary';
-            inBtn.className = 'btn-secondary';
-        } else {
-            outBtn.className = 'btn-secondary';
-            inBtn.className = 'btn-primary';
-        }
-    }
-
-    async function saveTransaction() {
-        const amount = parseFloat(document.getElementById('transaction-amount').value);
-        const responsible = document.getElementById('transaction-responsible').value.trim();
-        const note = document.getElementById('transaction-note').value.trim();
-
-        if (isNaN(amount) || amount <= 0) {
-            showToast('الرجاء إدخال مبلغ صحيح', 'error');
-            return;
-        }
-
-        if (!responsible) {
-            showToast('الرجاء إدخال اسم المسؤول', 'error');
-            return;
-        }
-
-        const clients = await getClients();
-        const clientIndex = clients.findIndex(c => c.id === currentClientId);
-        
-        if (clientIndex === -1) return;
-
-        const client = clients[clientIndex];
-        
-        const lastBalance = client.transactions.length > 0 
-            ? client.transactions[client.transactions.length - 1].runningBalance 
-            : 0;
-        
-        const newRunningBalance = currentTransactionType === 'out' 
-            ? lastBalance + amount 
-            : lastBalance - amount;
-
-        const newTransaction = {
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            type: currentTransactionType,
-            amount: amount,
-            responsible: responsible,
-            note: note,
-            runningBalance: newRunningBalance
-        };
-
-        client.transactions.push(newTransaction);
-        
-        await saveUserData(clients);
-        
-        closeTransactionModal();
-        viewClient(currentClientId);
-        showToast('تم إضافة المعاملة بنجاح', 'success');
-    }
-
-    function deleteTransaction(transactionId) {
-        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف هذه المعاملة؟';
-        document.getElementById('delete-modal').classList.add('active');
-        
-        deleteCallback = async () => {
-            const clients = await getClients();
-            const clientIndex = clients.findIndex(c => c.id === currentClientId);
-            
-            if (clientIndex === -1) return;
-            
-            const client = clients[clientIndex];
-            
-            client.transactions = client.transactions.filter(t => t.id !== transactionId);
-            
-            // إعادة حساب الرصيد التراكمي
-            let runningBalance = 0;
-            client.transactions = client.transactions.map(t => {
-                if (t.type === 'out') {
-                    runningBalance += t.amount;
-                } else {
-                    runningBalance -= t.amount;
-                }
-                return { ...t, runningBalance };
-            });
-            
-            await saveUserData(clients);
-            viewClient(currentClientId);
-            showToast('تم حذف المعاملة', 'success');
-        };
-    }
-
-    // ==================== Page Navigation ====================
-    function showPage(page) {
-        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-        document.getElementById(`${page}-page`).classList.remove('hidden');
-        
-        document.querySelectorAll('.vertical-nav-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        
-        const navItem = document.querySelector(`[data-page="${page}"]`);
-        if (navItem) {
-            navItem.classList.add('active');
-        }
-        
-        if (page === 'dashboard') renderDashboard();
-        if (page === 'reports') renderReportStats();
-    }
-
-    // ==================== Reports ====================
-    async function renderReportStats() {
-        const clients = await getClients();
-        const totalClients = clients.length;
-        const totalTransactions = clients.reduce((sum, c) => sum + c.transactions.length, 0);
-        const totalAmount = clients.reduce((sum, c) => 
-            sum + c.transactions.reduce((s, t) => s + t.amount, 0), 0
-        );
-        
-        document.getElementById('report-stats').innerHTML = `
-            <div class="flex justify-between py-2 border-b border-border">
-                <span>عدد العملاء</span>
-                <span class="font-bold">${totalClients}</span>
-            </div>
-            <div class="flex justify-between py-2 border-b border-border">
-                <span>عدد المعاملات</span>
-                <span class="font-bold">${totalTransactions}</span>
-            </div>
-            <div class="flex justify-between py-2 border-b border-border">
-                <span>إجمالي المبالغ</span>
-                <span class="font-bold text-emerald-400">${formatMoney(totalAmount)}</span>
-            </div>
-            <div class="flex justify-between py-2">
-                <span>متوسط المعاملات</span>
-                <span class="font-bold">${(totalTransactions / totalClients || 0).toFixed(1)}</span>
-            </div>
-        `;
-    }
-
-    async function exportToExcel() {
-        const clients = await getClients();
-        const wb = XLSX.utils.book_new();
-        
-        const clientsData = clients.map(client => {
-            const summary = getClientSummary(client);
-            return {
-                'الاسم': client.name,
-                'الجوال': client.phone || '-',
-                'له': summary.totalForClient,
-                'عليه': summary.totalOnClient,
-                'الصافي': summary.netBalance,
-                'عدد المعاملات': client.transactions.length
-            };
-        });
-        
-        const ws = XLSX.utils.json_to_sheet(clientsData);
-        XLSX.utils.book_append_sheet(wb, ws, 'العملاء');
-        XLSX.writeFile(wb, `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
-        
-        showToast('تم تصدير التقرير بنجاح', 'success');
-    }
-
-    async function exportToPDF() {
-        const clients = await getClients();
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(20);
-        doc.text('تقرير العملاء', 105, 20, { align: 'center' });
-        
-        doc.setFontSize(12);
-        doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, 105, 30, { align: 'center' });
-        
-        const tableData = clients.map(client => {
-            const summary = getClientSummary(client);
-            return [
-                client.name,
-                client.phone || '-',
-                summary.totalForClient.toLocaleString(),
-                summary.totalOnClient.toLocaleString(),
-                summary.netBalance.toLocaleString()
-            ];
-        });
-        
-        doc.autoTable({
-            head: [['الاسم', 'الجوال', 'له', 'عليه', 'الصافي']],
-            body: tableData,
-            startY: 40,
-            theme: 'striped',
-            styles: { font: 'helvetica', halign: 'right' },
-            headStyles: { fillColor: [16, 185, 129] }
-        });
-        
-        doc.save(`تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.pdf`);
-        showToast('تم تصدير التقرير بنجاح', 'success');
-    }
-
-    // ==================== Settings ====================
-    async function changePassword() {
-        if (!auth.currentUser) {
-            showToast('يجب تسجيل الدخول أولاً', 'error');
-            return;
-        }
-
-        const current = document.getElementById('current-password').value;
-        const newPass = document.getElementById('new-password').value;
-        const confirm = document.getElementById('confirm-password').value;
-
-        if (!current || !newPass || !confirm) {
-            showToast('الرجاء إدخال جميع الحقول', 'error');
-            return;
-        }
-
-        if (newPass !== confirm) {
-            showToast('كلمة المرور غير متطابقة', 'error');
-            return;
-        }
-
-        if (newPass.length < 6) {
-            showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
-            return;
-        }
-
-        showLoading();
-
-        try {
-            const user = auth.currentUser;
-            const credential = firebase.auth.EmailAuthProvider.credential(user.email, current);
-            await user.reauthenticateWithCredential(credential);
-            await user.updatePassword(newPass);
-            
-            showToast('تم تغيير كلمة المرور بنجاح', 'success');
-            
-            document.getElementById('current-password').value = '';
-            document.getElementById('new-password').value = '';
-            document.getElementById('confirm-password').value = '';
-            
-        } catch (error) {
-            if (error.code === 'auth/wrong-password') {
-                showToast('كلمة المرور الحالية غير صحيحة', 'error');
-            } else {
-                showToast('حدث خطأ في تغيير كلمة المرور', 'error');
-            }
-        } finally {
-            hideLoading();
-        }
-    }
-
-    async function syncData() {
-        if (!navigator.onLine) {
-            showToast('لا يمكن المزامنة دون اتصال بالإنترنت', 'error');
-            return;
-        }
-
-        showLoading();
-        
-        try {
-            await loadUserData();
-            showToast('تمت المزامنة بنجاح', 'success');
-        } catch (error) {
-            showToast('حدث خطأ في المزامنة', 'error');
-        } finally {
-            hideLoading();
-        }
-    }
-
-    function backupData() {
-        getClients().then(clients => {
-            const data = {
-                clients: clients,
-                exportDate: new Date().toISOString(),
-                user: currentUser.email
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `backup_${currentUser.email}_${new Date().toLocaleDateString('ar-EG')}.json`;
-            a.click();
-            
-            showToast('تم إنشاء النسخة الاحتياطية', 'success');
-        });
-    }
-
-    // ==================== Theme ====================
-    function toggleTheme() {
-        document.body.classList.toggle('light-mode');
-        const icon = document.getElementById('theme-icon');
-        icon.className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
-    }
-
-    // ==================== Delete Modal ====================
-    function closeDeleteModal() {
-        document.getElementById('delete-modal').classList.remove('active');
-        deleteCallback = null;
-    }
-
-    function confirmDelete() {
-        if (deleteCallback) {
-            deleteCallback();
-            closeDeleteModal();
-        }
-    }
-
-    // ==================== Auth State Observer ====================
-    auth.onAuthStateChanged(async (user) => {
-        if (user) {
-            // المستخدم مسجل الدخول
-            try {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                const userData = userDoc.data();
-                
-                currentUser = {
-                    uid: user.uid,
-                    name: user.displayName || userData?.name || user.email.split('@')[0],
-                    email: user.email,
-                    photoURL: user.photoURL
-                };
-                
-                document.getElementById('user-name').textContent = currentUser.name;
-                document.getElementById('user-email').textContent = currentUser.email;
-                document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
-                
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('register-container').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-                
-                await renderDashboard();
-                
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                showToast('حدث خطأ في تحميل بيانات المستخدم', 'error');
-            }
-            
-        } else {
-            // المستخدم غير مسجل الدخول
-            currentUser = null;
-            document.getElementById('main-app').style.display = 'none';
-            document.getElementById('login-container').style.display = 'flex';
-            document.getElementById('register-container').style.display = 'none';
-        }
-    });
-
-    // ==================== Initialization ====================
-    document.addEventListener('DOMContentLoaded', () => {
-        updateConnectionStatus();
-        
-        // التحقق من وجود مستخدم مسجل الدخول مسبقاً
-        if (auth.currentUser) {
-            document.getElementById('login-container').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-        }
-    });
-</script>
-
-</body>
-</html>
+            <div class="user-name" id="user-na
