@@ -18,6 +18,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <!-- HTML to Canvas for PDF images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         * {
@@ -291,6 +293,28 @@
         .restore-modal .btn-secondary {
             width: auto;
             min-width: 150px;
+        }
+
+        /* Auto Backup Indicator */
+        .auto-backup-indicator {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-primary);
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 99;
+            font-size: 12px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         /* Login Container */
@@ -829,9 +853,22 @@
             border-top: 1px solid var(--border-color);
             margin-top: 40px;
         }
+
+        /* Hyperlink in Excel simulation */
+        .excel-link {
+            color: var(--accent-primary);
+            text-decoration: underline;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+
+<!-- Auto Backup Indicator -->
+<div id="auto-backup-indicator" class="auto-backup-indicator hidden">
+    <i class="fas fa-cloud-upload-alt text-emerald-400"></i>
+    <span>جاري حفظ نسخة احتياطية...</span>
+</div>
 
 <!-- Restore Modal -->
 <div id="restore-modal" class="restore-modal">
@@ -890,6 +927,9 @@
     </button>
     <button class="export-import-btn" onclick="importData()" title="استيراد البيانات">
         <i class="fas fa-upload"></i>
+    </button>
+    <button class="export-import-btn" onclick="scheduleBackup()" title="جدولة نسخ احتياطي">
+        <i class="fas fa-clock"></i>
     </button>
 </div>
 
@@ -1127,6 +1167,10 @@
                             <i class="fas fa-file-pdf text-red-500 ml-2"></i>
                             تصدير PDF
                         </button>
+                        <button onclick="exportToImage()" class="btn-secondary w-full text-right">
+                            <i class="fas fa-camera text-purple-500 ml-2"></i>
+                            تصدير كصورة
+                        </button>
                     </div>
                 </div>
                 
@@ -1191,17 +1235,56 @@
             <h1 class="text-3xl font-bold mb-8">الإعدادات</h1>
             
             <div class="max-w-2xl stat-card">
-                <h3 class="text-lg font-semibold mb-6">تغيير كلمة المرور</h3>
+                <h3 class="text-lg font-semibold mb-6">إعدادات النسخ الاحتياطي</h3>
                 
                 <div class="space-y-4">
-                    <input type="password" id="current-password" class="input-field" placeholder="كلمة المرور الحالية">
-                    <input type="password" id="new-password" class="input-field" placeholder="كلمة المرور الجديدة">
-                    <input type="password" id="confirm-password" class="input-field" placeholder="تأكيد كلمة المرور">
+                    <div>
+                        <label class="input-label">النسخ الاحتياطي التلقائي</label>
+                        <div class="flex items-center gap-4">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackup()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="auto-backup-status">مفعل</span>
+                        </div>
+                    </div>
                     
-                    <button onclick="changePassword()" class="btn-primary">
-                        <i class="fas fa-key"></i>
-                        تغيير كلمة المرور
-                    </button>
+                    <div>
+                        <label class="input-label">عدد النسخ الاحتياطية للاحتفاظ بها</label>
+                        <select id="backup-count" class="input-field" onchange="updateBackupCount()">
+                            <option value="3">3 نسخ</option>
+                            <option value="5" selected>5 نسخ</option>
+                            <option value="10">10 نسخ</option>
+                            <option value="0">غير محدود</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">جدولة النسخ الاحتياطي</label>
+                        <select id="backup-schedule" class="input-field" onchange="updateBackupSchedule()">
+                            <option value="5">كل 5 دقائق</option>
+                            <option value="15">كل 15 دقيقة</option>
+                            <option value="30">كل 30 دقيقة</option>
+                            <option value="60" selected>كل ساعة</option>
+                            <option value="360">كل 6 ساعات</option>
+                            <option value="720">كل 12 ساعة</option>
+                            <option value="1440">كل يوم</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-8 border-t border-border">
+                    <h3 class="text-lg font-semibold mb-6">تغيير كلمة المرور</h3>
+                    <div class="space-y-4">
+                        <input type="password" id="current-password" class="input-field" placeholder="كلمة المرور الحالية">
+                        <input type="password" id="new-password" class="input-field" placeholder="كلمة المرور الجديدة">
+                        <input type="password" id="confirm-password" class="input-field" placeholder="تأكيد كلمة المرور">
+                        
+                        <button onclick="changePassword()" class="btn-primary">
+                            <i class="fas fa-key"></i>
+                            تغيير كلمة المرور
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="mt-8 pt-8 border-t border-border">
@@ -1212,6 +1295,10 @@
                     <button onclick="importData()" class="btn-secondary">
                         <i class="fas fa-upload ml-2"></i>
                         استيراد البيانات
+                    </button>
+                    <button onclick="viewBackupHistory()" class="btn-secondary mt-3 w-full">
+                        <i class="fas fa-history ml-2"></i>
+                        عرض سجل النسخ الاحتياطية
                     </button>
                 </div>
             </div>
@@ -1333,6 +1420,21 @@
     </div>
 </div>
 
+<!-- Backup History Modal -->
+<div id="backup-history-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <h3 class="text-xl font-bold mb-6">سجل النسخ الاحتياطية</h3>
+        
+        <div id="backup-history-list" class="space-y-3 max-h-96 overflow-y-auto">
+            <!-- تملأ بواسطة JavaScript -->
+        </div>
+        
+        <div class="flex justify-end gap-3 mt-6">
+            <button onclick="closeBackupHistoryModal()" class="btn-secondary">إغلاق</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ==================== معلومات المطور ====================
     const DEVELOPER_INFO = {
@@ -1349,6 +1451,16 @@
     const CLIENTS_KEY_PREFIX = 'clients_';
     const USER_STATUS_KEY = 'user_status_';
     const BACKUP_KEY = 'financial_system_backup';
+    const BACKUP_HISTORY_KEY = 'financial_system_backup_history';
+    const SETTINGS_KEY = 'financial_system_settings';
+
+    // إعدادات النظام
+    let systemSettings = {
+        autoBackup: true,
+        backupCount: 5,
+        backupSchedule: 60, // بالدقائق
+        lastBackup: null
+    };
 
     // المستخدمين الافتراضيين
     const defaultUsers = [
@@ -1406,6 +1518,240 @@
                 localStorage.setItem(key, JSON.stringify(defaultClients));
             }
         });
+
+        // تحميل الإعدادات
+        const savedSettings = localStorage.getItem(SETTINGS_KEY);
+        if (savedSettings) {
+            systemSettings = { ...systemSettings, ...JSON.parse(savedSettings) };
+            updateSettingsUI();
+        }
+    }
+
+    // تحديث واجهة الإعدادات
+    function updateSettingsUI() {
+        const toggle = document.getElementById('auto-backup-toggle');
+        const status = document.getElementById('auto-backup-status');
+        const countSelect = document.getElementById('backup-count');
+        const scheduleSelect = document.getElementById('backup-schedule');
+
+        if (toggle) {
+            toggle.checked = systemSettings.autoBackup;
+            status.textContent = systemSettings.autoBackup ? 'مفعل' : 'معطل';
+        }
+        if (countSelect) countSelect.value = systemSettings.backupCount;
+        if (scheduleSelect) scheduleSelect.value = systemSettings.backupSchedule;
+    }
+
+    // حفظ الإعدادات
+    function saveSettings() {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(systemSettings));
+    }
+
+    // تفعيل/إلغاء النسخ الاحتياطي التلقائي
+    function toggleAutoBackup() {
+        const toggle = document.getElementById('auto-backup-toggle');
+        systemSettings.autoBackup = toggle.checked;
+        document.getElementById('auto-backup-status').textContent = systemSettings.autoBackup ? 'مفعل' : 'معطل';
+        saveSettings();
+        
+        if (systemSettings.autoBackup) {
+            startAutoBackup();
+            showToast('تم تفعيل النسخ الاحتياطي التلقائي', 'success');
+        } else {
+            stopAutoBackup();
+            showToast('تم إلغاء النسخ الاحتياطي التلقائي', 'info');
+        }
+    }
+
+    // تحديث عدد النسخ الاحتياطية
+    function updateBackupCount() {
+        const select = document.getElementById('backup-count');
+        systemSettings.backupCount = parseInt(select.value);
+        saveSettings();
+        showToast('تم تحديث إعدادات النسخ الاحتياطي', 'success');
+    }
+
+    // تحديث جدولة النسخ الاحتياطي
+    function updateBackupSchedule() {
+        const select = document.getElementById('backup-schedule');
+        systemSettings.backupSchedule = parseInt(select.value);
+        saveSettings();
+        
+        if (systemSettings.autoBackup) {
+            stopAutoBackup();
+            startAutoBackup();
+        }
+        
+        showToast('تم تحديث جدولة النسخ الاحتياطي', 'success');
+    }
+
+    // بدء النسخ الاحتياطي التلقائي
+    let backupInterval = null;
+    function startAutoBackup() {
+        if (backupInterval) clearInterval(backupInterval);
+        
+        const minutes = systemSettings.backupSchedule;
+        backupInterval = setInterval(() => {
+            if (currentUser && systemSettings.autoBackup) {
+                createScheduledBackup();
+            }
+        }, minutes * 60 * 1000);
+    }
+
+    // إيقاف النسخ الاحتياطي التلقائي
+    function stopAutoBackup() {
+        if (backupInterval) {
+            clearInterval(backupInterval);
+            backupInterval = null;
+        }
+    }
+
+    // إنشاء نسخة احتياطية مجدولة
+    function createScheduledBackup() {
+        showAutoBackupIndicator(true);
+        
+        const data = {
+            users: loadUsers(),
+            clients: {}
+        };
+        
+        const users = loadUsers();
+        users.forEach(user => {
+            data.clients[user.id] = getUserClients(user.id);
+        });
+        
+        const backup = {
+            id: Date.now().toString(),
+            timestamp: new Date().toISOString(),
+            data: data
+        };
+        
+        // حفظ في سجل النسخ الاحتياطية
+        let history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        history.push(backup);
+        
+        // الاحتفاظ بعدد محدد من النسخ
+        if (systemSettings.backupCount > 0 && history.length > systemSettings.backupCount) {
+            history = history.slice(-systemSettings.backupCount);
+        }
+        
+        localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(history));
+        systemSettings.lastBackup = new Date().toISOString();
+        saveSettings();
+        
+        setTimeout(() => {
+            showAutoBackupIndicator(false);
+        }, 2000);
+    }
+
+    // إظهار/إخفاء مؤشر النسخ الاحتياطي
+    function showAutoBackupIndicator(show) {
+        const indicator = document.getElementById('auto-backup-indicator');
+        if (show) {
+            indicator.classList.remove('hidden');
+        } else {
+            indicator.classList.add('hidden');
+        }
+    }
+
+    // عرض سجل النسخ الاحتياطية
+    function viewBackupHistory() {
+        const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        const listDiv = document.getElementById('backup-history-list');
+        
+        if (history.length === 0) {
+            listDiv.innerHTML = '<p class="text-center text-gray-500 py-8">لا توجد نسخ احتياطية سابقة</p>';
+        } else {
+            listDiv.innerHTML = history.map((backup, index) => `
+                <div class="bg-tertiary p-4 rounded-xl flex justify-between items-center">
+                    <div>
+                        <div class="font-medium">نسخة احتياطية ${history.length - index}</div>
+                        <div class="text-sm text-gray-500">${new Date(backup.timestamp).toLocaleString('ar-EG')}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="restoreSpecificBackup('${backup.id}')" class="text-emerald-400 hover:text-emerald-300">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button onclick="downloadBackup('${backup.id}')" class="text-blue-400 hover:text-blue-300">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button onclick="deleteBackup('${backup.id}')" class="text-rose-400 hover:text-rose-300">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('backup-history-modal').classList.add('active');
+    }
+
+    // استعادة نسخة احتياطية محددة
+    function restoreSpecificBackup(backupId) {
+        const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        const backup = history.find(b => b.id === backupId);
+        
+        if (backup) {
+            if (confirm('هل أنت متأكد من استعادة هذه النسخة؟')) {
+                if (backup.data.users) {
+                    localStorage.setItem(USERS_KEY, JSON.stringify(backup.data.users));
+                }
+                
+                if (backup.data.clients) {
+                    Object.keys(backup.data.clients).forEach(userId => {
+                        const key = CLIENTS_KEY_PREFIX + userId;
+                        localStorage.setItem(key, JSON.stringify(backup.data.clients[userId]));
+                    });
+                }
+                
+                showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+                closeBackupHistoryModal();
+                
+                if (currentUser) {
+                    loadUserData();
+                }
+            }
+        }
+    }
+
+    // تحميل نسخة احتياطية
+    function downloadBackup(backupId) {
+        const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        const backup = history.find(b => b.id === backupId);
+        
+        if (backup) {
+            const blob = new Blob([JSON.stringify(backup.data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_${new Date(backup.timestamp).toLocaleDateString('ar-EG')}.json`;
+            a.click();
+            showToast('تم تحميل النسخة الاحتياطية', 'success');
+        }
+    }
+
+    // حذف نسخة احتياطية
+    function deleteBackup(backupId) {
+        if (confirm('هل أنت متأكد من حذف هذه النسخة الاحتياطية؟')) {
+            let history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+            history = history.filter(b => b.id !== backupId);
+            localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(history));
+            viewBackupHistory();
+            showToast('تم حذف النسخة الاحتياطية', 'success');
+        }
+    }
+
+    // إغلاق نافذة سجل النسخ الاحتياطية
+    function closeBackupHistoryModal() {
+        document.getElementById('backup-history-modal').classList.remove('active');
+    }
+
+    // جدولة نسخة احتياطية
+    function scheduleBackup() {
+        if (currentUser) {
+            createScheduledBackup();
+            showToast('تم جدولة نسخة احتياطية جديدة', 'success');
+        }
     }
 
     // التحقق من وجود نسخة احتياطية
@@ -1415,6 +1761,9 @@
             document.getElementById('restore-modal').style.display = 'flex';
         } else {
             initializeSystem();
+            if (systemSettings.autoBackup) {
+                startAutoBackup();
+            }
         }
     }
 
@@ -1439,7 +1788,10 @@
             
             showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
             
-            // إعادة تحميل الصفحة
+            if (systemSettings.autoBackup) {
+                startAutoBackup();
+            }
+            
             setTimeout(() => {
                 location.reload();
             }, 1500);
@@ -1456,10 +1808,16 @@
         initializeSystem();
         document.getElementById('restore-modal').style.display = 'none';
         showToast('تم بدء نظام جديد', 'success');
+        
+        if (systemSettings.autoBackup) {
+            startAutoBackup();
+        }
     }
 
     // إنشاء نسخة احتياطية قبل الإغلاق
     function createBackupBeforeUnload() {
+        if (!currentUser) return;
+        
         const data = {
             users: loadUsers(),
             clients: {}
@@ -1773,6 +2131,10 @@
         document.getElementById('login-email').value = '';
         document.getElementById('login-password').value = '';
         showToast('تم تسجيل الخروج بنجاح', 'success');
+        
+        if (backupInterval) {
+            clearInterval(backupInterval);
+        }
     }
 
     function updateUserUI() {
@@ -2337,11 +2699,12 @@
         `;
     }
 
+    // تصدير إلى Excel مع روابط تفاعلية
     function exportToExcel() {
         const clients = getCurrentUserClients();
         const wb = XLSX.utils.book_new();
         
-        // إنشاء sheet للعملاء
+        // إنشاء sheet للعملاء مع روابط
         const clientsData = clients.map(client => {
             const summary = getClientSummary(client);
             return {
@@ -2351,11 +2714,25 @@
                 'عليه': summary.totalOnClient,
                 'الصافي': summary.netBalance,
                 'الحالة': summary.status,
-                'عدد المعاملات': client.transactions.length
+                'عدد المعاملات': client.transactions.length,
+                'رابط العميل': `client_${client.id}`
             };
         });
         
         const wsClients = XLSX.utils.json_to_sheet(clientsData);
+        
+        // إضافة تعليق توضيحي للروابط
+        wsClients['!comments'] = [];
+        for (let i = 1; i <= clientsData.length; i++) {
+            wsClients['!comments'].push({
+                ref: `H${i+1}`,
+                a: {
+                    text: 'انقر نقراً مزدوجاً للانتقال إلى صفحة العميل',
+                    font: { color: { rgb: "10B981" } }
+                }
+            });
+        }
+        
         XLSX.utils.book_append_sheet(wb, wsClients, 'العملاء');
         
         // إنشاء sheet منفصل لكل عميل
@@ -2369,86 +2746,191 @@
                 'الرصيد التراكمي': t.runningBalance
             }));
             
-            if (transactionsData.length > 0) {
-                const wsClient = XLSX.utils.json_to_sheet(transactionsData);
-                XLSX.utils.book_append_sheet(wb, wsClient, client.name.substring(0, 20));
-            }
+            const wsClient = XLSX.utils.json_to_sheet(transactionsData);
+            XLSX.utils.book_append_sheet(wb, wsClient, client.name.substring(0, 20));
         });
         
         XLSX.writeFile(wb, `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
-        showToast('تم تصدير التقرير بنجاح', 'success');
+        showToast('تم تصدير التقرير بنجاح - يمكنك الضغط على اسم العميل للانتقال لصفحته', 'success');
     }
 
-    function exportToPDF() {
-        const clients = getCurrentUserClients();
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+    // تصدير إلى PDF كصورة
+    async function exportToPDF() {
+        showLoading();
         
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(20);
-        doc.text('تقرير العملاء', 105, 20, { align: 'center' });
-        
-        doc.setFontSize(12);
-        doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, 105, 30, { align: 'center' });
-        
-        let yOffset = 40;
-        
-        clients.forEach((client, index) => {
-            const summary = getClientSummary(client);
+        try {
+            const clients = getCurrentUserClients();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
             
-            if (yOffset > 250) {
-                doc.addPage();
-                yOffset = 20;
-            }
+            // إضافة الصفحة الأولى كغلاف
+            doc.setFontSize(24);
+            doc.setTextColor(16, 185, 129);
+            doc.text('تقرير العملاء', doc.internal.pageSize.width / 2, 100, { align: 'center' });
             
             doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text(client.name, 20, yOffset);
-            yOffset += 10;
+            doc.setTextColor(100);
+            doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, doc.internal.pageSize.width / 2, 140, { align: 'center' });
             
-            doc.setFontSize(10);
-            doc.setFont(undefined, 'normal');
-            doc.text(`رقم الجوال: ${client.phone || 'غير محدد'}`, 20, yOffset);
-            doc.text(`له: ${summary.totalForClient.toLocaleString()} جنيه`, 20, yOffset + 5);
-            doc.text(`عليه: ${summary.totalOnClient.toLocaleString()} جنيه`, 20, yOffset + 10);
-            doc.text(`الصافي: ${summary.netBalance.toLocaleString()} جنيه`, 20, yOffset + 15);
-            doc.text(`الحالة: ${summary.status}`, 20, yOffset + 20);
+            doc.setFontSize(12);
+            doc.text(`إجمالي العملاء: ${clients.length}`, doc.internal.pageSize.width / 2, 180, { align: 'center' });
             
-            yOffset += 30;
-            
-            if (client.transactions.length > 0) {
-                const tableData = client.transactions.map(t => [
-                    formatDate(t.date),
-                    t.type === 'out' ? 'تسليم' : 'استلام',
-                    t.amount.toLocaleString(),
-                    t.responsible,
-                    t.note || '-'
-                ]);
+            // إضافة كل عميل في صفحة منفصلة
+            for (let i = 0; i < clients.length; i++) {
+                const client = clients[i];
+                const summary = getClientSummary(client);
                 
-                doc.autoTable({
-                    startY: yOffset,
-                    head: [['التاريخ', 'النوع', 'المبلغ', 'المسؤول', 'ملاحظات']],
-                    body: tableData,
-                    theme: 'striped',
-                    styles: { font: 'helvetica', halign: 'right', fontSize: 8 },
-                    headStyles: { fillColor: [16, 185, 129] },
-                    margin: { left: 20, right: 20 }
+                if (i > 0) {
+                    doc.addPage();
+                }
+                
+                // عنوان العميل
+                doc.setFontSize(20);
+                doc.setTextColor(16, 185, 129);
+                doc.text(client.name, 50, 80);
+                
+                // معلومات العميل
+                doc.setFontSize(12);
+                doc.setTextColor(50);
+                doc.text(`رقم الجوال: ${client.phone || 'غير محدد'}`, 50, 120);
+                doc.text(`تاريخ الإضافة: ${formatDate(client.createdAt)}`, 50, 140);
+                
+                // الملخص المالي
+                doc.setFontSize(16);
+                doc.setTextColor(16, 185, 129);
+                doc.text('الملخص المالي', 50, 180);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(245, 158, 11);
+                doc.text(`له: ${formatMoney(summary.totalForClient)}`, 70, 210);
+                
+                doc.setTextColor(16, 185, 129);
+                doc.text(`عليه: ${formatMoney(summary.totalOnClient)}`, 70, 230);
+                
+                doc.setTextColor(summary.netBalance > 0 ? 245 : 16, summary.netBalance > 0 ? 158 : 185, summary.netBalance > 0 ? 11 : 129);
+                doc.text(`الصافي: ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}`, 70, 250);
+                
+                // المعاملات
+                if (client.transactions.length > 0) {
+                    doc.setFontSize(16);
+                    doc.setTextColor(16, 185, 129);
+                    doc.text('المعاملات', 50, 300);
+                    
+                    let yPos = 330;
+                    client.transactions.forEach((t, index) => {
+                        if (yPos > 700) {
+                            doc.addPage();
+                            yPos = 80;
+                        }
+                        
+                        doc.setFontSize(11);
+                        doc.setTextColor(100);
+                        doc.text(`المعاملة ${index + 1}:`, 50, yPos);
+                        doc.text(`التاريخ: ${formatDate(t.date)}`, 70, yPos + 20);
+                        doc.text(`النوع: ${t.type === 'out' ? 'تسليم' : 'استلام'}`, 70, yPos + 40);
+                        doc.text(`المبلغ: ${formatMoney(t.amount)}`, 70, yPos + 60);
+                        doc.text(`المسؤول: ${t.responsible}`, 70, yPos + 80);
+                        doc.text(`ملاحظات: ${t.note || '-'}`, 70, yPos + 100);
+                        
+                        yPos += 140;
+                    });
+                } else {
+                    doc.setFontSize(12);
+                    doc.setTextColor(150);
+                    doc.text('لا توجد معاملات', 50, 300);
+                }
+            }
+            
+            doc.save(`تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.pdf`);
+            showToast('تم تصدير التقرير كصورة بنجاح', 'success');
+            
+        } catch (error) {
+            console.error('PDF Error:', error);
+            showToast('حدث خطأ في تصدير PDF', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // تصدير كصورة
+    async function exportToImage() {
+        showLoading();
+        
+        try {
+            const clients = getCurrentUserClients();
+            const container = document.createElement('div');
+            container.style.direction = 'rtl';
+            container.style.padding = '40px';
+            container.style.background = 'white';
+            container.style.color = 'black';
+            
+            // إنشاء محتوى HTML للتقرير
+            let html = `
+                <div style="font-family: 'IBM Plex Sans Arabic', sans-serif;">
+                    <h1 style="color: #10b981; text-align: center;">تقرير العملاء</h1>
+                    <p style="text-align: center; color: #666;">تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}</p>
+                    <p style="text-align: center;">إجمالي العملاء: ${clients.length}</p>
+            `;
+            
+            clients.forEach(client => {
+                const summary = getClientSummary(client);
+                html += `
+                    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                        <h2 style="color: #10b981;">${client.name}</h2>
+                        <p>رقم الجوال: ${client.phone || 'غير محدد'}</p>
+                        <p>تاريخ الإضافة: ${formatDate(client.createdAt)}</p>
+                        
+                        <h3 style="color: #10b981;">الملخص المالي</h3>
+                        <p style="color: #f59e0b;">له: ${formatMoney(summary.totalForClient)}</p>
+                        <p style="color: #10b981;">عليه: ${formatMoney(summary.totalOnClient)}</p>
+                        <p style="color: ${summary.netBalance > 0 ? '#f59e0b' : '#10b981'};">الصافي: ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}</p>
+                        
+                        <h3 style="color: #10b981;">المعاملات</h3>
+                        ${client.transactions.length === 0 ? '<p>لا توجد معاملات</p>' : ''}
+                `;
+                
+                client.transactions.forEach((t, index) => {
+                    html += `
+                        <div style="border-top: 1px solid #eee; padding: 10px 0;">
+                            <p><strong>المعاملة ${index + 1}</strong></p>
+                            <p>التاريخ: ${formatDate(t.date)}</p>
+                            <p>النوع: ${t.type === 'out' ? 'تسليم' : 'استلام'}</p>
+                            <p>المبلغ: ${formatMoney(t.amount)}</p>
+                            <p>المسؤول: ${t.responsible}</p>
+                            <p>ملاحظات: ${t.note || '-'}</p>
+                        </div>
+                    `;
                 });
                 
-                yOffset = doc.lastAutoTable.finalY + 20;
-            } else {
-                doc.text('لا توجد معاملات', 20, yOffset);
-                yOffset += 10;
-            }
+                html += `</div>`;
+            });
             
-            if (index < clients.length - 1) {
-                doc.addPage();
-                yOffset = 20;
-            }
-        });
-        
-        doc.save(`تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.pdf`);
-        showToast('تم تصدير التقرير بنجاح', 'success');
+            html += `</div>`;
+            
+            container.innerHTML = html;
+            document.body.appendChild(container);
+            
+            // تحويل إلى صورة
+            const canvas = await html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff'
+            });
+            
+            // تحميل الصورة
+            const link = document.createElement('a');
+            link.download = `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            document.body.removeChild(container);
+            showToast('تم تصدير التقرير كصورة بنجاح', 'success');
+            
+        } catch (error) {
+            console.error('Image Error:', error);
+            showToast('حدث خطأ في تصدير الصورة', 'error');
+        } finally {
+            hideLoading();
+        }
     }
 
     // ==================== دوال إدارة المستخدمين ====================
