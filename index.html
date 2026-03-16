@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* ========== النظام المتغيرات المتقدمة - ألوان مريحة للعين ========== */
+        /* ========== المتغيرات ========== */
         :root {
             --primary: #4f8ef7;
             --primary-dark: #3a7af4;
@@ -23,7 +23,6 @@
             --warning: #f39c12;
             --warning-bg: rgba(243, 156, 18, 0.12);
             
-            /* ألوان مريحة للعين - نسخة داكنة محسنة */
             --bg-gradient-1: #121624;
             --bg-gradient-2: #1a1f2f;
             --bg-body: #141a26;
@@ -51,7 +50,6 @@
             --font: 'Cairo', sans-serif;
         }
 
-        /* الوضع الفاتح - ألوان مريحة للعين */
         [data-theme="light"] {
             --bg-gradient-1: #f0f5fa;
             --bg-gradient-2: #e4ecf5;
@@ -565,7 +563,7 @@
             border: 1px solid var(--danger);
         }
 
-        /* ========== النماذج ========== */
+        /* ========== النماذج المتطورة ========== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -599,6 +597,76 @@
             cursor: pointer;
         }
 
+        /* ========== جدول المعاملات المالية في نموذج الإضافة ========== */
+        .transactions-table {
+            width: 100%;
+            margin: 15px 0;
+            border-collapse: collapse;
+        }
+
+        .transactions-table th {
+            background: var(--bg-card);
+            padding: 12px;
+            font-size: 12px;
+        }
+
+        .transactions-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transactions-table input, .transactions-table select {
+            width: 100%;
+            padding: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+        }
+
+        .remove-btn {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .add-transaction-btn {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px dashed var(--success);
+            padding: 10px;
+            border-radius: var(--radius);
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .add-transaction-btn:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        .total-row {
+            background: var(--bg-card);
+            font-weight: 800;
+        }
+
         /* ========== النوافذ المنبثقة ========== */
         .modal-overlay {
             position: fixed;
@@ -623,7 +691,7 @@
             padding: 35px;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 550px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
             border: 1px solid var(--border);
@@ -857,6 +925,10 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .modal-card {
+                padding: 20px;
+            }
         }
 
         /* ========== أدوات مساعدة ========== */
@@ -867,6 +939,7 @@
         .w-100 { width: 100%; }
         .mt-3 { margin-top: 15px; }
         .mb-2 { margin-bottom: 10px; }
+        .text-center { text-align: center; }
     </style>
 </head>
 <body>
@@ -1097,49 +1170,44 @@ const Database = {
         return this.data.clients.find(c => c.id === id);
     },
 
-    // إضافة عميل جديد مع تفاصيل له/عليه
-    addClient(client) {
+    // إضافة عميل جديد مع قائمة معاملات
+    addClient(clientData) {
         const newClient = {
             id: Date.now().toString() + Math.random().toString(36).substr(2, 8),
-            name: client.name || '',
-            phone: client.phone || '',
-            address: client.address || '',
-            notes: client.notes || '',
+            name: clientData.name || '',
+            phone: clientData.phone || '',
+            address: clientData.address || '',
+            notes: clientData.notes || '',
             transactions: [],
             createdAt: new Date().toISOString(),
             balance: 0,
-            // تفاصيل إضافية
-            totalFor: 0, // إجمالي له
-            totalAgainst: 0 // إجمالي عليه
+            totalFor: 0,
+            totalAgainst: 0
         };
         
-        // إذا تم إدخال مبلغ له
-        if (client.amountFor && parseFloat(client.amountFor) > 0) {
-            const amount = parseFloat(client.amountFor) || 0;
-            newClient.totalFor = amount;
-            newClient.balance = amount;
-            newClient.transactions.push({
-                id: Date.now().toString() + 'a',
-                type: 'له',
-                amount: amount,
-                date: new Date().toISOString().split('T')[0],
-                notes: 'رصيد افتتاحي (له)',
-                createdAt: new Date().toISOString()
-            });
-        }
-        
-        // إذا تم إدخال مبلغ عليه
-        if (client.amountAgainst && parseFloat(client.amountAgainst) > 0) {
-            const amount = parseFloat(client.amountAgainst) || 0;
-            newClient.totalAgainst = amount;
-            newClient.balance = (newClient.balance || 0) - amount;
-            newClient.transactions.push({
-                id: Date.now().toString() + 'b',
-                type: 'عليه',
-                amount: amount,
-                date: new Date().toISOString().split('T')[0],
-                notes: 'رصيد افتتاحي (عليه)',
-                createdAt: new Date().toISOString()
+        // إضافة المعاملات المالية إذا وجدت
+        if (clientData.transactions && clientData.transactions.length > 0) {
+            clientData.transactions.forEach(tx => {
+                if (tx.amount && parseFloat(tx.amount) > 0) {
+                    const amount = parseFloat(tx.amount);
+                    const transaction = {
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 10),
+                        type: tx.type,
+                        amount: amount,
+                        date: tx.date || new Date().toISOString().split('T')[0],
+                        notes: tx.notes || 'رصيد افتتاحي',
+                        createdAt: new Date().toISOString()
+                    };
+                    newClient.transactions.push(transaction);
+                    
+                    if (tx.type === 'له') {
+                        newClient.totalFor += amount;
+                        newClient.balance += amount;
+                    } else {
+                        newClient.totalAgainst += amount;
+                        newClient.balance -= amount;
+                    }
+                }
             });
         }
         
@@ -2025,51 +2093,162 @@ const UI = {
         });
     },
 
-    // إضافة عميل جديد مع تفاصيل له/عليه
+    // إضافة عميل جديد مع معاملات متعددة
     showAddClient() {
+        // مصفوفة لتخزين المعاملات المؤقتة
+        let transactions = [];
+        
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
         modal.id = 'addClientModal';
+        
+        // دالة لتحديث عرض المعاملات في المودال
+        const renderTransactionsTable = () => {
+            const tbody = document.getElementById('transactions-tbody');
+            if (!tbody) return;
+            
+            let html = '';
+            let totalFor = 0;
+            let totalAgainst = 0;
+            
+            transactions.forEach((tx, index) => {
+                const amount = parseFloat(tx.amount) || 0;
+                if (tx.type === 'له') totalFor += amount;
+                else totalAgainst += amount;
+                
+                html += `
+                    <tr>
+                        <td>
+                            <select class="form-select tx-type" data-index="${index}" style="width: 100%;">
+                                <option value="له" ${tx.type === 'له' ? 'selected' : ''}>له (دائن)</option>
+                                <option value="عليه" ${tx.type === 'عليه' ? 'selected' : ''}>عليه (مدين)</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control tx-amount" data-index="${index}" value="${tx.amount || ''}" step="0.01" min="0" placeholder="المبلغ">
+                        </td>
+                        <td>
+                            <input type="date" class="form-control tx-date" data-index="${index}" value="${tx.date || new Date().toISOString().split('T')[0]}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control tx-notes" data-index="${index}" value="${tx.notes || ''}" placeholder="ملاحظات">
+                        </td>
+                        <td>
+                            <button class="remove-btn" onclick="UI.removeTransaction(${index})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // تحديث الإجماليات
+            document.getElementById('total-for').textContent = Utils.formatMoneyEnglish(totalFor);
+            document.getElementById('total-against').textContent = Utils.formatMoneyEnglish(totalAgainst);
+            document.getElementById('total-balance').textContent = Utils.formatMoneyEnglish(totalFor - totalAgainst);
+            
+            // إضافة مستمعي الأحداث للحقول الجديدة
+            document.querySelectorAll('.tx-type').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const index = e.target.dataset.index;
+                    transactions[index].type = e.target.value;
+                    renderTransactionsTable();
+                });
+            });
+            
+            document.querySelectorAll('.tx-amount').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const index = e.target.dataset.index;
+                    transactions[index].amount = e.target.value;
+                    renderTransactionsTable();
+                });
+            });
+            
+            document.querySelectorAll('.tx-date').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const index = e.target.dataset.index;
+                    transactions[index].date = e.target.value;
+                });
+            });
+            
+            document.querySelectorAll('.tx-notes').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const index = e.target.dataset.index;
+                    transactions[index].notes = e.target.value;
+                });
+            });
+        };
+        
         modal.innerHTML = `
             <div class="modal-card">
                 <div class="modal-header">
                     <div class="modal-title">➕ إضافة عميل جديد</div>
                     <button class="modal-close" onclick="document.getElementById('addClientModal').remove()"><i class="fas fa-times"></i></button>
                 </div>
-                <form onsubmit="UI.saveClient(event)">
+                
+                <form onsubmit="UI.saveClientWithTransactions(event, transactions)">
                     <div class="form-group">
                         <label class="form-label">الاسم <span style="color: var(--danger);">*</span></label>
                         <input type="text" id="clientName" class="form-control" required>
                     </div>
+                    
                     <div class="form-group">
                         <label class="form-label">رقم الهاتف</label>
                         <input type="text" id="clientPhone" class="form-control">
                     </div>
+                    
                     <div class="form-group">
                         <label class="form-label">العنوان</label>
                         <input type="text" id="clientAddress" class="form-control">
                     </div>
                     
-                    <div style="background: var(--bg-card-alt); padding: 20px; border-radius: var(--radius); margin: 20px 0;">
-                        <h4 style="margin-bottom: 15px; color: var(--primary);">💰 الرصيد الافتتاحي</h4>
-                        
-                        <div class="form-group">
-                            <label class="form-label">مبلغ (له) - إذا كان العميل دائن</label>
-                            <input type="number" id="clientAmountFor" class="form-control" step="0.01" min="0" value="0">
+                    <div style="margin: 25px 0; border-top: 2px dashed var(--border);"></div>
+                    
+                    <h4 style="margin-bottom: 15px; color: var(--primary);">
+                        <i class="fas fa-coins"></i> المعاملات المالية
+                    </h4>
+                    
+                    <div class="table-container" style="margin-bottom: 15px;">
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>النوع</th>
+                                    <th>المبلغ</th>
+                                    <th>التاريخ</th>
+                                    <th>البيان</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-tbody">
+                                <!-- سيتم إضافة المعاملات هنا ديناميكياً -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <button type="button" class="add-transaction-btn" onclick="UI.addTransactionRow()">
+                        <i class="fas fa-plus"></i> إضافة معاملة أخرى
+                    </button>
+                    
+                    <div style="background: var(--bg-card-alt); padding: 15px; border-radius: var(--radius); margin: 20px 0;">
+                        <h5 style="margin-bottom: 10px;">ملخص المعاملات:</h5>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>إجمالي (له):</span>
+                            <span class="text-success font-mono" id="total-for">0.00 EGP</span>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">مبلغ (عليه) - إذا كان العميل مدين</label>
-                            <input type="number" id="clientAmountAgainst" class="form-control" step="0.01" min="0" value="0">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>إجمالي (عليه):</span>
+                            <span class="text-danger font-mono" id="total-against">0.00 EGP</span>
                         </div>
-                        
-                        <p style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
-                            <i class="fas fa-info-circle"></i> يمكنك ترك القيم صفر إذا لم يكن هناك رصيد سابق
-                        </p>
+                        <div style="display: flex; justify-content: space-between; font-weight: 800;">
+                            <span>صافي الرصيد:</span>
+                            <span class="font-mono" id="total-balance">0.00 EGP</span>
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">ملاحظات</label>
+                        <label class="form-label">ملاحظات عامة</label>
                         <textarea id="clientNotes" class="form-control" rows="3"></textarea>
                     </div>
                     
@@ -2077,27 +2256,218 @@ const UI = {
                 </form>
             </div>
         `;
+        
         document.body.appendChild(modal);
+        
+        // إضافة معاملة افتراضية
+        setTimeout(() => {
+            UI.addTransactionRow();
+        }, 100);
     },
 
-    saveClient(e) {
+    addTransactionRow() {
+        const modal = document.getElementById('addClientModal');
+        if (!modal) return;
+        
+        // الحصول على مصفوفة المعاملات من النطاق العام
+        if (typeof window.transactions === 'undefined') {
+            window.transactions = [];
+        }
+        
+        window.transactions.push({
+            type: 'له',
+            amount: '',
+            date: new Date().toISOString().split('T')[0],
+            notes: ''
+        });
+        
+        // تحديث العرض
+        const renderTransactionsTable = () => {
+            const tbody = document.getElementById('transactions-tbody');
+            if (!tbody) return;
+            
+            let html = '';
+            let totalFor = 0;
+            let totalAgainst = 0;
+            
+            window.transactions.forEach((tx, index) => {
+                const amount = parseFloat(tx.amount) || 0;
+                if (tx.type === 'له') totalFor += amount;
+                else totalAgainst += amount;
+                
+                html += `
+                    <tr>
+                        <td>
+                            <select class="form-select tx-type" data-index="${index}" style="width: 100%;">
+                                <option value="له" ${tx.type === 'له' ? 'selected' : ''}>له (دائن)</option>
+                                <option value="عليه" ${tx.type === 'عليه' ? 'selected' : ''}>عليه (مدين)</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control tx-amount" data-index="${index}" value="${tx.amount || ''}" step="0.01" min="0" placeholder="المبلغ">
+                        </td>
+                        <td>
+                            <input type="date" class="form-control tx-date" data-index="${index}" value="${tx.date || new Date().toISOString().split('T')[0]}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control tx-notes" data-index="${index}" value="${tx.notes || ''}" placeholder="ملاحظات">
+                        </td>
+                        <td>
+                            <button class="remove-btn" onclick="UI.removeTransaction(${index})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            document.getElementById('total-for').textContent = Utils.formatMoneyEnglish(totalFor);
+            document.getElementById('total-against').textContent = Utils.formatMoneyEnglish(totalAgainst);
+            document.getElementById('total-balance').textContent = Utils.formatMoneyEnglish(totalFor - totalAgainst);
+            
+            // إضافة مستمعي الأحداث
+            document.querySelectorAll('.tx-type').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const index = e.target.dataset.index;
+                    window.transactions[index].type = e.target.value;
+                    renderTransactionsTable();
+                });
+            });
+            
+            document.querySelectorAll('.tx-amount').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const index = e.target.dataset.index;
+                    window.transactions[index].amount = e.target.value;
+                    renderTransactionsTable();
+                });
+            });
+            
+            document.querySelectorAll('.tx-date').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const index = e.target.dataset.index;
+                    window.transactions[index].date = e.target.value;
+                });
+            });
+            
+            document.querySelectorAll('.tx-notes').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const index = e.target.dataset.index;
+                    window.transactions[index].notes = e.target.value;
+                });
+            });
+        };
+        
+        renderTransactionsTable();
+    },
+
+    removeTransaction(index) {
+        if (window.transactions) {
+            window.transactions.splice(index, 1);
+            
+            const renderTransactionsTable = () => {
+                const tbody = document.getElementById('transactions-tbody');
+                if (!tbody) return;
+                
+                let html = '';
+                let totalFor = 0;
+                let totalAgainst = 0;
+                
+                window.transactions.forEach((tx, i) => {
+                    const amount = parseFloat(tx.amount) || 0;
+                    if (tx.type === 'له') totalFor += amount;
+                    else totalAgainst += amount;
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <select class="form-select tx-type" data-index="${i}" style="width: 100%;">
+                                    <option value="له" ${tx.type === 'له' ? 'selected' : ''}>له (دائن)</option>
+                                    <option value="عليه" ${tx.type === 'عليه' ? 'selected' : ''}>عليه (مدين)</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control tx-amount" data-index="${i}" value="${tx.amount || ''}" step="0.01" min="0" placeholder="المبلغ">
+                            </td>
+                            <td>
+                                <input type="date" class="form-control tx-date" data-index="${i}" value="${tx.date || new Date().toISOString().split('T')[0]}">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control tx-notes" data-index="${i}" value="${tx.notes || ''}" placeholder="ملاحظات">
+                            </td>
+                            <td>
+                                <button class="remove-btn" onclick="UI.removeTransaction(${i})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html;
+                
+                document.getElementById('total-for').textContent = Utils.formatMoneyEnglish(totalFor);
+                document.getElementById('total-against').textContent = Utils.formatMoneyEnglish(totalAgainst);
+                document.getElementById('total-balance').textContent = Utils.formatMoneyEnglish(totalFor - totalAgainst);
+                
+                // إضافة مستمعي الأحداث
+                document.querySelectorAll('.tx-type').forEach(select => {
+                    select.addEventListener('change', (e) => {
+                        const idx = e.target.dataset.index;
+                        window.transactions[idx].type = e.target.value;
+                        renderTransactionsTable();
+                    });
+                });
+                
+                document.querySelectorAll('.tx-amount').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        const idx = e.target.dataset.index;
+                        window.transactions[idx].amount = e.target.value;
+                        renderTransactionsTable();
+                    });
+                });
+                
+                document.querySelectorAll('.tx-date').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const idx = e.target.dataset.index;
+                        window.transactions[idx].date = e.target.value;
+                    });
+                });
+                
+                document.querySelectorAll('.tx-notes').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        const idx = e.target.dataset.index;
+                        window.transactions[idx].notes = e.target.value;
+                    });
+                });
+            };
+            
+            renderTransactionsTable();
+        }
+    },
+
+    saveClientWithTransactions(e, transactions) {
         e.preventDefault();
+        
         const name = document.getElementById('clientName').value.trim();
         if (!name) return this.toast('أدخل الاسم', 'error');
         
-        // قراءة المبالغ (تلقائياً 0 إذا لم يتم الإدخال)
-        const amountFor = parseFloat(document.getElementById('clientAmountFor').value) || 0;
-        const amountAgainst = parseFloat(document.getElementById('clientAmountAgainst').value) || 0;
+        // تجهيز المعاملات المالية (تصفية المعاملات الفارغة)
+        const validTransactions = (window.transactions || []).filter(tx => 
+            tx.amount && parseFloat(tx.amount) > 0
+        );
         
         Database.addClient({
             name,
             phone: document.getElementById('clientPhone').value,
             address: document.getElementById('clientAddress').value,
             notes: document.getElementById('clientNotes').value,
-            amountFor: amountFor,
-            amountAgainst: amountAgainst
+            transactions: validTransactions
         });
         
+        // تنظيف
+        window.transactions = [];
         document.getElementById('addClientModal').remove();
         this.toast('تم إضافة العميل', 'success');
         Router.render();
@@ -2132,7 +2502,7 @@ const UI = {
         if (!names.length) return this.toast('أدخل أسماء', 'error');
         
         const phone = document.getElementById('bulkPhone').value;
-        names.forEach(name => Database.addClient({ name, phone, notes: 'إضافة دفعة' }));
+        names.forEach(name => Database.addClient({ name, phone, notes: 'إضافة دفعة', transactions: [] }));
         document.getElementById('multipleClientsModal').remove();
         this.toast(`تم إضافة ${names.length} عميل`, 'success');
         Router.render();
