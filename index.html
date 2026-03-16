@@ -8,41 +8,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        /* ========== النظام المتغيرات المتقدمة ========== */
+        /* ========== النظام المتغيرات المتقدمة - ألوان مريحة للعين ========== */
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --primary-light: #6c8cff;
-            --primary-bg: rgba(67, 97, 238, 0.12);
-            --secondary: #7209b7;
-            --secondary-bg: rgba(114, 9, 183, 0.12);
-            --success: #06d6a0;
-            --success-bg: rgba(6, 214, 160, 0.12);
-            --danger: #ef476f;
-            --danger-bg: rgba(239, 71, 111, 0.12);
-            --warning: #ffb703;
-            --warning-bg: rgba(255, 183, 3, 0.12);
-            --info: #4cc9f0;
-            --info-bg: rgba(76, 201, 240, 0.12);
-            --purple: #9b5de5;
-            --purple-bg: rgba(155, 93, 229, 0.12);
+            --primary: #4f8ef7;
+            --primary-dark: #3a7af4;
+            --primary-light: #7aa9ff;
+            --primary-bg: rgba(79, 142, 247, 0.12);
+            --secondary: #9b59b6;
+            --secondary-bg: rgba(155, 89, 182, 0.12);
+            --success: #2ecc71;
+            --success-bg: rgba(46, 204, 113, 0.12);
+            --danger: #e74c3c;
+            --danger-bg: rgba(231, 76, 60, 0.12);
+            --warning: #f39c12;
+            --warning-bg: rgba(243, 156, 18, 0.12);
             
-            --bg-gradient-1: #0b0f1c;
-            --bg-gradient-2: #1a1f33;
-            --bg-body: #0d111f;
-            --bg-card: rgba(22, 28, 50, 0.9);
-            --bg-card-alt: #1e2440;
-            --bg-sidebar: #151b2b;
-            --text-main: #f1f5f9;
-            --text-muted: #9aa4bf;
-            --text-dim: #6e7b9c;
-            --border: rgba(255, 255, 255, 0.05);
-            --border-light: rgba(255, 255, 255, 0.1);
+            /* ألوان مريحة للعين - نسخة داكنة محسنة */
+            --bg-gradient-1: #121624;
+            --bg-gradient-2: #1a1f2f;
+            --bg-body: #141a26;
+            --bg-card: rgba(26, 32, 44, 0.95);
+            --bg-card-alt: #1e2537;
+            --bg-sidebar: #1a1f2d;
+            --text-main: #e2e8f0;
+            --text-muted: #a0aec0;
+            --text-dim: #718096;
+            --border: rgba(255, 255, 255, 0.03);
+            --border-light: rgba(255, 255, 255, 0.06);
             
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
             --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
             --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.7);
-            --shadow-glow: 0 0 20px rgba(67, 97, 238, 0.4);
+            --shadow-glow: 0 0 20px rgba(79, 142, 247, 0.2);
             
             --radius-sm: 10px;
             --radius: 18px;
@@ -54,19 +51,20 @@
             --font: 'Cairo', sans-serif;
         }
 
+        /* الوضع الفاتح - ألوان مريحة للعين */
         [data-theme="light"] {
-            --bg-gradient-1: #f0f4fa;
-            --bg-gradient-2: #e6ecf5;
-            --bg-body: #f4f7fc;
-            --bg-card: #ffffff;
+            --bg-gradient-1: #f0f5fa;
+            --bg-gradient-2: #e4ecf5;
+            --bg-body: #f5f9ff;
+            --bg-card: rgba(255, 255, 255, 0.95);
             --bg-card-alt: #f0f5ff;
             --bg-sidebar: #ffffff;
-            --text-main: #1e2b45;
-            --text-muted: #4a5a7a;
-            --text-dim: #7a89b0;
-            --border: rgba(0, 0, 0, 0.06);
-            --border-light: rgba(0, 0, 0, 0.1);
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --text-main: #2d3748;
+            --text-muted: #4a5568;
+            --text-dim: #718096;
+            --border: rgba(0, 0, 0, 0.04);
+            --border-light: rgba(0, 0, 0, 0.08);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
         }
 
         * {
@@ -87,9 +85,9 @@
             transition: background 0.4s, color 0.4s;
         }
 
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-card-alt); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; opacity: 0.5; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
 
         .app-container {
@@ -97,10 +95,10 @@
             height: 100vh;
             position: relative;
             width: 100%;
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(10px);
         }
 
-        /* ========== القائمة الجانبية الفائقة ========== */
+        /* ========== القائمة الجانبية ========== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-sidebar);
@@ -108,50 +106,27 @@
             display: flex;
             flex-direction: column;
             z-index: 1100;
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            backdrop-filter: blur(20px);
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.5s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.2);
         }
 
         .sidebar-brand {
             padding: 30px 25px;
             border-bottom: 1px solid var(--border);
-            background: linear-gradient(135deg, var(--primary-bg), transparent);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sidebar-brand::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
 
         .brand-title {
             font-size: 28px;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
             margin-bottom: 8px;
-            position: relative;
         }
 
         .brand-sub {
             font-size: 12px;
             color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .sidebar-nav {
@@ -170,83 +145,60 @@
             font-weight: 800;
             color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 14px 20px;
+            padding: 12px 20px;
             margin: 3px 8px;
             border-radius: var(--radius);
             color: var(--text-muted);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transform: scaleY(0);
-            transition: transform 0.4s;
+            transition: all 0.3s;
         }
 
         .nav-item:hover {
             background: var(--bg-card-alt);
             color: var(--text-main);
-            transform: translateX(-8px);
-            box-shadow: var(--shadow-sm);
+            transform: translateX(-5px);
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+            background: var(--primary-bg);
             color: var(--primary);
-            font-weight: 700;
-        }
-
-        .nav-item.active::before {
-            transform: scaleY(1);
         }
 
         .nav-item i {
             width: 24px;
             font-size: 18px;
-            text-align: center;
         }
 
         .nav-badge {
             margin-right: auto;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 50px;
             font-size: 10px;
             font-weight: 800;
-            box-shadow: var(--shadow-glow);
+            opacity: 0.9;
         }
 
         .sidebar-footer {
             padding: 25px;
             border-top: 1px solid var(--border);
-            background: linear-gradient(135deg, var(--bg-card), transparent);
         }
 
         .developer-card {
-            background: linear-gradient(135deg, var(--primary-bg), var(--purple-bg));
+            background: var(--bg-card-alt);
             border-radius: var(--radius);
             padding: 20px;
             margin-bottom: 15px;
             border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
         }
 
         .dev-name {
@@ -254,9 +206,6 @@
             font-size: 16px;
             color: var(--primary);
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .dev-contact {
@@ -271,15 +220,15 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: 0.3s;
             border: none;
             width: 100%;
+            opacity: 0.9;
         }
 
         .dev-contact:hover {
-            background: #20B859;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+            opacity: 1;
+            transform: translateY(-2px);
         }
 
         .theme-toggle {
@@ -306,12 +255,11 @@
 
         .theme-toggle button:hover,
         .theme-toggle button.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
-            transform: scale(1.1);
         }
 
-        /* ========== المحتوى الرئيسي المتطور ========== */
+        /* ========== المحتوى الرئيسي ========== */
         .main-content {
             flex: 1;
             display: flex;
@@ -323,14 +271,13 @@
         .header {
             height: var(--header-height);
             background: var(--bg-card);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 30px;
             z-index: 1000;
-            box-shadow: var(--shadow-sm);
         }
 
         .menu-toggle {
@@ -348,18 +295,14 @@
         }
 
         .menu-toggle:hover {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
-            transform: rotate(90deg);
         }
 
         .header-title {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
+            color: var(--primary);
         }
 
         .header-actions {
@@ -391,12 +334,11 @@
             color: var(--text-main);
             font-family: var(--font);
             font-size: 14px;
-            transition: 0.4s;
+            transition: 0.3s;
         }
 
         .search-input:focus {
             border-color: var(--primary);
-            box-shadow: var(--shadow-glow);
             background: var(--bg-card);
         }
 
@@ -416,9 +358,8 @@
         }
 
         .btn-icon:hover {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
-            transform: scale(1.1) rotate(360deg);
         }
 
         .scroll-area {
@@ -426,68 +367,42 @@
             overflow-y: auto;
             padding: 30px;
             scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
         }
 
-        /* ========== الأزرار الفائقة ========== */
+        /* ========== الأزرار ========== */
         .btn {
-            padding: 14px 28px;
+            padding: 12px 24px;
             border-radius: 50px;
             border: none;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.4s;
+            transition: 0.3s;
             font-family: var(--font);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             font-size: 14px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
+            opacity: 0.9;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            opacity: 1;
+            transform: translateY(-2px);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, var(--success), #04b384);
+            background: var(--success);
             color: white;
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, var(--danger), #d64161);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #e09d00);
+            background: var(--danger);
             color: white;
         }
 
@@ -498,16 +413,11 @@
         }
 
         .btn-sm {
-            padding: 10px 20px;
+            padding: 8px 16px;
             font-size: 12px;
         }
 
-        .btn-lg {
-            padding: 16px 32px;
-            font-size: 16px;
-        }
-
-        /* ========== البطاقات الإحصائية الفاخرة ========== */
+        /* ========== البطاقات الإحصائية ========== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -520,45 +430,19 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 25px;
-            transition: all 0.5s;
-            position: relative;
-            overflow: hidden;
+            transition: 0.3s;
             backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--purple));
-        }
-
-        .stat-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, var(--primary-bg) 0%, transparent 70%);
-            border-radius: 50%;
-            transform: translate(50%, 50%);
         }
 
         .stat-card:hover {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-5px);
             border-color: var(--primary);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
         }
 
         .stat-icon {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+            background: var(--primary-bg);
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -566,36 +450,30 @@
             font-size: 28px;
             color: var(--primary);
             margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
         }
 
         .stat-label {
             font-size: 13px;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
             margin-bottom: 8px;
         }
 
         .stat-value {
-            font-size: 34px;
+            font-size: 32px;
             font-weight: 900;
+            color: var(--text-main);
             margin-bottom: 8px;
-            background: linear-gradient(135deg, var(--text-main), var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            display: inline-block;
         }
 
         .stat-change {
             font-size: 12px;
             color: var(--success);
-            display: flex;
-            align-items: center;
-            gap: 5px;
         }
 
-        /* ========== البطاقات والجداول المتطورة ========== */
+        /* ========== البطاقات والجداول ========== */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -603,13 +481,6 @@
             padding: 30px;
             margin-bottom: 30px;
             backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-            transition: 0.4s;
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary-light);
         }
 
         .card-header {
@@ -624,12 +495,7 @@
         .card-title {
             font-size: 20px;
             font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
         }
 
         .table-container {
@@ -648,7 +514,7 @@
         th {
             padding: 18px 20px;
             text-align: right;
-            background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+            background: var(--primary-bg);
             color: var(--text-muted);
             font-size: 12px;
             font-weight: 800;
@@ -661,32 +527,27 @@
             border-bottom: 1px solid var(--border);
             font-size: 14px;
             font-weight: 500;
-            transition: 0.3s;
         }
 
         tr:hover td {
             background: var(--bg-card);
-            transform: scale(1.01);
         }
 
         .clickable {
             cursor: pointer;
             color: var(--primary);
             font-weight: 700;
-            transition: 0.3s;
         }
 
         .clickable:hover {
-            color: var(--secondary);
             text-decoration: underline;
-            transform: translateX(5px);
         }
 
         .badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 16px;
+            padding: 4px 12px;
             border-radius: 50px;
             font-size: 12px;
             font-weight: 700;
@@ -704,19 +565,7 @@
             border: 1px solid var(--danger);
         }
 
-        .badge-warning {
-            background: var(--warning-bg);
-            color: var(--warning);
-            border: 1px solid var(--warning);
-        }
-
-        .badge-primary {
-            background: var(--primary-bg);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-        }
-
-        /* ========== النماذج المتطورة ========== */
+        /* ========== النماذج ========== */
         .form-group {
             margin-bottom: 20px;
         }
@@ -738,62 +587,35 @@
             color: var(--text-main);
             font-family: var(--font);
             font-size: 14px;
-            transition: 0.4s;
+            transition: 0.3s;
         }
 
         .form-control:focus, .form-select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-bg);
             background: var(--bg-card);
         }
 
         .form-select {
             cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa4bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: left 18px center;
-            padding-left: 45px;
         }
 
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        /* ========== النوافذ المنبثقة الفاخرة ========== */
+        /* ========== النوافذ المنبثقة ========== */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 2000;
             padding: 20px;
-            animation: modalFade 0.4s;
+            animation: fadeIn 0.3s;
         }
 
-        @keyframes modalFade {
+        @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
-        }
-
-        @keyframes modalSlide {
-            from {
-                opacity: 0;
-                transform: translateY(50px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
         }
 
         .modal-card {
@@ -806,8 +628,18 @@
             overflow-y: auto;
             border: 1px solid var(--border);
             box-shadow: var(--shadow-lg);
-            animation: modalSlide 0.5s;
-            position: relative;
+            animation: slideUp 0.4s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
@@ -820,9 +652,7 @@
         .modal-title {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
         }
 
         .modal-close {
@@ -834,7 +664,7 @@
             color: var(--text-muted);
             font-size: 22px;
             cursor: pointer;
-            transition: 0.4s;
+            transition: 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -843,10 +673,9 @@
         .modal-close:hover {
             background: var(--danger);
             color: white;
-            transform: rotate(180deg) scale(1.1);
         }
 
-        /* ========== الإشعارات المتطورة ========== */
+        /* ========== الإشعارات ========== */
         .toast-container {
             position: fixed;
             bottom: 30px;
@@ -859,20 +688,19 @@
         }
 
         .toast-item {
-            padding: 16px 24px;
+            padding: 14px 24px;
             border-radius: 50px;
             color: white;
             font-weight: 700;
-            box-shadow: var(--shadow-lg);
-            animation: toastSlide 0.4s;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s;
             display: flex;
             align-items: center;
-            gap: 12px;
-            min-width: 300px;
-            backdrop-filter: blur(10px);
+            gap: 10px;
+            min-width: 280px;
         }
 
-        @keyframes toastSlide {
+        @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateX(50px);
@@ -883,29 +711,18 @@
             }
         }
 
-        .toast-item.success { background: linear-gradient(135deg, var(--success), #04b384); }
-        .toast-item.error { background: linear-gradient(135deg, var(--danger), #d64161); }
-        .toast-item.info { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .toast-item.success { background: var(--success); }
+        .toast-item.error { background: var(--danger); }
+        .toast-item.info { background: var(--primary); }
 
-        /* ========== شاشة الدخول الفاخرة ========== */
+        /* ========== شاشة الدخول ========== */
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #0b0f1c, #1a1f33);
+            background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2));
             padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-container::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--primary-bg) 0%, transparent 50%);
-            animation: rotate 30s linear infinite;
         }
 
         .login-card {
@@ -915,32 +732,22 @@
             width: 100%;
             max-width: 450px;
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
-            animation: modalSlide 0.6s;
-            backdrop-filter: blur(20px);
-            position: relative;
-            z-index: 1;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
         }
 
         .login-logo {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 100px;
+            height: 100px;
+            background: var(--primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px;
+            font-size: 50px;
             color: white;
             margin: 0 auto 30px;
-            box-shadow: var(--shadow-glow);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 var(--primary-bg); }
-            70% { box-shadow: 0 0 0 20px rgba(67, 97, 238, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+            opacity: 0.9;
         }
 
         .login-title {
@@ -948,9 +755,7 @@
             font-weight: 900;
             text-align: center;
             margin-bottom: 35px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
         }
 
         .login-input {
@@ -962,31 +767,31 @@
             color: var(--text-main);
             margin-bottom: 20px;
             font-size: 15px;
-            transition: 0.4s;
+            transition: 0.3s;
         }
 
         .login-input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-bg);
         }
 
         .login-button {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
             border: none;
             border-radius: 50px;
             font-weight: 800;
             font-size: 18px;
             cursor: pointer;
-            transition: 0.4s;
+            transition: 0.3s;
             margin-top: 15px;
+            opacity: 0.9;
         }
 
         .login-button:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-glow);
+            opacity: 1;
+            transform: translateY(-2px);
         }
 
         .login-error {
@@ -1000,7 +805,7 @@
             display: none;
         }
 
-        /* ========== التجاوب مع الشاشات ========== */
+        /* ========== التجاوب ========== */
         @media (max-width: 1024px) {
             .sidebar {
                 position: fixed;
@@ -1018,8 +823,8 @@
                 display: none;
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.8);
-                backdrop-filter: blur(5px);
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(3px);
                 z-index: 1050;
             }
             
@@ -1052,60 +857,21 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .btn {
-                padding: 12px 20px;
-            }
-            
-            .modal-card {
-                padding: 25px;
-            }
-        }
-
-        @media print {
-            .sidebar, .header, .btn, .no-print {
-                display: none !important;
-            }
-            
-            .main-content, .scroll-area {
-                overflow: visible !important;
-                height: auto !important;
-                padding: 0 !important;
-            }
-            
-            .card {
-                break-inside: avoid;
-                border: 1px solid #ddd !important;
-                color: #000 !important;
-            }
         }
 
         /* ========== أدوات مساعدة ========== */
-        .text-gradient {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .font-mono { font-family: 'Courier New', monospace; }
+        .direction-ltr { direction: ltr; display: inline-block; }
+        .w-100 { width: 100%; }
+        .mt-3 { margin-top: 15px; }
+        .mb-2 { margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<!-- شاشة الدخول الفاخرة -->
+<!-- شاشة الدخول -->
 <div id="loginScreen" class="login-container">
     <div class="login-card">
         <div class="login-logo">
@@ -1128,11 +894,11 @@
     </div>
 </div>
 
-<!-- التطبيق الرئيسي الفاخر -->
+<!-- التطبيق الرئيسي -->
 <div id="mainApp" class="app-container" style="display: none;">
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="UI.toggleSidebar(false)"></div>
 
-    <!-- القائمة الجانبية الفاخرة -->
+    <!-- القائمة الجانبية -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <div class="brand-title">الخبير المحاسبي</div>
@@ -1159,24 +925,20 @@
                 </div>
                 <div class="nav-item" id="nav-reports" onclick="Router.navigate('reports')">
                     <i class="fas fa-chart-pie"></i>
-                    التقارير المتقدمة
-                    <span class="nav-badge">Pro+</span>
+                    التقارير
+                    <span class="nav-badge">Pro</span>
                 </div>
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">الإضافات الذهبية</div>
+                <div class="nav-section-title">الإضافات</div>
                 <div class="nav-item" onclick="UI.showAddMultipleClients()">
                     <i class="fas fa-users-cog"></i>
                     إضافة عدة عملاء
                 </div>
                 <div class="nav-item" onclick="Excel.showExportOptions()">
                     <i class="fas fa-file-excel"></i>
-                    تصدير إكسل متقدم
-                </div>
-                <div class="nav-item" onclick="UI.showAnalytics()">
-                    <i class="fas fa-chart-bar"></i>
-                    تحليلات ذكية
+                    تصدير إكسل
                 </div>
                 <div class="nav-item" onclick="UI.showBackupOptions()">
                     <i class="fas fa-database"></i>
@@ -1225,13 +987,10 @@
                     </button>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 15px; font-size: 11px; color: var(--text-dim);">
-                © 2024 جميع الحقوق محفوظة
-            </div>
         </div>
     </aside>
 
-    <!-- المحتوى الرئيسي الفاخر -->
+    <!-- المحتوى الرئيسي -->
     <main class="main-content">
         <header class="header no-print">
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -1259,15 +1018,14 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
-// ========== النظام الأساسي الفائق v10.0 ==========
+// ========== النظام الأساسي ==========
 const Core = {
     version: '10.0 الذهبية',
     developer: 'محمد أحمد فؤاد',
-    whatsapp: '01010421571',
-    appName: 'الخبير المحاسبي'
+    whatsapp: '01010421571'
 };
 
-// ========== قاعدة البيانات المتطورة جداً ==========
+// ========== قاعدة البيانات ==========
 const Database = {
     data: {
         clients: [],
@@ -1275,8 +1033,7 @@ const Database = {
             username: 'admin',
             password: 'admin123',
             theme: 'dark',
-            companyName: 'شركتي',
-            dateFormat: 'ar-EG'
+            companyName: 'شركتي'
         },
         statistics: {
             lastBackup: null,
@@ -1308,8 +1065,7 @@ const Database = {
                 username: 'admin',
                 password: 'admin123',
                 theme: 'dark',
-                companyName: 'شركتي',
-                dateFormat: 'ar-EG'
+                companyName: 'شركتي'
             },
             statistics: {
                 lastBackup: null,
@@ -1341,6 +1097,7 @@ const Database = {
         return this.data.clients.find(c => c.id === id);
     },
 
+    // إضافة عميل جديد مع تفاصيل له/عليه
     addClient(client) {
         const newClient = {
             id: Date.now().toString() + Math.random().toString(36).substr(2, 8),
@@ -1350,8 +1107,42 @@ const Database = {
             notes: client.notes || '',
             transactions: [],
             createdAt: new Date().toISOString(),
-            balance: 0
+            balance: 0,
+            // تفاصيل إضافية
+            totalFor: 0, // إجمالي له
+            totalAgainst: 0 // إجمالي عليه
         };
+        
+        // إذا تم إدخال مبلغ له
+        if (client.amountFor && parseFloat(client.amountFor) > 0) {
+            const amount = parseFloat(client.amountFor) || 0;
+            newClient.totalFor = amount;
+            newClient.balance = amount;
+            newClient.transactions.push({
+                id: Date.now().toString() + 'a',
+                type: 'له',
+                amount: amount,
+                date: new Date().toISOString().split('T')[0],
+                notes: 'رصيد افتتاحي (له)',
+                createdAt: new Date().toISOString()
+            });
+        }
+        
+        // إذا تم إدخال مبلغ عليه
+        if (client.amountAgainst && parseFloat(client.amountAgainst) > 0) {
+            const amount = parseFloat(client.amountAgainst) || 0;
+            newClient.totalAgainst = amount;
+            newClient.balance = (newClient.balance || 0) - amount;
+            newClient.transactions.push({
+                id: Date.now().toString() + 'b',
+                type: 'عليه',
+                amount: amount,
+                date: new Date().toISOString().split('T')[0],
+                notes: 'رصيد افتتاحي (عليه)',
+                createdAt: new Date().toISOString()
+            });
+        }
+        
         this.data.clients.push(newClient);
         this.save();
         return newClient;
@@ -1376,10 +1167,16 @@ const Database = {
         const client = this.getClient(clientId);
         if (!client) return false;
 
+        const amount = parseFloat(transaction.amount) || 0;
+        if (amount === 0) {
+            UI.toast('المبلغ لا يمكن أن يكون صفر', 'error');
+            return false;
+        }
+
         const tx = {
             id: Date.now().toString() + Math.random().toString(36).substr(2, 10),
             type: transaction.type || 'له',
-            amount: parseFloat(transaction.amount) || 0,
+            amount: amount,
             date: transaction.date || new Date().toISOString().split('T')[0],
             notes: transaction.notes || '',
             createdAt: new Date().toISOString()
@@ -1407,27 +1204,27 @@ const Database = {
         const client = this.getClient(clientId);
         if (!client || !client.transactions) return;
 
-        client.balance = client.transactions.reduce((sum, t) => {
+        let totalFor = 0, totalAgainst = 0;
+        
+        client.transactions.forEach(t => {
             const amount = parseFloat(t.amount) || 0;
-            return t.type === 'له' ? sum + amount : sum - amount;
-        }, 0);
+            if (t.type === 'له') totalFor += amount;
+            else totalAgainst += amount;
+        });
+
+        client.totalFor = totalFor;
+        client.totalAgainst = totalAgainst;
+        client.balance = totalFor - totalAgainst;
     },
 
     getClientSummary(clientId) {
         const client = this.getClient(clientId);
-        if (!client) return { balance: 0, totalIn: 0, totalOut: 0, count: 0 };
-
-        let totalIn = 0, totalOut = 0;
-        (client.transactions || []).forEach(t => {
-            const amount = parseFloat(t.amount) || 0;
-            if (t.type === 'له') totalIn += amount;
-            else totalOut += amount;
-        });
+        if (!client) return { balance: 0, totalFor: 0, totalAgainst: 0, count: 0 };
 
         return {
             balance: client.balance || 0,
-            totalIn,
-            totalOut,
+            totalFor: client.totalFor || 0,
+            totalAgainst: client.totalAgainst || 0,
             count: client.transactions?.length || 0
         };
     },
@@ -1452,8 +1249,8 @@ const Database = {
         const stats = {
             totalClients: this.data.clients.length,
             totalTransactions: 0,
-            totalIn: 0,
-            totalOut: 0,
+            totalFor: 0,
+            totalAgainst: 0,
             netBalance: 0,
             debtors: 0,
             creditors: 0,
@@ -1463,14 +1260,14 @@ const Database = {
         this.data.clients.forEach(client => {
             const summary = this.getClientSummary(client.id);
             stats.totalTransactions += summary.count;
-            stats.totalIn += summary.totalIn;
-            stats.totalOut += summary.totalOut;
+            stats.totalFor += summary.totalFor;
+            stats.totalAgainst += summary.totalAgainst;
             if (summary.balance > 0) stats.creditors++;
             else if (summary.balance < 0) stats.debtors++;
         });
 
-        stats.netBalance = stats.totalIn - stats.totalOut;
-        stats.totalAmount = stats.totalIn + stats.totalOut;
+        stats.netBalance = stats.totalFor - stats.totalAgainst;
+        stats.totalAmount = stats.totalFor + stats.totalAgainst;
         return stats;
     },
 
@@ -1490,7 +1287,7 @@ const Database = {
     }
 };
 
-// ========== نظام المصادقة المتطور ==========
+// ========== نظام المصادقة ==========
 const Auth = {
     checkLogin() {
         return sessionStorage.getItem('elite_logged_in') === 'true';
@@ -1530,7 +1327,7 @@ const Auth = {
     }
 };
 
-// ========== نظام التوجيه المتقدم ==========
+// ========== نظام التوجيه ==========
 const Router = {
     currentView: 'dashboard',
     params: null,
@@ -1575,7 +1372,7 @@ const Router = {
             'dashboard': 'لوحة التحكم',
             'clients': 'إدارة العملاء',
             'transactions': 'المعاملات',
-            'reports': 'التقارير المتقدمة',
+            'reports': 'التقارير',
             'clientDetail': 'تفاصيل العميل'
         };
         
@@ -1611,7 +1408,7 @@ const Router = {
     }
 };
 
-// ========== نظام العرض المتطور جداً ==========
+// ========== نظام العرض ==========
 const Views = {
     async dashboard() {
         const stats = Database.getStatistics();
@@ -1622,25 +1419,25 @@ const Views = {
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-users"></i></div>
                     <div class="stat-label">إجمالي العملاء</div>
-                    <div class="stat-value">${stats.totalClients}</div>
-                    <div class="stat-change"><i class="fas fa-arrow-up"></i> عميل نشط</div>
+                    <div class="stat-value direction-ltr">${stats.totalClients.toLocaleString('en-US')}</div>
+                    <div class="stat-change">عميل نشط</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-arrow-down" style="color: var(--success)"></i></div>
-                    <div class="stat-label">إجمالي الوارد (له)</div>
-                    <div class="stat-value">${Utils.formatMoney(stats.totalIn)}</div>
-                    <div class="stat-change" style="color: var(--success)">+ زيادة</div>
+                    <div class="stat-label">إجمالي (له)</div>
+                    <div class="stat-value direction-ltr">${Utils.formatMoneyEnglish(stats.totalFor)}</div>
+                    <div class="stat-change" style="color: var(--success)">زيادة</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-arrow-up" style="color: var(--danger)"></i></div>
-                    <div class="stat-label">إجمالي المنصرف (عليه)</div>
-                    <div class="stat-value">${Utils.formatMoney(stats.totalOut)}</div>
-                    <div class="stat-change" style="color: var(--danger)">- نقص</div>
+                    <div class="stat-label">إجمالي (عليه)</div>
+                    <div class="stat-value direction-ltr">${Utils.formatMoneyEnglish(stats.totalAgainst)}</div>
+                    <div class="stat-change" style="color: var(--danger)">نقص</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-balance-scale"></i></div>
                     <div class="stat-label">صافي الرصيد</div>
-                    <div class="stat-value">${Utils.formatMoney(stats.netBalance)}</div>
+                    <div class="stat-value direction-ltr">${Utils.formatMoneyEnglish(stats.netBalance)}</div>
                     <div class="stat-change">${stats.netBalance >= 0 ? 'دائن' : 'مدين'}</div>
                 </div>
             </div>
@@ -1667,7 +1464,7 @@ const Views = {
                                     .map(c => `
                                         <tr>
                                             <td class="clickable" onclick="Router.navigate('clientDetail', '${c.id}')">${c.name}</td>
-                                            <td class="text-danger font-bold">${Utils.formatMoney(Math.abs(c.summary.balance))}</td>
+                                            <td class="text-danger font-mono direction-ltr">${Utils.formatMoneyEnglish(Math.abs(c.summary.balance))}</td>
                                             <td><span class="badge badge-danger">مدين</span></td>
                                         </tr>
                                     `).join('') || '<tr><td colspan="3" style="text-align: center">لا توجد بيانات</td></tr>'
@@ -1698,7 +1495,7 @@ const Views = {
                                     .map(c => `
                                         <tr>
                                             <td class="clickable" onclick="Router.navigate('clientDetail', '${c.id}')">${c.name}</td>
-                                            <td class="text-success font-bold">${Utils.formatMoney(c.summary.balance)}</td>
+                                            <td class="text-success font-mono direction-ltr">${Utils.formatMoneyEnglish(c.summary.balance)}</td>
                                             <td><span class="badge badge-success">دائن</span></td>
                                         </tr>
                                     `).join('') || '<tr><td colspan="3" style="text-align: center">لا توجد بيانات</td></tr>'
@@ -1733,7 +1530,7 @@ const Views = {
                                     <td class="clickable" onclick="Router.navigate('clientDetail', '${t.clientId}')">${t.clientName}</td>
                                     <td>${t.notes || '—'}</td>
                                     <td><span class="badge ${t.type === 'له' ? 'badge-success' : 'badge-danger'}">${t.type}</span></td>
-                                    <td class="${t.type === 'له' ? 'text-success' : 'text-danger'} font-bold">${Utils.formatMoney(t.amount)}</td>
+                                    <td class="${t.type === 'له' ? 'text-success' : 'text-danger'} font-mono direction-ltr">${Utils.formatMoneyEnglish(t.amount)}</td>
                                 </tr>
                             `).join('') || '<tr><td colspan="5" style="text-align: center">لا توجد معاملات</td></tr>'}
                         </tbody>
@@ -1770,9 +1567,9 @@ const Views = {
                                         <td class="clickable" onclick="Router.navigate('clientDetail', '${client.id}')">${client.name}</td>
                                         <td>${client.phone || '—'}</td>
                                         <td>${summary.count}</td>
-                                        <td class="text-success">${Utils.formatMoney(summary.totalIn)}</td>
-                                        <td class="text-danger">${Utils.formatMoney(summary.totalOut)}</td>
-                                        <td class="${summary.balance >= 0 ? 'text-success' : 'text-danger'} font-bold">${Utils.formatMoney(summary.balance)}</td>
+                                        <td class="text-success font-mono direction-ltr">${Utils.formatMoneyEnglish(summary.totalFor)}</td>
+                                        <td class="text-danger font-mono direction-ltr">${Utils.formatMoneyEnglish(summary.totalAgainst)}</td>
+                                        <td class="${summary.balance >= 0 ? 'text-success' : 'text-danger'} font-mono direction-ltr">${Utils.formatMoneyEnglish(Math.abs(summary.balance))}</td>
                                         <td><span class="badge ${summary.balance > 0 ? 'badge-success' : summary.balance < 0 ? 'badge-danger' : ''}">
                                             ${summary.balance > 0 ? 'دائن' : summary.balance < 0 ? 'مدين' : 'متوازن'}
                                         </span></td>
@@ -1819,7 +1616,7 @@ const Views = {
                                     <td class="clickable" onclick="Router.navigate('clientDetail', '${tx.clientId}')">${tx.clientName}</td>
                                     <td>${tx.notes || '—'}</td>
                                     <td><span class="badge ${tx.type === 'له' ? 'badge-success' : 'badge-danger'}">${tx.type}</span></td>
-                                    <td class="${tx.type === 'له' ? 'text-success' : 'text-danger'} font-bold">${Utils.formatMoney(tx.amount)}</td>
+                                    <td class="${tx.type === 'له' ? 'text-success' : 'text-danger'} font-mono direction-ltr">${Utils.formatMoneyEnglish(tx.amount)}</td>
                                     <td>
                                         <button class="btn btn-icon btn-sm btn-danger" onclick="UI.deleteTransaction('${tx.clientId}', '${tx.id}')">
                                             <i class="fas fa-trash"></i>
@@ -1842,12 +1639,12 @@ const Views = {
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
                     <div class="stat-label">إجمالي المعاملات</div>
-                    <div class="stat-value">${stats.totalTransactions}</div>
+                    <div class="stat-value direction-ltr">${stats.totalTransactions.toLocaleString('en-US')}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                     <div class="stat-label">متوسط المعاملة</div>
-                    <div class="stat-value">${Utils.formatMoney(stats.totalTransactions ? (stats.totalIn + stats.totalOut) / stats.totalTransactions : 0)}</div>
+                    <div class="stat-value direction-ltr">${Utils.formatMoneyEnglish(stats.totalTransactions ? (stats.totalFor + stats.totalAgainst) / stats.totalTransactions : 0)}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-calendar"></i></div>
@@ -1857,7 +1654,7 @@ const Views = {
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
                     <div class="stat-label">نسبة المديونية</div>
-                    <div class="stat-value">${stats.totalIn ? ((stats.totalOut / stats.totalIn) * 100).toFixed(1) : 0}%</div>
+                    <div class="stat-value direction-ltr">${stats.totalFor ? ((stats.totalAgainst / stats.totalFor) * 100).toFixed(1) : 0}%</div>
                 </div>
             </div>
 
@@ -1868,7 +1665,7 @@ const Views = {
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
                         <button class="btn btn-success" onclick="Excel.exportFullReport()">
-                            <i class="fas fa-file-excel"></i> تقرير شامل (متعدد الأوراق)
+                            <i class="fas fa-file-excel"></i> تقرير شامل
                         </button>
                         <button class="btn btn-primary" onclick="Excel.exportClientSummary()">
                             <i class="fas fa-file-excel"></i> ملخص العملاء
@@ -1876,28 +1673,25 @@ const Views = {
                         <button class="btn btn-warning" onclick="Excel.exportAllTransactions()">
                             <i class="fas fa-file-excel"></i> جميع المعاملات
                         </button>
-                        <button class="btn btn-info" onclick="Excel.exportDetailedReport()">
-                            <i class="fas fa-file-excel"></i> تقارير مفصلة لكل عميل
-                        </button>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fas fa-chart-bar"></i> تحليلات ذكية</div>
+                        <div class="card-title"><i class="fas fa-chart-bar"></i> تحليلات</div>
                     </div>
                     <div style="padding: 20px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                             <span>العملاء الدائنون:</span>
-                            <span class="text-success font-bold">${stats.creditors}</span>
+                            <span class="text-success font-mono direction-ltr">${stats.creditors.toLocaleString('en-US')}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                             <span>العملاء المدينون:</span>
-                            <span class="text-danger font-bold">${stats.debtors}</span>
+                            <span class="text-danger font-mono direction-ltr">${stats.debtors.toLocaleString('en-US')}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
                             <span>العملاء المتوازنون:</span>
-                            <span class="text-muted font-bold">${stats.totalClients - stats.creditors - stats.debtors}</span>
+                            <span class="font-mono direction-ltr">${(stats.totalClients - stats.creditors - stats.debtors).toLocaleString('en-US')}</span>
                         </div>
                     </div>
                 </div>
@@ -1921,17 +1715,17 @@ const Views = {
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-arrow-down" style="color: var(--success)"></i></div>
                     <div class="stat-label">إجمالي له</div>
-                    <div class="stat-value" style="color: var(--success)">${Utils.formatMoney(summary.totalIn)}</div>
+                    <div class="stat-value direction-ltr" style="color: var(--success)">${Utils.formatMoneyEnglish(summary.totalFor)}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-arrow-up" style="color: var(--danger)"></i></div>
                     <div class="stat-label">إجمالي عليه</div>
-                    <div class="stat-value" style="color: var(--danger)">${Utils.formatMoney(summary.totalOut)}</div>
+                    <div class="stat-value direction-ltr" style="color: var(--danger)">${Utils.formatMoneyEnglish(summary.totalAgainst)}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-balance-scale"></i></div>
                     <div class="stat-label">الرصيد</div>
-                    <div class="stat-value" style="color: ${summary.balance >= 0 ? 'var(--success)' : 'var(--danger)'}">${Utils.formatMoney(Math.abs(summary.balance))}</div>
+                    <div class="stat-value direction-ltr" style="color: ${summary.balance >= 0 ? 'var(--success)' : 'var(--danger)'}">${Utils.formatMoneyEnglish(Math.abs(summary.balance))}</div>
                     <div class="stat-change">${summary.balance >= 0 ? 'دائن' : 'مدين'}</div>
                 </div>
             </div>
@@ -1958,9 +1752,9 @@ const Views = {
                                 <tr>
                                     <td>${Utils.formatDate(t.date)}</td>
                                     <td>${t.notes || '—'}</td>
-                                    <td class="text-success">${t.type === 'له' ? Utils.formatMoney(t.amount) : '—'}</td>
-                                    <td class="text-danger">${t.type === 'عليه' ? Utils.formatMoney(t.amount) : '—'}</td>
-                                    <td class="font-bold">${Utils.formatMoney(t.running)}</td>
+                                    <td class="text-success font-mono direction-ltr">${t.type === 'له' ? Utils.formatMoneyEnglish(t.amount) : '—'}</td>
+                                    <td class="text-danger font-mono direction-ltr">${t.type === 'عليه' ? Utils.formatMoneyEnglish(t.amount) : '—'}</td>
+                                    <td class="font-mono direction-ltr">${Utils.formatMoneyEnglish(t.running)}</td>
                                     <td>
                                         <button class="btn btn-icon btn-sm btn-danger" onclick="UI.deleteTransaction('${client.id}', '${t.id}')">
                                             <i class="fas fa-trash"></i>
@@ -1976,7 +1770,7 @@ const Views = {
     }
 };
 
-// ========== نظام التصدير المتقدم جداً لإكسل ==========
+// ========== نظام التصدير لإكسل ==========
 const Excel = {
     formatWorksheet(ws) {
         const range = XLSX.utils.decode_range(ws['!ref']);
@@ -2005,14 +1799,13 @@ const Excel = {
             const s = Database.getClientSummary(client.id);
             summaryData.push([
                 index + 1, client.name, client.phone || '—', s.count,
-                s.totalIn, s.totalOut, s.balance,
+                s.totalFor, s.totalAgainst, s.balance,
                 s.balance > 0 ? 'دائن' : s.balance < 0 ? 'مدين' : 'متوازن'
             ]);
         });
         
         const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
         this.formatWorksheet(wsSummary);
-        wsSummary['!cols'] = [{wch:5},{wch:25},{wch:15},{wch:10},{wch:15},{wch:15},{wch:15},{wch:10}];
         XLSX.utils.book_append_sheet(wb, wsSummary, 'ملخص العملاء');
         
         // ورقة جميع المعاملات
@@ -2029,26 +1822,7 @@ const Excel = {
         
         const wsTx = XLSX.utils.aoa_to_sheet(txData);
         this.formatWorksheet(wsTx);
-        wsTx['!cols'] = [{wch:5},{wch:12},{wch:25},{wch:8},{wch:15},{wch:30},{wch:15}];
         XLSX.utils.book_append_sheet(wb, wsTx, 'المعاملات');
-        
-        // ورقة إحصائيات
-        const stats = Database.getStatistics();
-        const statsData = [
-            [company], ['إحصائيات متقدمة'], [`تاريخ: ${Utils.formatDate(new Date())}`], [],
-            ['البيان', 'القيمة'],
-            ['إجمالي العملاء', stats.totalClients],
-            ['إجمالي المعاملات', stats.totalTransactions],
-            ['إجمالي الوارد (له)', stats.totalIn],
-            ['إجمالي المنصرف (عليه)', stats.totalOut],
-            ['صافي الرصيد', stats.netBalance],
-            ['الدائنون', stats.creditors],
-            ['المدينون', stats.debtors]
-        ];
-        
-        const wsStats = XLSX.utils.aoa_to_sheet(statsData);
-        wsStats['!cols'] = [{wch:25},{wch:20}];
-        XLSX.utils.book_append_sheet(wb, wsStats, 'إحصائيات');
         
         XLSX.writeFile(wb, `تقرير_شامل_${date}.xlsx`);
         UI.toast('تم تصدير التقرير الشامل', 'success');
@@ -2065,7 +1839,7 @@ const Excel = {
         const data = [
             [Database.data.settings.companyName], [`كشف حساب: ${client.name}`], [`هاتف: ${client.phone || '—'}`], [`تاريخ: ${Utils.formatDate(new Date())}`], [],
             ['ملخص الحساب'], ['له', 'عليه', 'الرصيد', 'المعاملات'],
-            [summary.totalIn, summary.totalOut, summary.balance, summary.count], [],
+            [summary.totalFor, summary.totalAgainst, summary.balance, summary.count], [],
             ['تفاصيل المعاملات'], ['م', 'التاريخ', 'البيان', 'له', 'عليه', 'الرصيد']
         ];
         
@@ -2080,7 +1854,6 @@ const Excel = {
         
         const ws = XLSX.utils.aoa_to_sheet(data);
         this.formatWorksheet(ws);
-        ws['!cols'] = [{wch:5},{wch:12},{wch:30},{wch:15},{wch:15},{wch:15}];
         
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, client.name);
@@ -2156,7 +1929,7 @@ const Excel = {
         
         Database.data.clients.forEach((c, i) => {
             const s = Database.getClientSummary(c.id);
-            data.push([i + 1, c.name, c.phone || '—', s.totalIn, s.totalOut, s.balance,
+            data.push([i + 1, c.name, c.phone || '—', s.totalFor, s.totalAgainst, s.balance,
                 s.balance > 0 ? 'دائن' : s.balance < 0 ? 'مدين' : 'متوازن']);
         });
         
@@ -2166,38 +1939,6 @@ const Excel = {
         XLSX.utils.book_append_sheet(wb, ws, 'ملخص العملاء');
         XLSX.writeFile(wb, `ملخص_العملاء_${Utils.formatDate(new Date()).replace(/\//g, '-')}.xlsx`);
         UI.toast('تم تصدير الملخص', 'success');
-    },
-
-    exportDetailedReport() {
-        const wb = XLSX.utils.book_new();
-        const date = Utils.formatDate(new Date()).replace(/\//g, '-');
-        
-        Database.data.clients.forEach(client => {
-            const running = Database.getRunningBalance(client);
-            const s = Database.getClientSummary(client.id);
-            
-            const data = [
-                [Database.data.settings.companyName], [`كشف حساب مفصل - ${client.name}`],
-                [`هاتف: ${client.phone || '—'}`], [`تاريخ: ${Utils.formatDate(new Date())}`], [],
-                ['ملخص', 'له', 'عليه', 'الرصيد', 'المعاملات'],
-                [s.totalIn, s.totalOut, s.balance, s.count], [],
-                ['تفاصيل', 'التاريخ', 'البيان', 'له', 'عليه', 'الرصيد']
-            ];
-            
-            running.forEach((t, i) => {
-                data.push([i + 1, t.date, t.notes || '—',
-                    t.type === 'له' ? t.amount : '—',
-                    t.type === 'عليه' ? t.amount : '—',
-                    t.running]);
-            });
-            
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            this.formatWorksheet(ws);
-            XLSX.utils.book_append_sheet(wb, ws, client.name.substring(0, 20));
-        });
-        
-        XLSX.writeFile(wb, `تقارير_مفصلة_${date}.xlsx`);
-        UI.toast('تم تصدير التقارير المفصلة', 'success');
     },
 
     showExportOptions() {
@@ -2212,16 +1953,13 @@ const Excel = {
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <button class="btn btn-success" onclick="Excel.exportFullReport(); document.getElementById('exportModal').remove()">
-                        <i class="fas fa-file-excel"></i> تقرير شامل (3 ورقات)
+                        <i class="fas fa-file-excel"></i> تقرير شامل
                     </button>
                     <button class="btn btn-primary" onclick="Excel.exportClientSummary(); document.getElementById('exportModal').remove()">
                         <i class="fas fa-file-excel"></i> ملخص العملاء
                     </button>
                     <button class="btn btn-warning" onclick="Excel.exportAllTransactions(); document.getElementById('exportModal').remove()">
                         <i class="fas fa-file-excel"></i> جميع المعاملات
-                    </button>
-                    <button class="btn btn-info" onclick="Excel.exportDetailedReport(); document.getElementById('exportModal').remove()">
-                        <i class="fas fa-file-excel"></i> تقارير مفصلة لكل عميل
                     </button>
                     <button class="btn btn-danger" onclick="Excel.exportTopDebtors(); document.getElementById('exportModal').remove()">
                         <i class="fas fa-file-excel"></i> أكبر المديونيات
@@ -2236,7 +1974,7 @@ const Excel = {
     }
 };
 
-// ========== نظام الواجهة المتطور جداً ==========
+// ========== نظام الواجهة ==========
 const UI = {
     initApp() {
         document.getElementById('loginScreen').style.display = 'none';
@@ -2287,6 +2025,7 @@ const UI = {
         });
     },
 
+    // إضافة عميل جديد مع تفاصيل له/عليه
     showAddClient() {
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
@@ -2294,15 +2033,47 @@ const UI = {
         modal.innerHTML = `
             <div class="modal-card">
                 <div class="modal-header">
-                    <div class="modal-title">➕ إضافة عميل</div>
+                    <div class="modal-title">➕ إضافة عميل جديد</div>
                     <button class="modal-close" onclick="document.getElementById('addClientModal').remove()"><i class="fas fa-times"></i></button>
                 </div>
                 <form onsubmit="UI.saveClient(event)">
-                    <div class="form-group"><label class="form-label">الاسم *</label><input type="text" id="clientName" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">الهاتف</label><input type="text" id="clientPhone" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">العنوان</label><input type="text" id="clientAddress" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">ملاحظات</label><textarea id="clientNotes" class="form-control" rows="3"></textarea></div>
-                    <button type="submit" class="btn btn-primary w-100">حفظ</button>
+                    <div class="form-group">
+                        <label class="form-label">الاسم <span style="color: var(--danger);">*</span></label>
+                        <input type="text" id="clientName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="text" id="clientPhone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">العنوان</label>
+                        <input type="text" id="clientAddress" class="form-control">
+                    </div>
+                    
+                    <div style="background: var(--bg-card-alt); padding: 20px; border-radius: var(--radius); margin: 20px 0;">
+                        <h4 style="margin-bottom: 15px; color: var(--primary);">💰 الرصيد الافتتاحي</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">مبلغ (له) - إذا كان العميل دائن</label>
+                            <input type="number" id="clientAmountFor" class="form-control" step="0.01" min="0" value="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">مبلغ (عليه) - إذا كان العميل مدين</label>
+                            <input type="number" id="clientAmountAgainst" class="form-control" step="0.01" min="0" value="0">
+                        </div>
+                        
+                        <p style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
+                            <i class="fas fa-info-circle"></i> يمكنك ترك القيم صفر إذا لم يكن هناك رصيد سابق
+                        </p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea id="clientNotes" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">حفظ العميل</button>
                 </form>
             </div>
         `;
@@ -2314,11 +2085,19 @@ const UI = {
         const name = document.getElementById('clientName').value.trim();
         if (!name) return this.toast('أدخل الاسم', 'error');
         
+        // قراءة المبالغ (تلقائياً 0 إذا لم يتم الإدخال)
+        const amountFor = parseFloat(document.getElementById('clientAmountFor').value) || 0;
+        const amountAgainst = parseFloat(document.getElementById('clientAmountAgainst').value) || 0;
+        
         Database.addClient({
-            name, phone: document.getElementById('clientPhone').value,
+            name,
+            phone: document.getElementById('clientPhone').value,
             address: document.getElementById('clientAddress').value,
-            notes: document.getElementById('clientNotes').value
+            notes: document.getElementById('clientNotes').value,
+            amountFor: amountFor,
+            amountAgainst: amountAgainst
         });
+        
         document.getElementById('addClientModal').remove();
         this.toast('تم إضافة العميل', 'success');
         Router.render();
@@ -2339,7 +2118,7 @@ const UI = {
                     <textarea id="bulkClientNames" class="form-control" rows="8" placeholder="محمد أحمد&#10;علي حسن&#10;فاطمة محمد"></textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">رقم هاتف افتراضي</label>
+                    <label class="form-label">رقم هاتف افتراضي (اختياري)</label>
                     <input type="text" id="bulkPhone" class="form-control" placeholder="نفس الرقم للجميع">
                 </div>
                 <button class="btn btn-primary w-100" onclick="UI.saveMultipleClients()">حفظ الجميع</button>
@@ -2372,7 +2151,8 @@ const UI = {
                 <form onsubmit="UI.saveTransaction(event)">
                     <div class="form-group">
                         <label class="form-label">العميل</label>
-                        <select id="txClient" class="form-select" ${clientId ? 'disabled' : ''}>
+                        <select id="txClient" class="form-select" ${clientId ? 'disabled' : ''} required>
+                            <option value="">اختر العميل</option>
                             ${Database.data.clients.map(c => `<option value="${c.id}" ${clientId === c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
                         </select>
                     </div>
@@ -2383,10 +2163,20 @@ const UI = {
                             <option value="عليه">عليه (صرف)</option>
                         </select>
                     </div>
-                    <div class="form-group"><label class="form-label">المبلغ</label><input type="number" id="txAmount" class="form-control" step="0.01" required></div>
-                    <div class="form-group"><label class="form-label">التاريخ</label><input type="date" id="txDate" class="form-control" value="${new Date().toISOString().split('T')[0]}"></div>
-                    <div class="form-group"><label class="form-label">البيان</label><input type="text" id="txNotes" class="form-control"></div>
-                    <button type="submit" class="btn btn-primary w-100">حفظ</button>
+                    <div class="form-group">
+                        <label class="form-label">المبلغ</label>
+                        <input type="number" id="txAmount" class="form-control" step="0.01" min="0.01" required>
+                        <small style="color: var(--text-dim);">يجب أن يكون المبلغ أكبر من صفر</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">التاريخ</label>
+                        <input type="date" id="txDate" class="form-control" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">البيان</label>
+                        <input type="text" id="txNotes" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">حفظ المعاملة</button>
                 </form>
             </div>
         `;
@@ -2399,7 +2189,7 @@ const UI = {
         if (!clientId) return this.toast('اختر العميل', 'error');
         
         const amount = parseFloat(document.getElementById('txAmount').value);
-        if (!amount || amount <= 0) return this.toast('أدخل مبلغ صحيح', 'error');
+        if (!amount || amount <= 0) return this.toast('أدخل مبلغ صحيح أكبر من صفر', 'error');
         
         Database.addTransaction(clientId, {
             type: document.getElementById('txType').value,
@@ -2427,10 +2217,22 @@ const UI = {
                     <button class="modal-close" onclick="document.getElementById('editClientModal').remove()"><i class="fas fa-times"></i></button>
                 </div>
                 <form onsubmit="UI.updateClient(event, '${clientId}')">
-                    <div class="form-group"><label class="form-label">الاسم</label><input type="text" id="editName" class="form-control" value="${client.name}" required></div>
-                    <div class="form-group"><label class="form-label">الهاتف</label><input type="text" id="editPhone" class="form-control" value="${client.phone || ''}"></div>
-                    <div class="form-group"><label class="form-label">العنوان</label><input type="text" id="editAddress" class="form-control" value="${client.address || ''}"></div>
-                    <div class="form-group"><label class="form-label">ملاحظات</label><textarea id="editNotes" class="form-control">${client.notes || ''}</textarea></div>
+                    <div class="form-group">
+                        <label class="form-label">الاسم</label>
+                        <input type="text" id="editName" class="form-control" value="${client.name}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الهاتف</label>
+                        <input type="text" id="editPhone" class="form-control" value="${client.phone || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">العنوان</label>
+                        <input type="text" id="editAddress" class="form-control" value="${client.address || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea id="editNotes" class="form-control">${client.notes || ''}</textarea>
+                    </div>
                     <button type="submit" class="btn btn-primary w-100">تحديث</button>
                 </form>
             </div>
@@ -2478,9 +2280,18 @@ const UI = {
                     <div class="modal-title">⚙️ الإعدادات</div>
                     <button class="modal-close" onclick="document.getElementById('settingsModal').remove()"><i class="fas fa-times"></i></button>
                 </div>
-                <div class="form-group"><label class="form-label">اسم الشركة</label><input type="text" id="companyName" class="form-control" value="${s.companyName || ''}"></div>
-                <div class="form-group"><label class="form-label">اسم المستخدم</label><input type="text" id="newUsername" class="form-control" value="${s.username}"></div>
-                <div class="form-group"><label class="form-label">كلمة المرور</label><input type="text" id="newPassword" class="form-control" value="${s.password}"></div>
+                <div class="form-group">
+                    <label class="form-label">اسم الشركة</label>
+                    <input type="text" id="companyName" class="form-control" value="${s.companyName || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">اسم المستخدم</label>
+                    <input type="text" id="newUsername" class="form-control" value="${s.username}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">كلمة المرور</label>
+                    <input type="text" id="newPassword" class="form-control" value="${s.password}">
+                </div>
                 <button class="btn btn-primary w-100" onclick="UI.saveSettings()">حفظ</button>
             </div>
         `;
@@ -2507,15 +2318,15 @@ const UI = {
                     <button class="modal-close" onclick="document.getElementById('devModal').remove()"><i class="fas fa-times"></i></button>
                 </div>
                 <div style="text-align: center;">
-                    <div style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <div style="width: 100px; height: 100px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
                         <i class="fas fa-user-cog" style="font-size: 50px; color: white;"></i>
                     </div>
                     <h3>محمد أحمد فؤاد</h3>
-                    <p style="color: var(--text-muted);">مطور برمجيات محترف</p>
+                    <p style="color: var(--text-muted);">مطور برمجيات</p>
                     <div style="margin: 20px 0;">
                         <p><i class="fas fa-phone" style="color: var(--success);"></i> 01010421571</p>
                         <p><i class="fab fa-whatsapp" style="color: #25D366;"></i> 01010421571</p>
-                        <p><i class="fas fa-code"></i> الإصدار: 10.0 الذهبي</p>
+                        <p><i class="fas fa-code"></i> الإصدار: 10.0</p>
                     </div>
                     <button class="btn btn-success w-100" onclick="Utils.contactDev()">
                         <i class="fab fa-whatsapp"></i> تواصل عبر واتساب
@@ -2596,46 +2407,16 @@ const UI = {
             this.toast('تم إعادة التعيين', 'success');
             Router.render();
         }
-    },
-
-    showAnalytics() {
-        const stats = Database.getStatistics();
-        const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-        modal.id = 'analyticsModal';
-        modal.innerHTML = `
-            <div class="modal-card" style="max-width: 600px;">
-                <div class="modal-header">
-                    <div class="modal-title">📊 تحليلات ذكية</div>
-                    <button class="modal-close" onclick="document.getElementById('analyticsModal').remove()"><i class="fas fa-times"></i></button>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="stat-card" style="padding: 15px;">
-                        <div class="stat-label">متوسط الرصيد</div>
-                        <div class="stat-value" style="font-size: 20px;">${Utils.formatMoney(stats.totalClients ? stats.netBalance / stats.totalClients : 0)}</div>
-                    </div>
-                    <div class="stat-card" style="padding: 15px;">
-                        <div class="stat-label">نسبة النشاط</div>
-                        <div class="stat-value" style="font-size: 20px;">${stats.totalClients ? (stats.totalTransactions / stats.totalClients).toFixed(1) : 0} معاملة/عميل</div>
-                    </div>
-                </div>
-                <div style="margin-top: 20px;">
-                    <p><strong>توزيع العملاء:</strong></p>
-                    <p>دائنون: <span class="text-success">${stats.creditors}</span></p>
-                    <p>مدينون: <span class="text-danger">${stats.debtors}</span></p>
-                    <p>متوازنون: <span class="text-muted">${stats.totalClients - stats.creditors - stats.debtors}</span></p>
-                </div>
-                <button class="btn btn-primary w-100 mt-3" onclick="Excel.exportFullReport()">تصدير تحليلات</button>
-            </div>
-        `;
-        document.body.appendChild(modal);
     }
 };
 
 // ========== أدوات مساعدة ==========
 const Utils = {
-    formatMoney(amount) {
-        return parseFloat(amount || 0).toLocaleString('ar-EG', {minimumFractionDigits: 2}) + ' ج.م';
+    formatMoneyEnglish(amount) {
+        return parseFloat(amount || 0).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + ' EGP';
     },
 
     formatDate(date) {
