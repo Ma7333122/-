@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام المالي المتكامل - إدارة العملاء</title>
+    <title>النظام المالي المتكامل - لوحة تحكم المدير</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -58,6 +58,7 @@
             --border-color: #e5e7eb;
         }
 
+        /* Connection Status */
         .connection-status {
             position: fixed;
             top: 20px;
@@ -89,6 +90,7 @@
             color: white;
         }
 
+        /* Toast Notifications */
         .toast {
             position: fixed;
             top: 20px;
@@ -116,6 +118,7 @@
         .toast.info { background: var(--info); }
         .toast.warning { background: var(--warning); }
 
+        /* Loading Spinner */
         .loading-spinner {
             position: fixed;
             top: 0;
@@ -151,6 +154,7 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Login Container */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -290,6 +294,25 @@
         .social-btn:hover {
             background: var(--border-color);
             transform: translateY(-2px);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-badge.inactive {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
         }
 
         .vertical-nav {
@@ -448,6 +471,11 @@
             color: var(--warning);
         }
 
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
         .modal {
             position: fixed;
             top: 0;
@@ -475,7 +503,7 @@
             border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 32px;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
@@ -506,6 +534,10 @@
             border-bottom: 1px solid var(--border-color);
         }
 
+        .table tr:hover {
+            background: var(--bg-tertiary);
+        }
+
         .filter-btn {
             padding: 8px 16px;
             border-radius: 50px;
@@ -530,6 +562,51 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--danger);
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
         }
 
         @media (max-width: 768px) {
@@ -577,10 +654,10 @@
 <div id="login-container" class="login-container">
     <div class="login-card">
         <div class="login-logo">
-            <i class="fas fa-cloud-upload-alt"></i>
+            <i class="fas fa-shield-alt"></i>
         </div>
         <h1 class="login-title">النظام المالي المتكامل</h1>
-        <p class="login-subtitle">سجل دخولك لإدارة عملائك</p>
+        <p class="login-subtitle">تسجيل الدخول إلى لوحة التحكم</p>
 
         <div id="login-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3">
             <i class="fas fa-exclamation-circle"></i>
@@ -597,7 +674,7 @@
             <input type="password" id="login-password" class="input-field" placeholder="أدخل كلمة المرور">
         </div>
 
-        <button onclick="handleEmailLogin()" class="btn-primary">
+        <button onclick="handleLogin()" class="btn-primary">
             <i class="fas fa-sign-in-alt"></i>
             تسجيل الدخول
         </button>
@@ -605,13 +682,13 @@
         <div class="text-center my-4 text-gray-500">أو</div>
 
         <div class="social-login">
-            <button onclick="handleGoogleLogin()" class="social-btn google">
+            <button onclick="handleSocialLogin('google')" class="social-btn google">
                 <i class="fab fa-google"></i>
-                Google (محاكاة)
+                Google
             </button>
-            <button onclick="handleMicrosoftLogin()" class="social-btn microsoft">
+            <button onclick="handleSocialLogin('microsoft')" class="social-btn microsoft">
                 <i class="fab fa-microsoft"></i>
-                Microsoft (محاكاة)
+                Microsoft
             </button>
         </div>
 
@@ -622,7 +699,7 @@
         </div>
         
         <div class="mt-4 text-center text-sm text-gray-500">
-            <p>للتجربة: admin@demo.com / 123456</p>
+            <p>حساب المدير: admin@system.com / admin123</p>
         </div>
     </div>
 </div>
@@ -685,4 +762,1567 @@
     <div class="user-menu" id="user-menu">
         <div class="user-avatar" id="user-avatar"></div>
         <div class="user-info">
-            <div class="user-name" id="user-na
+            <div class="user-name" id="user-name"></div>
+            <div class="user-email" id="user-email"></div>
+            <div class="text-xs mt-1" id="user-role-badge"></div>
+        </div>
+    </div>
+
+    <!-- Vertical Navigation -->
+    <div class="vertical-nav">
+        <div class="vertical-nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+            <i class="fas fa-chart-pie"></i>
+            <span>الرئيسية</span>
+        </div>
+        <div class="vertical-nav-item" onclick="showPage('clients')" data-page="clients">
+            <i class="fas fa-users"></i>
+            <span>العملاء</span>
+        </div>
+        <div class="vertical-nav-item" onclick="showPage('add')" data-page="add">
+            <i class="fas fa-user-plus"></i>
+            <span>إضافة عميل</span>
+        </div>
+        <div class="vertical-nav-item" onclick="showPage('reports')" data-page="reports">
+            <i class="fas fa-file-alt"></i>
+            <span>التقارير</span>
+        </div>
+        <div class="vertical-nav-item" onclick="showPage('users')" data-page="users" id="users-menu">
+            <i class="fas fa-user-cog"></i>
+            <span>المستخدمين</span>
+        </div>
+        <div class="vertical-nav-item" onclick="showPage('settings')" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span>الإعدادات</span>
+        </div>
+        <div class="vertical-nav-item" onclick="toggleTheme()">
+            <i class="fas fa-moon" id="theme-icon"></i>
+            <span>المظهر</span>
+        </div>
+        <div class="vertical-nav-item" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>خروج</span>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page">
+            <h1 class="text-3xl font-bold mb-8">لوحة التحكم الرئيسية</h1>
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" id="stats-cards"></div>
+
+            <!-- Search and Filters -->
+            <div class="mb-8">
+                <input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل..." oninput="searchClients()">
+            </div>
+
+            <div class="flex gap-3 mb-8" id="filter-buttons">
+                <button class="filter-btn active" onclick="filterClients('all')">الكل</button>
+                <button class="filter-btn" onclick="filterClients('له')">له</button>
+                <button class="filter-btn" onclick="filterClients('عليه')">عليه</button>
+                <button class="filter-btn" onclick="filterClients('صفر')">متوازن</button>
+            </div>
+
+            <!-- Clients Grid -->
+            <div id="clients-grid" class="grid-container"></div>
+        </div>
+
+        <!-- Clients Page -->
+        <div id="clients-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">جميع العملاء</h1>
+            <div id="all-clients-list" class="space-y-4"></div>
+        </div>
+
+        <!-- Add Client Page -->
+        <div id="add-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">إضافة عميل جديد</h1>
+            
+            <div class="max-w-2xl bg-secondary p-8 rounded-2xl border border-border">
+                <div class="space-y-6">
+                    <div>
+                        <label class="input-label">اسم العميل</label>
+                        <input type="text" id="client-name" class="input-field" placeholder="أدخل اسم العميل">
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">رقم الجوال</label>
+                        <input type="tel" id="client-phone" class="input-field" placeholder="أدخل رقم الجوال">
+                    </div>
+                    
+                    <button onclick="addNewClient()" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        إضافة العميل
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">التقارير</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-lg font-semibold mb-4">تقارير العملاء</h3>
+                    <div class="space-y-3">
+                        <button onclick="exportToExcel()" class="btn-secondary w-full text-right">
+                            <i class="fas fa-file-excel text-green-500 ml-2"></i>
+                            تصدير Excel
+                        </button>
+                        <button onclick="exportToPDF()" class="btn-secondary w-full text-right">
+                            <i class="fas fa-file-pdf text-red-500 ml-2"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3 class="text-lg font-semibold mb-4">إحصائيات</h3>
+                    <div id="report-stats" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management Page -->
+        <div id="users-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">إدارة المستخدمين</h1>
+            
+            <div class="stat-card mb-8">
+                <h3 class="text-lg font-semibold mb-4">إحصائيات المستخدمين</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-tertiary p-4 rounded-xl">
+                        <p class="text-sm text-gray-500">إجمالي المستخدمين</p>
+                        <p class="text-2xl font-bold" id="total-users">0</p>
+                    </div>
+                    <div class="bg-tertiary p-4 rounded-xl">
+                        <p class="text-sm text-gray-500">المستخدمين النشطين</p>
+                        <p class="text-2xl font-bold text-emerald-400" id="active-users">0</p>
+                    </div>
+                    <div class="bg-tertiary p-4 rounded-xl">
+                        <p class="text-sm text-gray-500">المستخدمين المتوقفين</p>
+                        <p class="text-2xl font-bold text-rose-400" id="inactive-users">0</p>
+                    </div>
+                    <div class="bg-tertiary p-4 rounded-xl">
+                        <p class="text-sm text-gray-500">إجمالي العملاء</p>
+                        <p class="text-2xl font-bold text-amber-400" id="total-clients-all">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3 class="text-lg font-semibold mb-4">قائمة المستخدمين</h3>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>المستخدم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>نوع الحساب</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>عدد العملاء</th>
+                                <th>الحالة</th>
+                                <th>التحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- تملأ بواسطة JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">الإعدادات</h1>
+            
+            <div class="max-w-2xl stat-card">
+                <h3 class="text-lg font-semibold mb-6">تغيير كلمة المرور</h3>
+                
+                <div class="space-y-4">
+                    <input type="password" id="current-password" class="input-field" placeholder="كلمة المرور الحالية">
+                    <input type="password" id="new-password" class="input-field" placeholder="كلمة المرور الجديدة">
+                    <input type="password" id="confirm-password" class="input-field" placeholder="تأكيد كلمة المرور">
+                    
+                    <button onclick="changePassword()" class="btn-primary">
+                        <i class="fas fa-key"></i>
+                        تغيير كلمة المرور
+                    </button>
+                </div>
+                
+                <div class="mt-8 pt-8 border-t border-border">
+                    <button onclick="backupData()" class="btn-secondary ml-3">
+                        <i class="fas fa-download ml-2"></i>
+                        نسخ احتياطي
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Details Page -->
+        <div id="client-page" class="page hidden">
+            <button onclick="showPage('dashboard')" class="btn-secondary mb-6">
+                <i class="fas fa-arrow-right ml-2"></i>
+                العودة
+            </button>
+            
+            <div id="client-details" class="stat-card"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction Modal -->
+<div id="transaction-modal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-xl font-bold mb-6">إضافة معاملة جديدة</h3>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="input-label">نوع المعاملة</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="setTransactionType('out')" id="type-out" class="btn-primary">تسليم (له)</button>
+                    <button onclick="setTransactionType('in')" id="type-in" class="btn-secondary">استلام (عليه)</button>
+                </div>
+            </div>
+            
+            <div>
+                <label class="input-label">المبلغ</label>
+                <input type="number" id="transaction-amount" class="input-field" placeholder="أدخل المبلغ">
+            </div>
+            
+            <div>
+                <label class="input-label">المسؤول</label>
+                <input type="text" id="transaction-responsible" class="input-field" placeholder="اسم المسؤول">
+            </div>
+            
+            <div>
+                <label class="input-label">ملاحظات</label>
+                <textarea id="transaction-note" class="input-field" rows="3" placeholder="ملاحظات إضافية"></textarea>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeTransactionModal()" class="btn-secondary">إلغاء</button>
+                <button onclick="saveTransaction()" class="btn-primary">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-xl font-bold mb-4">تأكيد الحذف</h3>
+        <p class="text-secondary mb-6" id="delete-message">هل أنت متأكد من حذف هذا العنصر؟</p>
+        <div class="flex justify-end gap-3">
+            <button onclick="closeDeleteModal()" class="btn-secondary">إلغاء</button>
+            <button onclick="confirmDelete()" class="bg-red-600 text-white px-6 py-2 rounded-xl hover:bg-red-700">حذف</button>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div id="user-modal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-xl font-bold mb-6">تفاصيل المستخدم</h3>
+        
+        <div class="space-y-4">
+            <div class="flex items-center gap-4 p-4 bg-tertiary rounded-xl">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-2xl font-bold text-white" id="modal-user-avatar"></div>
+                <div>
+                    <h4 class="text-lg font-bold" id="modal-user-name"></h4>
+                    <p class="text-gray-500" id="modal-user-email"></p>
+                    <p class="text-sm mt-1" id="modal-user-provider"></p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-tertiary p-4 rounded-xl">
+                    <p class="text-sm text-gray-500">عدد العملاء</p>
+                    <p class="text-2xl font-bold" id="modal-user-clients">0</p>
+                </div>
+                <div class="bg-tertiary p-4 rounded-xl">
+                    <p class="text-sm text-gray-500">عدد المعاملات</p>
+                    <p class="text-2xl font-bold" id="modal-user-transactions">0</p>
+                </div>
+            </div>
+            
+            <div class="bg-tertiary p-4 rounded-xl">
+                <p class="text-sm text-gray-500 mb-2">حالة الحساب</p>
+                <div class="flex items-center justify-between">
+                    <span id="modal-user-status-text">نشط</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-user-status" onchange="toggleUserStatus()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="bg-tertiary p-4 rounded-xl">
+                <p class="text-sm text-gray-500 mb-2">تاريخ التسجيل</p>
+                <p id="modal-user-created"></p>
+            </div>
+            
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeUserModal()" class="btn-secondary">إغلاق</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== نظام تخزين البيانات المتكامل ====================
+    
+    // مفاتيح التخزين
+    const USERS_KEY = 'financial_system_users';
+    const CURRENT_USER_KEY = 'current_user';
+    const CLIENTS_KEY_PREFIX = 'clients_';
+    const USER_STATUS_KEY = 'user_status_';
+
+    // المستخدمين الافتراضيين
+    const defaultUsers = [
+        {
+            id: 'admin_1',
+            name: 'مدير النظام',
+            email: 'admin@system.com',
+            password: 'admin123',
+            provider: 'email',
+            role: 'admin',
+            createdAt: new Date().toISOString(),
+            status: 'active'
+        },
+        {
+            id: 'user_1',
+            name: 'أحمد محمد',
+            email: 'ahmed@example.com',
+            password: '123456',
+            provider: 'email',
+            role: 'user',
+            createdAt: new Date().toISOString(),
+            status: 'active'
+        },
+        {
+            id: 'user_2',
+            name: 'سارة أحمد',
+            email: 'sara@example.com',
+            password: '123456',
+            provider: 'email',
+            role: 'user',
+            createdAt: new Date().toISOString(),
+            status: 'active'
+        }
+    ];
+
+    // بيانات افتراضية للعملاء
+    const defaultClients = [
+        {
+            id: '1',
+            name: 'محمد علي',
+            phone: '0123456789',
+            userId: 'user_1',
+            createdAt: new Date().toISOString(),
+            transactions: [
+                {
+                    id: 't1',
+                    date: new Date().toISOString(),
+                    type: 'out',
+                    amount: 5000,
+                    responsible: 'المدير',
+                    note: 'دفعة مقدمة',
+                    runningBalance: 5000
+                }
+            ]
+        },
+        {
+            id: '2',
+            name: 'فاطمة عمر',
+            phone: '0112345678',
+            userId: 'user_1',
+            createdAt: new Date().toISOString(),
+            transactions: []
+        },
+        {
+            id: '3',
+            name: 'خالد حسن',
+            phone: '0109876543',
+            userId: 'user_2',
+            createdAt: new Date().toISOString(),
+            transactions: []
+        }
+    ];
+
+    // ==================== دوال التهيئة ====================
+    function initializeSystem() {
+        // تهيئة المستخدمين
+        if (!localStorage.getItem(USERS_KEY)) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
+        }
+        
+        // تهيئة العملاء لكل مستخدم
+        defaultClients.forEach(client => {
+            const key = CLIENTS_KEY_PREFIX + client.userId;
+            const existing = localStorage.getItem(key);
+            if (!existing) {
+                const userClients = defaultClients.filter(c => c.userId === client.userId);
+                localStorage.setItem(key, JSON.stringify(userClients));
+            }
+        });
+        
+        // تهيئة حالة المستخدمين
+        defaultUsers.forEach(user => {
+            const statusKey = USER_STATUS_KEY + user.id;
+            if (!localStorage.getItem(statusKey)) {
+                localStorage.setItem(statusKey, 'active');
+            }
+        });
+    }
+
+    // تنفيذ التهيئة
+    initializeSystem();
+
+    // ==================== دوال المستخدمين ====================
+    function loadUsers() {
+        return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+    }
+
+    function saveUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function getUserStatus(userId) {
+        return localStorage.getItem(USER_STATUS_KEY + userId) || 'active';
+    }
+
+    function setUserStatus(userId, status) {
+        localStorage.setItem(USER_STATUS_KEY + userId, status);
+    }
+
+    function isUserActive(userId) {
+        return getUserStatus(userId) === 'active';
+    }
+
+    function getUserClients(userId) {
+        const key = CLIENTS_KEY_PREFIX + userId;
+        return JSON.parse(localStorage.getItem(key)) || [];
+    }
+
+    function saveUserClients(userId, clients) {
+        const key = CLIENTS_KEY_PREFIX + userId;
+        localStorage.setItem(key, JSON.stringify(clients));
+    }
+
+    // ==================== متغيرات عامة ====================
+    let currentUser = null;
+    let deleteCallback = null;
+    let currentFilter = 'all';
+    let currentClientId = null;
+    let currentTransactionType = 'out';
+    let selectedUserId = null;
+
+    // ==================== دوال المساعدة ====================
+    function showLoading() {
+        document.getElementById('loading-spinner').classList.add('active');
+    }
+
+    function hideLoading() {
+        document.getElementById('loading-spinner').classList.remove('active');
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const icon = type === 'success' ? 'fa-check-circle' : 
+                    type === 'error' ? 'fa-exclamation-circle' : 
+                    type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+        
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+        toast.className = `toast ${type} show`;
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    function updateConnectionStatus() {
+        const status = document.getElementById('connection-status');
+        const icon = status.querySelector('i');
+        const span = status.querySelector('span');
+        
+        if (navigator.onLine) {
+            icon.className = 'fas fa-wifi';
+            span.textContent = 'متصل بالإنترنت';
+            status.className = 'connection-status online show';
+        } else {
+            icon.className = 'fas fa-wifi-slash';
+            span.textContent = 'غير متصل - البيانات محفوظة محلياً';
+            status.className = 'connection-status offline show';
+        }
+        
+        setTimeout(() => {
+            status.classList.remove('show');
+        }, 3000);
+    }
+
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+
+    function formatMoney(amount) {
+        return amount.toLocaleString() + ' جنيه';
+    }
+
+    function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('ar-EG', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // ==================== دوال المصادقة ====================
+    function showRegister() {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('register-container').style.display = 'flex';
+    }
+
+    function showLogin() {
+        document.getElementById('register-container').style.display = 'none';
+        document.getElementById('login-container').style.display = 'flex';
+    }
+
+    function handleLogin() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorDiv = document.getElementById('login-error');
+
+        errorDiv.classList.add('hidden');
+
+        if (!email || !password) {
+            errorDiv.querySelector('span').textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        showLoading();
+
+        setTimeout(() => {
+            const users = loadUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (!user) {
+                hideLoading();
+                errorDiv.querySelector('span').textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const userStatus = getUserStatus(user.id);
+            
+            if (userStatus !== 'active') {
+                hideLoading();
+                errorDiv.querySelector('span').textContent = 'هذا الحساب غير نشط. الرجاء التواصل مع المدير';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            currentUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role || 'user',
+                provider: user.provider
+            };
+            
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+            
+            updateUserUI();
+            hideLoading();
+            showToast(`مرحباً بك ${user.name}`, 'success');
+            
+        }, 1000);
+    }
+
+    function handleSocialLogin(provider) {
+        showLoading();
+        
+        setTimeout(() => {
+            const email = provider === 'google' 
+                ? 'user' + Math.floor(Math.random() * 1000) + '@gmail.com'
+                : 'user' + Math.floor(Math.random() * 1000) + '@outlook.com';
+            
+            const name = provider === 'google' 
+                ? 'مستخدم Google ' + Math.floor(Math.random() * 100)
+                : 'مستخدم Microsoft ' + Math.floor(Math.random() * 100);
+            
+            const users = loadUsers();
+            let user = users.find(u => u.email === email);
+            
+            if (!user) {
+                user = {
+                    id: provider + '_' + Date.now(),
+                    name: name,
+                    email: email,
+                    password: 'social_' + Date.now(),
+                    provider: provider,
+                    role: 'user',
+                    createdAt: new Date().toISOString()
+                };
+                users.push(user);
+                saveUsers(users);
+                setUserStatus(user.id, 'active');
+                
+                // إنشاء مخزن عملاء للمستخدم الجديد
+                saveUserClients(user.id, []);
+            }
+            
+            const userStatus = getUserStatus(user.id);
+            
+            if (userStatus !== 'active') {
+                hideLoading();
+                showToast('هذا الحساب غير نشط. الرجاء التواصل مع المدير', 'error');
+                return;
+            }
+            
+            currentUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role || 'user',
+                provider: user.provider
+            };
+            
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+            
+            updateUserUI();
+            hideLoading();
+            showToast(`مرحباً بك ${user.name}`, 'success');
+            
+        }, 1500);
+    }
+
+    function handleRegister() {
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirm = document.getElementById('register-confirm').value;
+        const errorDiv = document.getElementById('register-error');
+        const successDiv = document.getElementById('register-success');
+
+        errorDiv.classList.add('hidden');
+        successDiv.classList.add('hidden');
+
+        if (!name || !email || !password || !confirm) {
+            errorDiv.querySelector('span').textContent = 'الرجاء إدخال جميع البيانات';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        if (password !== confirm) {
+            errorDiv.querySelector('span').textContent = 'كلمة المرور غير متطابقة';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        if (password.length < 6) {
+            errorDiv.querySelector('span').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        showLoading();
+
+        setTimeout(() => {
+            const users = loadUsers();
+            
+            if (users.some(u => u.email === email)) {
+                hideLoading();
+                errorDiv.querySelector('span').textContent = 'البريد الإلكتروني مستخدم بالفعل';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const newUser = {
+                id: 'user_' + Date.now(),
+                name: name,
+                email: email,
+                password: password,
+                provider: 'email',
+                role: 'user',
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+            setUserStatus(newUser.id, 'active');
+            
+            // إنشاء مخزن عملاء للمستخدم الجديد
+            saveUserClients(newUser.id, []);
+
+            hideLoading();
+            successDiv.querySelector('span').textContent = 'تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن';
+            successDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                showLogin();
+            }, 2000);
+            
+        }, 1000);
+    }
+
+    function logout() {
+        localStorage.removeItem(CURRENT_USER_KEY);
+        currentUser = null;
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('login-container').style.display = 'flex';
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+        showToast('تم تسجيل الخروج بنجاح', 'success');
+    }
+
+    function updateUserUI() {
+        document.getElementById('user-name').textContent = currentUser.name;
+        document.getElementById('user-email').textContent = currentUser.email;
+        document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
+        
+        const roleBadge = document.getElementById('user-role-badge');
+        if (currentUser.role === 'admin') {
+            roleBadge.textContent = 'مدير النظام';
+            roleBadge.className = 'text-xs mt-1 text-emerald-400';
+        } else {
+            roleBadge.textContent = 'مستخدم عادي';
+            roleBadge.className = 'text-xs mt-1 text-gray-500';
+        }
+        
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('register-container').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        
+        // إظهار/إخفاء قائمة المستخدمين حسب الصلاحية
+        const usersMenu = document.getElementById('users-menu');
+        if (currentUser.role === 'admin') {
+            usersMenu.style.display = 'flex';
+        } else {
+            usersMenu.style.display = 'none';
+        }
+        
+        // تحميل البيانات
+        loadUserData();
+    }
+
+    // ==================== دوال البيانات ====================
+    function loadUserData() {
+        if (!currentUser) return;
+        
+        if (currentUser.role === 'admin') {
+            // المدير يرى كل العملاء
+            const allClients = [];
+            const users = loadUsers();
+            users.forEach(user => {
+                const userClients = getUserClients(user.id);
+                allClients.push(...userClients);
+            });
+            renderDashboard(allClients);
+        } else {
+            // المستخدم العادي يرى عملاءه فقط
+            const clients = getUserClients(currentUser.id);
+            renderDashboard(clients);
+        }
+    }
+
+    function getCurrentUserClients() {
+        if (!currentUser) return [];
+        
+        if (currentUser.role === 'admin') {
+            const allClients = [];
+            const users = loadUsers();
+            users.forEach(user => {
+                if (isUserActive(user.id)) {
+                    const userClients = getUserClients(user.id);
+                    allClients.push(...userClients);
+                }
+            });
+            return allClients;
+        } else {
+            return getUserClients(currentUser.id);
+        }
+    }
+
+    // ==================== دوال العملاء ====================
+    function getClientSummary(client) {
+        const totalForClient = client.transactions
+            .filter(t => t.type === 'out')
+            .reduce((sum, t) => sum + t.amount, 0);
+        
+        const totalOnClient = client.transactions
+            .filter(t => t.type === 'in')
+            .reduce((sum, t) => sum + t.amount, 0);
+        
+        const netBalance = totalForClient - totalOnClient;
+        
+        let status = 'صفر';
+        if (netBalance > 0) status = 'له';
+        else if (netBalance < 0) status = 'عليه';
+        
+        return { totalForClient, totalOnClient, netBalance, status };
+    }
+
+    function renderDashboard(clients) {
+        const totalForAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalForClient, 0);
+        const totalOnAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalOnClient, 0);
+        const netTotal = totalForAll - totalOnAll;
+        
+        document.getElementById('stats-cards').innerHTML = `
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-emerald-400">إجمالي ما لنا</h3>
+                    <i class="fas fa-arrow-down text-emerald-400"></i>
+                </div>
+                <p class="text-2xl font-bold text-emerald-400">${formatMoney(totalOnAll)}</p>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-amber-400">إجمالي ما لهم</h3>
+                    <i class="fas fa-arrow-up text-amber-400"></i>
+                </div>
+                <p class="text-2xl font-bold text-amber-400">${formatMoney(totalForAll)}</p>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-rose-400">الفرق</h3>
+                    <i class="fas fa-balance-scale text-rose-400"></i>
+                </div>
+                <p class="text-2xl font-bold text-rose-400">${formatMoney(Math.abs(totalForAll - totalOnAll))}</p>
+            </div>
+            <div class="stat-card">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-blue-400">صافي الرصيد</h3>
+                    <i class="fas fa-chart-line text-blue-400"></i>
+                </div>
+                <p class="text-2xl font-bold text-blue-400">${formatMoney(Math.abs(netTotal))}</p>
+                <p class="text-xs mt-2 ${netTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                    ${netTotal >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}
+                </p>
+            </div>
+        `;
+
+        renderClientsList(clients);
+    }
+
+    function renderClientsList(clients) {
+        const grid = document.getElementById('clients-grid');
+        
+        let filteredClients = clients;
+        if (currentFilter !== 'all') {
+            filteredClients = clients.filter(c => getClientSummary(c).status === currentFilter);
+        }
+
+        if (filteredClients.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-12 text-gray-500">
+                    <i class="fas fa-users text-4xl mb-3"></i>
+                    <p>لا يوجد عملاء</p>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = filteredClients.map(client => {
+            const summary = getClientSummary(client);
+            return `
+                <div class="client-card" onclick="viewClient('${client.id}')">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-semibold">${client.name}</h3>
+                        <span class="badge ${
+                            summary.status === 'له' ? 'badge-warning' :
+                            summary.status === 'عليه' ? 'badge-success' :
+                            'bg-gray-700 text-gray-400'
+                        }">${summary.status}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <p class="text-xs text-gray-500">له</p>
+                            <p class="font-medium text-amber-400">${formatMoney(summary.totalForClient)}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">عليه</p>
+                            <p class="font-medium text-emerald-400">${formatMoney(summary.totalOnClient)}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center text-sm text-gray-500">
+                        <span><i class="fas fa-calendar ml-1"></i>${formatDate(client.createdAt)}</span>
+                        <span><i class="fas fa-list ml-1"></i>${client.transactions.length} معاملات</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function searchClients() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const clients = getCurrentUserClients();
+        
+        if (!query) {
+            renderClientsList(clients);
+            return;
+        }
+        
+        const filtered = clients.filter(c => 
+            c.name.toLowerCase().includes(query) || 
+            (c.phone && c.phone.toLowerCase().includes(query))
+        );
+        
+        renderClientsList(filtered);
+    }
+
+    function filterClients(filter) {
+        currentFilter = filter;
+        
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        event.target.classList.add('active');
+        
+        const clients = getCurrentUserClients();
+        renderClientsList(clients);
+    }
+
+    function addNewClient() {
+        const name = document.getElementById('client-name').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+
+        if (!name) {
+            showToast('الرجاء إدخال اسم العميل', 'error');
+            return;
+        }
+
+        const clients = getCurrentUserClients();
+        
+        if (clients.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+            showToast('هذا الاسم موجود مسبقاً', 'error');
+            return;
+        }
+
+        const newClient = {
+            id: Date.now().toString(),
+            name,
+            phone,
+            userId: currentUser.id,
+            createdAt: new Date().toISOString(),
+            transactions: []
+        };
+
+        if (currentUser.role === 'admin') {
+            // المدير يضيف عميل للمستخدم الحالي
+            const userClients = getUserClients(currentUser.id);
+            userClients.push(newClient);
+            saveUserClients(currentUser.id, userClients);
+        } else {
+            const userClients = getUserClients(currentUser.id);
+            userClients.push(newClient);
+            saveUserClients(currentUser.id, userClients);
+        }
+        
+        showToast('تم إضافة العميل بنجاح', 'success');
+        document.getElementById('client-name').value = '';
+        document.getElementById('client-phone').value = '';
+        
+        loadUserData();
+    }
+
+    function viewClient(clientId) {
+        currentClientId = clientId;
+        const clients = getCurrentUserClients();
+        const client = clients.find(c => c.id === clientId);
+        
+        if (!client) return;
+        
+        const summary = getClientSummary(client);
+        
+        document.getElementById('client-details').innerHTML = `
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">${client.name}</h2>
+                    ${client.phone ? `<p class="text-gray-500 mt-2">${client.phone}</p>` : ''}
+                </div>
+                <span class="badge ${
+                    summary.status === 'له' ? 'badge-warning' :
+                    summary.status === 'عليه' ? 'badge-success' :
+                    'bg-gray-700 text-gray-400'
+                }">${summary.status}</span>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="bg-tertiary p-4 rounded-xl">
+                    <p class="text-sm text-gray-500">له</p>
+                    <p class="text-xl font-bold text-amber-400">${formatMoney(summary.totalForClient)}</p>
+                </div>
+                <div class="bg-tertiary p-4 rounded-xl">
+                    <p class="text-sm text-gray-500">عليه</p>
+                    <p class="text-xl font-bold text-emerald-400">${formatMoney(summary.totalOnClient)}</p>
+                </div>
+                <div class="bg-tertiary p-4 rounded-xl">
+                    <p class="text-sm text-gray-500">الصافي</p>
+                    <p class="text-xl font-bold ${summary.netBalance > 0 ? 'text-amber-400' : 'text-emerald-400'}">
+                        ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">المعاملات</h3>
+                <button onclick="openTransactionModal()" class="btn-primary px-4 py-2 text-sm">
+                    <i class="fas fa-plus ml-2"></i>
+                    إضافة معاملة
+                </button>
+            </div>
+            
+            ${client.transactions.length === 0 ? 
+                '<p class="text-center py-8 text-gray-500">لا توجد معاملات</p>' : 
+                `<table class="table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>النوع</th>
+                            <th>المبلغ</th>
+                            <th>المسؤول</th>
+                            <th>الملاحظات</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${client.transactions.map(t => `
+                            <tr>
+                                <td>${formatDate(t.date)}</td>
+                                <td>
+                                    <span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">
+                                        ${t.type === 'out' ? 'تسليم' : 'استلام'}
+                                    </span>
+                                </td>
+                                <td>${formatMoney(t.amount)}</td>
+                                <td>${t.responsible}</td>
+                                <td>${t.note || '-'}</td>
+                                <td>
+                                    <button onclick="deleteTransaction('${t.id}')" class="text-rose-500 hover:text-rose-400">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`
+            }
+        `;
+        
+        showPage('client');
+    }
+
+    // ==================== دوال المعاملات ====================
+    function openTransactionModal() {
+        document.getElementById('transaction-modal').classList.add('active');
+        document.getElementById('transaction-amount').value = '';
+        document.getElementById('transaction-responsible').value = '';
+        document.getElementById('transaction-note').value = '';
+        setTransactionType('out');
+    }
+
+    function closeTransactionModal() {
+        document.getElementById('transaction-modal').classList.remove('active');
+    }
+
+    function setTransactionType(type) {
+        currentTransactionType = type;
+        const outBtn = document.getElementById('type-out');
+        const inBtn = document.getElementById('type-in');
+        
+        if (type === 'out') {
+            outBtn.className = 'btn-primary';
+            inBtn.className = 'btn-secondary';
+        } else {
+            outBtn.className = 'btn-secondary';
+            inBtn.className = 'btn-primary';
+        }
+    }
+
+    function saveTransaction() {
+        const amount = parseFloat(document.getElementById('transaction-amount').value);
+        const responsible = document.getElementById('transaction-responsible').value.trim();
+        const note = document.getElementById('transaction-note').value.trim();
+
+        if (isNaN(amount) || amount <= 0) {
+            showToast('الرجاء إدخال مبلغ صحيح', 'error');
+            return;
+        }
+
+        if (!responsible) {
+            showToast('الرجاء إدخال اسم المسؤول', 'error');
+            return;
+        }
+
+        const clients = getCurrentUserClients();
+        const clientIndex = clients.findIndex(c => c.id === currentClientId);
+        
+        if (clientIndex === -1) return;
+
+        const client = clients[clientIndex];
+        
+        const lastBalance = client.transactions.length > 0 
+            ? client.transactions[client.transactions.length - 1].runningBalance 
+            : 0;
+        
+        const newRunningBalance = currentTransactionType === 'out' 
+            ? lastBalance + amount 
+            : lastBalance - amount;
+
+        const newTransaction = {
+            id: Date.now().toString(),
+            date: new Date().toISOString(),
+            type: currentTransactionType,
+            amount: amount,
+            responsible: responsible,
+            note: note,
+            runningBalance: newRunningBalance
+        };
+
+        client.transactions.push(newTransaction);
+        
+        if (currentUser.role === 'admin') {
+            // المدير يحفظ للعميل الحالي
+            const userClients = getUserClients(client.userId);
+            const userClientIndex = userClients.findIndex(c => c.id === client.id);
+            userClients[userClientIndex] = client;
+            saveUserClients(client.userId, userClients);
+        } else {
+            const userClients = getUserClients(currentUser.id);
+            userClients[clientIndex] = client;
+            saveUserClients(currentUser.id, userClients);
+        }
+        
+        closeTransactionModal();
+        viewClient(currentClientId);
+        showToast('تم إضافة المعاملة بنجاح', 'success');
+    }
+
+    function deleteTransaction(transactionId) {
+        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف هذه المعاملة؟';
+        document.getElementById('delete-modal').classList.add('active');
+        
+        deleteCallback = () => {
+            const clients = getCurrentUserClients();
+            const clientIndex = clients.findIndex(c => c.id === currentClientId);
+            
+            if (clientIndex === -1) return;
+            
+            const client = clients[clientIndex];
+            
+            client.transactions = client.transactions.filter(t => t.id !== transactionId);
+            
+            let runningBalance = 0;
+            client.transactions = client.transactions.map(t => {
+                if (t.type === 'out') {
+                    runningBalance += t.amount;
+                } else {
+                    runningBalance -= t.amount;
+                }
+                return { ...t, runningBalance };
+            });
+            
+            if (currentUser.role === 'admin') {
+                const userClients = getUserClients(client.userId);
+                const userClientIndex = userClients.findIndex(c => c.id === client.id);
+                userClients[userClientIndex] = client;
+                saveUserClients(client.userId, userClients);
+            } else {
+                const userClients = getUserClients(currentUser.id);
+                userClients[clientIndex] = client;
+                saveUserClients(currentUser.id, userClients);
+            }
+            
+            viewClient(currentClientId);
+            showToast('تم حذف المعاملة', 'success');
+        };
+    }
+
+    // ==================== دوال إدارة المستخدمين (للمدير) ====================
+    function renderUsersList() {
+        if (currentUser.role !== 'admin') return;
+        
+        const users = loadUsers();
+        const tbody = document.getElementById('users-table-body');
+        
+        // تحديث الإحصائيات
+        document.getElementById('total-users').textContent = users.length;
+        
+        let activeCount = 0;
+        let inactiveCount = 0;
+        let totalClientsAll = 0;
+        
+        users.forEach(user => {
+            const status = getUserStatus(user.id);
+            if (status === 'active') activeCount++;
+            else inactiveCount++;
+            
+            const userClients = getUserClients(user.id);
+            totalClientsAll += userClients.length;
+        });
+        
+        document.getElementById('active-users').textContent = activeCount;
+        document.getElementById('inactive-users').textContent = inactiveCount;
+        document.getElementById('total-clients-all').textContent = totalClientsAll;
+        
+        tbody.innerHTML = users.map(user => {
+            const status = getUserStatus(user.id);
+            const userClients = getUserClients(user.id);
+            const totalTransactions = userClients.reduce((sum, c) => sum + c.transactions.length, 0);
+            
+            return `
+                <tr>
+                    <td>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold">
+                                ${user.name.charAt(0)}
+                            </div>
+                            <div>
+                                <div class="font-medium">${user.name}</div>
+                                <div class="text-xs text-gray-500">${user.role === 'admin' ? 'مدير' : 'مستخدم'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge ${
+                            user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' :
+                            user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' :
+                            'bg-gray-700 text-gray-400'
+                        }">
+                            ${user.provider === 'google' ? 'Google' : 
+                              user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}
+                        </span>
+                    </td>
+                    <td>${formatDate(user.createdAt)}</td>
+                    <td>
+                        <div>${userClients.length} عميل</div>
+                        <div class="text-xs text-gray-500">${totalTransactions} معاملة</div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${status === 'active' ? 'active' : 'inactive'}">
+                            ${status === 'active' ? 'نشط' : 'موقوف'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex gap-2">
+                            <button onclick="showUserDetails('${user.id}')" class="text-emerald-400 hover:text-emerald-300">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            ${user.role !== 'admin' ? `
+                                <button onclick="toggleUserStatusFromList('${user.id}')" class="text-amber-400 hover:text-amber-300">
+                                    <i class="fas ${status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    function showUserDetails(userId) {
+        const users = loadUsers();
+        const user = users.find(u => u.id === userId);
+        if (!user) return;
+        
+        selectedUserId = userId;
+        
+        const userClients = getUserClients(userId);
+        const totalTransactions = userClients.reduce((sum, c) => sum + c.transactions.length, 0);
+        const status = getUserStatus(userId);
+        
+        document.getElementById('modal-user-avatar').textContent = user.name.charAt(0);
+        document.getElementById('modal-user-name').textContent = user.name;
+        document.getElementById('modal-user-email').textContent = user.email;
+        document.getElementById('modal-user-provider').innerHTML = `
+            <span class="badge ${
+                user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' :
+                user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' :
+                'bg-gray-700 text-gray-400'
+            }">
+                ${user.provider === 'google' ? 'Google' : 
+                  user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}
+            </span>
+        `;
+        document.getElementById('modal-user-clients').textContent = userClients.length;
+        document.getElementById('modal-user-transactions').textContent = totalTransactions;
+        document.getElementById('modal-user-status').checked = status === 'active';
+        document.getElementById('modal-user-status-text').textContent = status === 'active' ? 'نشط' : 'موقوف';
+        document.getElementById('modal-user-created').textContent = formatDate(user.createdAt);
+        
+        document.getElementById('user-modal').classList.add('active');
+    }
+
+    function closeUserModal() {
+        document.getElementById('user-modal').classList.remove('active');
+        selectedUserId = null;
+    }
+
+    function toggleUserStatus() {
+        if (!selectedUserId) return;
+        
+        const newStatus = document.getElementById('modal-user-status').checked ? 'active' : 'inactive';
+        setUserStatus(selectedUserId, newStatus);
+        
+        document.getElementById('modal-user-status-text').textContent = newStatus === 'active' ? 'نشط' : 'موقوف';
+        
+        showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح`, 'success');
+        
+        // تحديث قائمة المستخدمين
+        renderUsersList();
+    }
+
+    function toggleUserStatusFromList(userId) {
+        const currentStatus = getUserStatus(userId);
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+        
+        setUserStatus(userId, newStatus);
+        
+        showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح`, 'success');
+        
+        // تحديث قائمة المستخدمين
+        renderUsersList();
+    }
+
+    // ==================== دوال التنقل بين الصفحات ====================
+    function showPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`${page}-page`).classList.remove('hidden');
+        
+        document.querySelectorAll('.vertical-nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        const navItem = document.querySelector(`[data-page="${page}"]`);
+        if (navItem) {
+            navItem.classList.add('active');
+        }
+        
+        if (page === 'dashboard') {
+            loadUserData();
+        }
+        if (page === 'reports') {
+            renderReportStats();
+        }
+        if (page === 'users' && currentUser.role === 'admin') {
+            renderUsersList();
+        }
+    }
+
+    // ==================== دوال التقارير ====================
+    function renderReportStats() {
+        const clients = getCurrentUserClients();
+        const totalClients = clients.length;
+        const totalTransactions = clients.reduce((sum, c) => sum + c.transactions.length, 0);
+        const totalAmount = clients.reduce((sum, c) => 
+            sum + c.transactions.reduce((s, t) => s + t.amount, 0), 0
+        );
+        
+        document.getElementById('report-stats').innerHTML = `
+            <div class="flex justify-between py-2 border-b border-border">
+                <span>عدد العملاء</span>
+                <span class="font-bold">${totalClients}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-border">
+                <span>عدد المعاملات</span>
+                <span class="font-bold">${totalTransactions}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-border">
+                <span>إجمالي المبالغ</span>
+                <span class="font-bold text-emerald-400">${formatMoney(totalAmount)}</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span>متوسط المعاملات</span>
+                <span class="font-bold">${(totalTransactions / totalClients || 0).toFixed(1)}</span>
+            </div>
+        `;
+    }
+
+    function exportToExcel() {
+        const clients = getCurrentUserClients();
+        const wb = XLSX.utils.book_new();
+        
+        const clientsData = clients.map(client => {
+            const summary = getClientSummary(client);
+            return {
+                'الاسم': client.name,
+                'الجوال': client.phone || '-',
+                'له': summary.totalForClient,
+                'عليه': summary.totalOnClient,
+                'الصافي': summary.netBalance,
+                'عدد المعاملات': client.transactions.length
+            };
+        });
+        
+        const ws = XLSX.utils.json_to_sheet(clientsData);
+        XLSX.utils.book_append_sheet(wb, ws, 'العملاء');
+        XLSX.writeFile(wb, `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
+        
+        showToast('تم تصدير التقرير بنجاح', 'success');
+    }
+
+    function exportToPDF() {
+        const clients = getCurrentUserClients();
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text('تقرير العملاء', 105, 20, { align: 'center' });
+        
+        doc.setFontSize(12);
+        doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, 105, 30, { align: 'center' });
+        
+        const tableData = clients.map(client => {
+            const summary = getClientSummary(client);
+            return [
+                client.name,
+                client.phone || '-',
+                summary.totalForClient.toLocaleString(),
+                summary.totalOnClient.toLocaleString(),
+                summary.netBalance.toLocaleString()
+            ];
+        });
+        
+        doc.autoTable({
+            head: [['الاسم', 'الجوال', 'له', 'عليه', 'الصافي']],
+            body: tableData,
+            startY: 40,
+            theme: 'striped',
+            styles: { font: 'helvetica', halign: 'right' },
+            headStyles: { fillColor: [16, 185, 129] }
+        });
+        
+        doc.save(`تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.pdf`);
+        showToast('تم تصدير التقرير بنجاح', 'success');
+    }
+
+    // ==================== دوال الإعدادات ====================
+    function changePassword() {
+        const current = document.getElementById('current-password').value;
+        const newPass = document.getElementById('new-password').value;
+        const confirm = document.getElementById('confirm-password').value;
+
+        if (!current || !newPass || !confirm) {
+            showToast('الرجاء إدخال جميع الحقول', 'error');
+            return;
+        }
+
+        if (newPass !== confirm) {
+            showToast('كلمة المرور غير متطابقة', 'error');
+            return;
+        }
+
+        if (newPass.length < 6) {
+            showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+            return;
+        }
+
+        showLoading();
+
+        setTimeout(() => {
+            const users = loadUsers();
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            
+            if (users[userIndex].password !== current) {
+                hideLoading();
+                showToast('كلمة المرور الحالية غير صحيحة', 'error');
+                return;
+            }
+
+            users[userIndex].password = newPass;
+            saveUsers(users);
+            
+            hideLoading();
+            showToast('تم تغيير كلمة المرور بنجاح', 'success');
+            
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        }, 1000);
+    }
+
+    function backupData() {
+        const clients = getCurrentUserClients();
+        const data = {
+            clients: clients,
+            exportDate: new Date().toISOString(),
+            user: currentUser.email
+        };
+        
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_${currentUser.email}_${new Date().toLocaleDateString('ar-EG')}.json`;
+        a.click();
+        
+        showToast('تم إنشاء النسخة الاحتياطية', 'success');
+    }
+
+    // ==================== دوال المظهر ====================
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const icon = document.getElementById('theme-icon');
+        icon.className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // ==================== دوال المودال ====================
+    function closeDeleteModal() {
+        document.getElementById('delete-modal').classList.remove('active');
+        deleteCallback = null;
+    }
+
+    function confirmDelete() {
+        if (deleteCallback) {
+            deleteCallback();
+            closeDeleteModal();
+        }
+    }
+
+    // ==================== التحقق من الجلسة المحفوظة ====================
+    function checkSavedSession() {
+        const savedUser = localStorage.getItem(CURRENT_USER_KEY);
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            
+            // التحقق من أن الحساب لا يزال نشطاً
+            const userStatus = getUserStatus(currentUser.id);
+            if (userStatus !== 'active') {
+                localStorage.removeItem(CURRENT_USER_KEY);
+                showToast('تم إيقاف هذا الحساب. الرجاء التواصل مع المدير', 'error');
+                return;
+            }
+            
+            updateUserUI();
+        }
+    }
+
+    // ==================== التهيئة ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        updateConnectionStatus();
+        checkSavedSession();
+        
+        // تعيين الفلتر النشط
+        document.querySelectorAll('.filter-btn')[0]?.classList.add('active');
+        
+        // إخفاء قائمة المستخدمين للمستخدمين العاديين
+        const savedUser = localStorage.getItem(CURRENT_USER_KEY);
+        if (savedUser) {
+            const user = JSON.parse(savedUser);
+            if (user.role !== 'admin') {
+                document.getElementById('users-menu').style.display = 'none';
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
