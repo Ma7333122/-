@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
-    <title>النظام المالي المتكامل | Integrated Financial System</title>
+    <title>النظام المالي المتكامل - النسخة النهائية</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -51,7 +50,7 @@
             color: var(--text-primary);
             transition: all 0.3s ease;
             min-height: 100vh;
-            font-family: 'IBM Plex Sans Arabic', 'Inter', sans-serif;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
         }
 
         body.light-mode {
@@ -63,49 +62,11 @@
             --border-color: #e2e8f0;
         }
 
-        body.ltr {
-            direction: ltr;
-            font-family: 'Inter', 'IBM Plex Sans Arabic', sans-serif;
-        }
-
-        body.ltr .arabic-text {
-            font-family: 'IBM Plex Sans Arabic', sans-serif;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 640px) {
-            .container-custom {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            
-            .text-responsive {
-                font-size: 0.875rem;
-            }
-            
-            .hide-mobile {
-                display: none;
-            }
-        }
-
-        @media (min-width: 641px) and (max-width: 1024px) {
-            .container-custom {
-                padding-left: 2rem;
-                padding-right: 2rem;
-            }
-        }
-
-        /* Glass Effect */
-        .glass {
-            background: rgba(30, 30, 45, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-        }
-
-        .glass-light {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
+        /* الأرقام بالإنجليزية */
+        .numbers, input, .money-value, .gold-value {
+            font-family: 'IBM Plex Sans Arabic', 'Courier New', monospace !important;
+            direction: ltr !important;
+            text-align: left !important;
         }
 
         /* Developer Info */
@@ -420,29 +381,8 @@
             color: white;
         }
 
-        /* Language Switch */
-        .lang-switch {
-            position: fixed;
-            top: 20px;
-            right: 90px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            padding: 6px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 100;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .lang-switch:hover {
-            background: var(--bg-tertiary);
-        }
-
-        /* Vertical Navigation */
-        .vertical-nav {
+        /* الشريط الجانبي المحسّن */
+        .nav-sidebar {
             position: fixed;
             top: 50%;
             right: 20px;
@@ -452,21 +392,18 @@
             border-radius: 30px;
             padding: 15px 0;
             border: 1px solid var(--border-color);
-            z-index: 100;
-            transition: all 0.3s ease;
+            z-index: 1000;
+            transition: width 0.3s ease, box-shadow 0.3s ease;
             overflow: hidden;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
-        .vertical-nav:hover {
+        .nav-sidebar:hover {
             width: 220px;
+            box-shadow: 0 20px 40px -10px rgba(34, 197, 94, 0.3);
         }
 
-        body.ltr .vertical-nav {
-            right: auto;
-            left: 20px;
-        }
-
-        .vertical-nav-item {
+        .nav-item {
             display: flex;
             align-items: center;
             padding: 15px 20px;
@@ -477,37 +414,39 @@
             position: relative;
         }
 
-        .vertical-nav-item i {
+        .nav-item i {
             font-size: 20px;
             min-width: 20px;
+            transition: transform 0.3s ease;
         }
 
-        .vertical-nav-item span {
+        .nav-item span {
             margin-right: 20px;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, margin-right 0.3s ease;
+            font-size: 14px;
         }
 
-        body.ltr .vertical-nav-item span {
-            margin-right: 0;
-            margin-left: 20px;
-        }
-
-        .vertical-nav:hover .vertical-nav-item span {
+        .nav-sidebar:hover .nav-item span {
             opacity: 1;
+            margin-right: 20px;
         }
 
-        .vertical-nav-item:hover {
+        .nav-item:hover {
             background: var(--bg-tertiary);
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.1);
             color: var(--accent-primary);
         }
 
-        .vertical-nav-item.active {
+        .nav-item.active {
             color: var(--accent-primary);
             background: rgba(34, 197, 94, 0.1);
         }
 
-        .vertical-nav-item.active::before {
+        .nav-item.active::before {
             content: '';
             position: absolute;
             right: 0;
@@ -517,12 +456,102 @@
             height: 20px;
             background: var(--accent-primary);
             border-radius: 0 3px 3px 0;
+            animation: pulse 2s infinite;
         }
 
-        body.ltr .vertical-nav-item.active::before {
-            right: auto;
-            left: 0;
-            border-radius: 3px 0 0 3px;
+        /* للهواتف - شريط سفلي */
+        @media (max-width: 768px) {
+            .nav-sidebar {
+                top: auto;
+                bottom: 20px;
+                right: 50%;
+                transform: translateX(50%);
+                width: auto;
+                display: flex;
+                padding: 8px;
+                border-radius: 50px;
+                background: var(--bg-secondary);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--border-color);
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .nav-sidebar:hover {
+                width: auto;
+            }
+
+            .nav-sidebar.collapsed {
+                width: 60px;
+                overflow: hidden;
+            }
+
+            .nav-sidebar.collapsed .nav-item span {
+                display: none;
+            }
+
+            .nav-sidebar:not(.collapsed) {
+                width: auto;
+                max-width: 90vw;
+                overflow-x: auto;
+            }
+
+            .nav-sidebar:not(.collapsed) .nav-item {
+                padding: 12px;
+            }
+
+            .nav-sidebar:not(.collapsed) .nav-item span {
+                display: inline-block;
+                font-size: 12px;
+                margin-right: 8px;
+            }
+
+            .nav-item {
+                padding: 12px;
+            }
+
+            .nav-item i {
+                font-size: 18px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            /* زر التبديل للهاتف */
+            .nav-toggle {
+                display: flex !important;
+                position: fixed;
+                bottom: 90px;
+                right: 50%;
+                transform: translateX(50%);
+                background: var(--accent-primary);
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 8px 16px;
+                font-size: 12px;
+                z-index: 1001;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            }
+        }
+
+        .nav-toggle {
+            display: none;
+        }
+
+        .main-content {
+            margin-right: 80px;
+            padding: 20px;
+            transition: margin-right 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-right: 0;
+                margin-bottom: 100px;
+            }
         }
 
         /* User Menu */
@@ -542,11 +571,6 @@
             transition: all 0.3s ease;
         }
 
-        body.ltr .user-menu {
-            left: auto;
-            right: 20px;
-        }
-
         .user-menu:hover {
             background: var(--bg-tertiary);
         }
@@ -562,57 +586,6 @@
             color: white;
             font-weight: bold;
             font-size: 18px;
-        }
-
-        .main-content {
-            margin-right: 80px;
-            padding: 20px;
-            transition: margin-right 0.3s ease;
-        }
-
-        body.ltr .main-content {
-            margin-right: 0;
-            margin-left: 80px;
-        }
-
-        /* Responsive Navigation */
-        @media (max-width: 768px) {
-            .vertical-nav {
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                transform: none;
-                width: auto;
-                display: flex;
-                padding: 10px;
-            }
-
-            .vertical-nav:hover {
-                width: auto;
-            }
-
-            .vertical-nav-item span {
-                display: none;
-            }
-
-            .main-content {
-                margin-right: 0;
-                margin-bottom: 80px;
-            }
-
-            body.ltr .main-content {
-                margin-left: 0;
-                margin-bottom: 80px;
-            }
-
-            .developer-info {
-                display: none;
-            }
-
-            .lang-switch {
-                top: 70px;
-                right: 20px;
-            }
         }
 
         /* Cards */
@@ -713,10 +686,6 @@
             font-size: 14px;
         }
 
-        body.ltr .table th {
-            text-align: left;
-        }
-
         .table td {
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
@@ -806,10 +775,6 @@
             transform: translateX(26px);
         }
 
-        body.ltr input:checked + .toggle-slider:before {
-            transform: translateX(-26px);
-        }
-
         /* Last Client Card */
         .last-client-card {
             background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
@@ -857,11 +822,6 @@
             z-index: 99;
         }
 
-        body.ltr .export-buttons {
-            right: auto;
-            left: 100px;
-        }
-
         .export-btn {
             width: 50px;
             height: 50px;
@@ -896,6 +856,50 @@
         .hidden {
             display: none !important;
         }
+
+        /* Restore Modal */
+        .restore-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20000;
+        }
+
+        .restore-modal .modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            border-radius: 32px;
+            padding: 48px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .restore-modal h2 {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent-primary);
+            margin-bottom: 16px;
+        }
+
+        .restore-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 16px;
+        }
+
+        .restore-modal .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -903,7 +907,7 @@
 <!-- Auto Backup Indicator -->
 <div id="auto-backup-indicator" class="auto-backup-indicator hidden">
     <i class="fas fa-cloud-upload-alt text-emerald-400"></i>
-    <span data-ar="جاري حفظ نسخة احتياطية..." data-en="Auto backup in progress...">جاري حفظ نسخة احتياطية...</span>
+    <span>جاري حفظ نسخة احتياطية...</span>
 </div>
 
 <!-- Loading Spinner -->
@@ -931,39 +935,39 @@
     <i class="fab fa-whatsapp"></i>
 </a>
 
-<!-- Language Switch -->
-<div class="lang-switch" onclick="toggleLanguage()">
-    <i class="fas fa-globe"></i>
-    <span id="lang-text">EN</span>
-</div>
+<!-- زر تبديل الشريط للهاتف -->
+<button class="nav-toggle" onclick="toggleNav()" id="nav-toggle-btn">
+    <i class="fas fa-bars"></i>
+    <span>القائمة</span>
+</button>
 
 <!-- Export Buttons -->
 <div class="export-buttons">
-    <button class="export-btn" onclick="exportToExcel()" title="Export Excel">
+    <button class="export-btn" onclick="exportToExcel()" title="تصدير Excel">
         <i class="fas fa-file-excel"></i>
     </button>
-    <button class="export-btn" onclick="exportToPDF()" title="Export PDF">
+    <button class="export-btn" onclick="exportToPDF()" title="تصدير PDF">
         <i class="fas fa-file-pdf"></i>
     </button>
-    <button class="export-btn" onclick="exportToImage()" title="Export Image">
+    <button class="export-btn" onclick="exportToImage()" title="تصدير صورة">
         <i class="fas fa-camera"></i>
     </button>
 </div>
 
 <!-- Restore Modal -->
-<div id="restore-modal" class="modal" style="display: none;">
+<div id="restore-modal" class="restore-modal" style="display: none;">
     <div class="modal-content">
         <i class="fas fa-database text-6xl text-emerald-400 mb-6"></i>
-        <h2 class="text-2xl font-bold mb-4" data-ar="استعادة النسخة الاحتياطية" data-en="Restore Backup">استعادة النسخة الاحتياطية</h2>
-        <p class="text-secondary mb-6" data-ar="تم العثور على نسخة احتياطية سابقة. هل تريد استعادتها؟" data-en="A previous backup was found. Do you want to restore it?">تم العثور على نسخة احتياطية سابقة. هل تريد استعادتها؟</p>
-        <div class="flex gap-4 justify-center">
+        <h2>استعادة النسخة الاحتياطية</h2>
+        <p>تم العثور على نسخة احتياطية سابقة. هل تريد استعادتها؟</p>
+        <div class="btn-group">
             <button onclick="restoreBackup()" class="btn-primary w-auto">
                 <i class="fas fa-check ml-2"></i>
-                <span data-ar="نعم، استعادة" data-en="Yes, Restore">نعم، استعادة</span>
+                نعم، استعادة
             </button>
             <button onclick="startFresh()" class="btn-secondary w-auto">
                 <i class="fas fa-times ml-2"></i>
-                <span data-ar="لا، بدء جديد" data-en="No, Start Fresh">لا، بدء جديد</span>
+                لا، بدء جديد
             </button>
         </div>
     </div>
@@ -975,8 +979,8 @@
         <div class="login-logo">
             <i class="fas fa-shield-alt"></i>
         </div>
-        <h1 class="login-title" data-ar="النظام المالي المتكامل" data-en="Integrated Financial System">النظام المالي المتكامل</h1>
-        <p class="login-subtitle text-center text-secondary mb-8" data-ar="تسجيل الدخول إلى لوحة التحكم" data-en="Login to Dashboard">تسجيل الدخول إلى لوحة التحكم</p>
+        <h1 class="login-title">النظام المالي المتكامل</h1>
+        <p class="login-subtitle text-center text-secondary mb-8">تسجيل الدخول إلى لوحة التحكم</p>
 
         <div id="login-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3">
             <i class="fas fa-exclamation-circle"></i>
@@ -984,21 +988,21 @@
         </div>
 
         <div class="input-group">
-            <label class="input-label" data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</label>
+            <label class="input-label">البريد الإلكتروني</label>
             <input type="email" id="login-email" class="input-field" placeholder="admin@system.com" value="admin@system.com">
         </div>
 
         <div class="input-group">
-            <label class="input-label" data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+            <label class="input-label">كلمة المرور</label>
             <input type="password" id="login-password" class="input-field" placeholder="••••••••" value="admin123">
         </div>
 
         <button onclick="handleLogin()" class="btn-primary">
             <i class="fas fa-sign-in-alt"></i>
-            <span data-ar="تسجيل الدخول" data-en="Login">تسجيل الدخول</span>
+            تسجيل الدخول
         </button>
 
-        <div class="text-center my-4 text-gray-500" data-ar="أو" data-en="or">أو</div>
+        <div class="text-center my-4 text-gray-500">أو</div>
 
         <div class="social-login grid grid-cols-2 gap-4">
             <button onclick="handleSocialLogin('google')" class="social-btn border border-border bg-tertiary p-3 rounded-xl hover:bg-border transition">
@@ -1013,7 +1017,7 @@
 
         <div class="mt-6 text-center">
             <button onclick="showRegister()" class="text-emerald-400 hover:text-emerald-300">
-                <span data-ar="ليس لديك حساب؟ سجل الآن" data-en="Don't have an account? Register">ليس لديك حساب؟ سجل الآن</span>
+                ليس لديك حساب؟ سجل الآن
             </button>
         </div>
         
@@ -1037,8 +1041,8 @@
         <div class="login-logo">
             <i class="fas fa-user-plus"></i>
         </div>
-        <h1 class="login-title" data-ar="إنشاء حساب جديد" data-en="Create New Account">إنشاء حساب جديد</h1>
-        <p class="login-subtitle text-center text-secondary mb-8" data-ar="أدخل بياناتك للتسجيل في النظام" data-en="Enter your details to register">أدخل بياناتك للتسجيل في النظام</p>
+        <h1 class="login-title">إنشاء حساب جديد</h1>
+        <p class="login-subtitle text-center text-secondary mb-8">أدخل بياناتك للتسجيل في النظام</p>
 
         <div id="register-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3">
             <i class="fas fa-exclamation-circle"></i>
@@ -1051,33 +1055,33 @@
         </div>
 
         <div class="input-group">
-            <label class="input-label" data-ar="الاسم الكامل" data-en="Full Name">الاسم الكامل</label>
-            <input type="text" id="register-name" class="input-field" placeholder="" data-ar="أدخل اسمك الكامل" data-en="Enter your full name">
+            <label class="input-label">الاسم الكامل</label>
+            <input type="text" id="register-name" class="input-field" placeholder="أدخل اسمك الكامل">
         </div>
 
         <div class="input-group">
-            <label class="input-label" data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</label>
+            <label class="input-label">البريد الإلكتروني</label>
             <input type="email" id="register-email" class="input-field" placeholder="email@example.com">
         </div>
 
         <div class="input-group">
-            <label class="input-label" data-ar="كلمة المرور" data-en="Password">كلمة المرور</label>
+            <label class="input-label">كلمة المرور</label>
             <input type="password" id="register-password" class="input-field" placeholder="••••••••">
         </div>
 
         <div class="input-group">
-            <label class="input-label" data-ar="تأكيد كلمة المرور" data-en="Confirm Password">تأكيد كلمة المرور</label>
+            <label class="input-label">تأكيد كلمة المرور</label>
             <input type="password" id="register-confirm" class="input-field" placeholder="••••••••">
         </div>
 
         <button onclick="handleRegister()" class="btn-primary">
             <i class="fas fa-user-plus"></i>
-            <span data-ar="إنشاء حساب" data-en="Register">إنشاء حساب</span>
+            إنشاء حساب
         </button>
 
         <div class="mt-6 text-center">
             <button onclick="showLogin()" class="text-emerald-400 hover:text-emerald-300">
-                <span data-ar="لديك حساب بالفعل؟ سجل دخول" data-en="Already have an account? Login">لديك حساب بالفعل؟ سجل دخول</span>
+                لديك حساب بالفعل؟ سجل دخول
             </button>
         </div>
     </div>
@@ -1095,39 +1099,39 @@
         </div>
     </div>
 
-    <!-- Vertical Navigation -->
-    <div class="vertical-nav">
-        <div class="vertical-nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+    <!-- الشريط الجانبي المحسّن -->
+    <div class="nav-sidebar" id="nav-sidebar">
+        <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
             <i class="fas fa-chart-pie"></i>
-            <span data-ar="الرئيسية" data-en="Dashboard">الرئيسية</span>
+            <span>الرئيسية</span>
         </div>
-        <div class="vertical-nav-item" onclick="showPage('clients')" data-page="clients">
+        <div class="nav-item" onclick="showPage('clients')" data-page="clients">
             <i class="fas fa-users"></i>
-            <span data-ar="العملاء" data-en="Clients">العملاء</span>
+            <span>العملاء</span>
         </div>
-        <div class="vertical-nav-item" onclick="showPage('add')" data-page="add">
+        <div class="nav-item" onclick="showPage('add')" data-page="add">
             <i class="fas fa-user-plus"></i>
-            <span data-ar="إضافة عميل" data-en="Add Client">إضافة عميل</span>
+            <span>إضافة عميل</span>
         </div>
-        <div class="vertical-nav-item" onclick="showPage('reports')" data-page="reports">
+        <div class="nav-item" onclick="showPage('reports')" data-page="reports">
             <i class="fas fa-file-alt"></i>
-            <span data-ar="التقارير" data-en="Reports">التقارير</span>
+            <span>التقارير</span>
         </div>
-        <div class="vertical-nav-item" onclick="showPage('users')" data-page="users" id="users-menu">
+        <div class="nav-item" onclick="showPage('users')" data-page="users" id="users-menu">
             <i class="fas fa-user-cog"></i>
-            <span data-ar="المستخدمين" data-en="Users">المستخدمين</span>
+            <span>المستخدمين</span>
         </div>
-        <div class="vertical-nav-item" onclick="showPage('settings')" data-page="settings">
+        <div class="nav-item" onclick="showPage('settings')" data-page="settings">
             <i class="fas fa-cog"></i>
-            <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span>
+            <span>الإعدادات</span>
         </div>
-        <div class="vertical-nav-item" onclick="toggleTheme()">
+        <div class="nav-item" onclick="toggleTheme()">
             <i class="fas fa-moon" id="theme-icon"></i>
-            <span data-ar="المظهر" data-en="Theme">المظهر</span>
+            <span>المظهر</span>
         </div>
-        <div class="vertical-nav-item" onclick="logout()">
+        <div class="nav-item" onclick="logout()">
             <i class="fas fa-sign-out-alt"></i>
-            <span data-ar="خروج" data-en="Logout">خروج</span>
+            <span>خروج</span>
         </div>
     </div>
 
@@ -1135,7 +1139,7 @@
     <div class="main-content">
         <!-- Dashboard Page -->
         <div id="dashboard-page" class="page">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" data-ar="لوحة التحكم الرئيسية" data-en="Dashboard">لوحة التحكم الرئيسية</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">لوحة التحكم الرئيسية</h1>
 
             <!-- Last Added Client -->
             <div id="last-client-section" class="hidden">
@@ -1143,11 +1147,11 @@
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                         <h3 class="text-base sm:text-lg font-semibold flex items-center gap-2">
                             <i class="fas fa-user-check text-emerald-400"></i>
-                            <span data-ar="آخر عميل تمت إضافته" data-en="Last Added Client">آخر عميل تمت إضافته</span>
+                            آخر عميل تمت إضافته
                         </h3>
                         <button onclick="showPage('add')" class="btn-secondary text-sm py-2 px-4">
                             <i class="fas fa-plus ml-1"></i>
-                            <span data-ar="إضافة عميل جديد" data-en="Add New Client">إضافة عميل جديد</span>
+                            إضافة عميل جديد
                         </button>
                     </div>
                     <div id="last-client-info" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -1159,17 +1163,17 @@
 
             <!-- Search -->
             <div class="mb-6">
-                <input type="text" id="search-input" class="input-field" data-ar="ابحث عن عميل (اسم، هاتف، عنوان، ملاحظات)..." data-en="Search client (name, phone, address, notes)..." placeholder="ابحث عن عميل (اسم، هاتف، عنوان، ملاحظات)..." oninput="searchClients()">
+                <input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل (اسم، هاتف، عنوان، ملاحظات)..." oninput="searchClients()">
             </div>
 
             <!-- Filters -->
             <div class="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8" id="filter-buttons">
-                <button class="filter-btn active" onclick="filterClients('all')" data-ar="الكل" data-en="All">الكل</button>
-                <button class="filter-btn" onclick="filterClients('له')" data-ar="له مال" data-en="Owes">له مال</button>
-                <button class="filter-btn" onclick="filterClients('عليه')" data-ar="عليه مال" data-en="Owed">عليه مال</button>
-                <button class="filter-btn" onclick="filterClients('ذهب له')" data-ar="له ذهب" data-en="Gold Owes">له ذهب</button>
-                <button class="filter-btn" onclick="filterClients('ذهب عليه')" data-ar="عليه ذهب" data-en="Gold Owed">عليه ذهب</button>
-                <button class="filter-btn" onclick="filterClients('صفر')" data-ar="متوازن" data-en="Balanced">متوازن</button>
+                <button class="filter-btn active" onclick="filterClients('all')">الكل</button>
+                <button class="filter-btn" onclick="filterClients('له')">له مال</button>
+                <button class="filter-btn" onclick="filterClients('عليه')">عليه مال</button>
+                <button class="filter-btn" onclick="filterClients('ذهب له')">له ذهب</button>
+                <button class="filter-btn" onclick="filterClients('ذهب عليه')">عليه ذهب</button>
+                <button class="filter-btn" onclick="filterClients('صفر')">متوازن</button>
             </div>
 
             <!-- Clients Grid -->
@@ -1178,120 +1182,135 @@
 
         <!-- Clients Page -->
         <div id="clients-page" class="page hidden">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" data-ar="جميع العملاء" data-en="All Clients">جميع العملاء</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">جميع العملاء</h1>
             <div id="all-clients-list" class="grid-container"></div>
         </div>
 
         <!-- Add Client Page -->
         <div id="add-page" class="page hidden">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" data-ar="إضافة عميل جديد" data-en="Add New Client">إضافة عميل جديد</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">إضافة عميل جديد</h1>
 
             <div class="max-w-4xl bg-secondary p-4 sm:p-6 md:p-8 rounded-2xl border border-border">
                 <!-- Basic Info -->
                 <div class="section-header">
                     <i class="fas fa-user"></i>
-                    <span class="font-semibold" data-ar="البيانات الأساسية" data-en="Basic Information">البيانات الأساسية</span>
+                    <span class="font-semibold">البيانات الأساسية</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label class="input-label" data-ar="اسم العميل *" data-en="Client Name *">اسم العميل *</label>
-                        <input type="text" id="client-name" class="input-field" data-ar="أدخل اسم العميل" data-en="Enter client name" placeholder="أدخل اسم العميل">
+                        <label class="input-label">اسم العميل *</label>
+                        <input type="text" id="client-name" class="input-field" placeholder="أدخل اسم العميل">
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="رقم الجوال" data-en="Phone Number">رقم الجوال</label>
-                        <input type="tel" id="client-phone" class="input-field" data-ar="أدخل رقم الجوال" data-en="Enter phone number" placeholder="أدخل رقم الجوال">
+                        <label class="input-label">رقم الجوال</label>
+                        <input type="tel" id="client-phone" class="input-field" placeholder="أدخل رقم الجوال">
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <label class="input-label" data-ar="العنوان" data-en="Address">العنوان</label>
-                    <input type="text" id="client-address" class="input-field" data-ar="أدخل العنوان" data-en="Enter address" placeholder="أدخل العنوان">
+                    <label class="input-label">العنوان</label>
+                    <input type="text" id="client-address" class="input-field" placeholder="أدخل العنوان">
                 </div>
 
                 <div class="mb-6">
-                    <label class="input-label" data-ar="ملاحظات عامة" data-en="General Notes">ملاحظات عامة</label>
-                    <textarea id="client-notes" class="input-field" rows="2" data-ar="ملاحظات إضافية عن العميل" data-en="Additional notes about client" placeholder="ملاحظات إضافية عن العميل"></textarea>
+                    <label class="input-label">ملاحظات عامة</label>
+                    <textarea id="client-notes" class="input-field" rows="2" placeholder="ملاحظات إضافية عن العميل"></textarea>
                 </div>
 
                 <!-- Money Section -->
                 <div class="section-header mt-8">
                     <i class="fas fa-money-bill-wave"></i>
-                    <span class="font-semibold" data-ar="المبالغ المالية" data-en="Money Amounts">المبالغ المالية</span>
+                    <span class="font-semibold">المبالغ المالية</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label class="input-label" data-ar="له (جنيه)" data-en="Owes (EGP)">له (جنيه)</label>
-                        <input type="number" id="client-money-for" class="input-field" placeholder="0" min="0" value="0">
+                        <label class="input-label">له (جنيه)</label>
+                        <input type="number" id="client-money-for" class="input-field numbers" placeholder="0" min="0" value="0">
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="عليه (جنيه)" data-en="Owed (EGP)">عليه (جنيه)</label>
-                        <input type="number" id="client-money-on" class="input-field" placeholder="0" min="0" value="0">
+                        <label class="input-label">عليه (جنيه)</label>
+                        <input type="number" id="client-money-on" class="input-field numbers" placeholder="0" min="0" value="0">
                     </div>
                 </div>
 
                 <!-- Gold Section -->
                 <div class="section-header gold mt-8">
                     <i class="fas fa-coins gold-icon"></i>
-                    <span class="font-semibold" data-ar="جرامات الذهب" data-en="Gold Grams">جرامات الذهب</span>
+                    <span class="font-semibold">جرامات الذهب</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div>
-                        <label class="input-label" data-ar="له ذهب (جرام)" data-en="Owes Gold (g)">له ذهب (جرام)</label>
-                        <input type="number" id="client-gold-for" class="input-field" placeholder="0" min="0" step="0.01" value="0">
+                        <label class="input-label">له ذهب (جرام)</label>
+                        <input type="number" id="client-gold-for" class="input-field numbers" placeholder="0" min="0" step="0.01" value="0">
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="عليه ذهب (جرام)" data-en="Owed Gold (g)">عليه ذهب (جرام)</label>
-                        <input type="number" id="client-gold-on" class="input-field" placeholder="0" min="0" step="0.01" value="0">
+                        <label class="input-label">عليه ذهب (جرام)</label>
+                        <input type="number" id="client-gold-on" class="input-field numbers" placeholder="0" min="0" step="0.01" value="0">
                     </div>
+                </div>
+
+                <!-- Gold Description (جديد) -->
+                <div class="mb-6">
+                    <label class="input-label">بيان الذهب (نوعه)</label>
+                    <select id="client-gold-description" class="input-field">
+                        <option value="">اختر النوع</option>
+                        <option value="سبيكة">سبيكة</option>
+                        <option value="مشغولات">مشغولات ذهبية</option>
+                        <option value="عملة">عملة ذهبية</option>
+                        <option value="جنيه">جنيه ذهب</option>
+                        <option value="كسر">كسر ذهب</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                    <input type="text" id="client-gold-description-other" class="input-field mt-2 hidden" placeholder="اكتب وصف الذهب">
                 </div>
 
                 <!-- Initial Transaction -->
                 <div class="section-header mt-8">
                     <i class="fas fa-receipt"></i>
-                    <span class="font-semibold" data-ar="معاملة أولية (اختياري)" data-en="Initial Transaction (Optional)">معاملة أولية (اختياري)</span>
+                    <span class="font-semibold">معاملة أولية (اختياري)</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                     <div>
-                        <label class="input-label" data-ar="نوع المعاملة" data-en="Transaction Type">نوع المعاملة</label>
+                        <label class="input-label">نوع المعاملة</label>
                         <select id="initial-tx-type" class="input-field">
-                            <option value="" data-ar="بدون معاملة" data-en="No transaction">بدون معاملة</option>
-                            <option value="out" data-ar="تسليم (له)" data-en="Give (Owes)">تسليم (له)</option>
-                            <option value="in" data-ar="استلام (عليه)" data-en="Receive (Owed)">استلام (عليه)</option>
+                            <option value="">بدون معاملة</option>
+                            <option value="out">تسليم (له)</option>
+                            <option value="in">استلام (عليه)</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="المبلغ" data-en="Amount">المبلغ</label>
-                        <input type="number" id="initial-tx-amount" class="input-field" placeholder="0" min="0" value="0">
+                        <label class="input-label">المبلغ</label>
+                        <input type="number" id="initial-tx-amount" class="input-field numbers" placeholder="0" min="0" value="0">
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="المسؤول" data-en="Responsible">المسؤول</label>
-                        <input type="text" id="initial-tx-responsible" class="input-field" data-ar="اسم المسؤول" data-en="Responsible name" placeholder="اسم المسؤول">
+                        <label class="input-label">المسؤول</label>
+                        <input type="text" id="initial-tx-responsible" class="input-field" placeholder="اسم المسؤول">
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <label class="input-label" data-ar="ملاحظات المعاملة" data-en="Transaction Notes">ملاحظات المعاملة</label>
-                    <input type="text" id="initial-tx-note" class="input-field" data-ar="ملاحظات" data-en="Notes" placeholder="ملاحظات">
+                    <label class="input-label">ملاحظات المعاملة</label>
+                    <input type="text" id="initial-tx-note" class="input-field" placeholder="ملاحظات">
                 </div>
 
                 <!-- Actions -->
                 <div class="flex flex-col sm:flex-row gap-4 mt-8">
                     <button onclick="addNewClient(false)" class="btn-primary flex-1">
                         <i class="fas fa-save"></i>
-                        <span data-ar="إضافة العميل" data-en="Add Client">إضافة العميل</span>
+                        إضافة العميل
                     </button>
                     <button onclick="addNewClient(true)" class="btn-secondary flex-1">
                         <i class="fas fa-plus"></i>
-                        <span data-ar="إضافة وعميل جديد" data-en="Add & New">إضافة وعميل جديد</span>
+                        إضافة وعميل جديد
                     </button>
                 </div>
             </div>
@@ -1299,29 +1318,29 @@
 
         <!-- Reports Page -->
         <div id="reports-page" class="page hidden">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" data-ar="التقارير" data-en="Reports">التقارير</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">التقارير</h1>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="stat-card">
-                    <h3 class="text-lg font-semibold mb-4" data-ar="تصدير البيانات" data-en="Export Data">تصدير البيانات</h3>
+                    <h3 class="text-lg font-semibold mb-4">تصدير البيانات</h3>
                     <div class="space-y-3">
                         <button onclick="exportToExcel()" class="btn-secondary w-full text-right">
                             <i class="fas fa-file-excel text-green-500 ml-2"></i>
-                            <span data-ar="تصدير Excel" data-en="Export Excel">تصدير Excel</span>
+                            تصدير Excel
                         </button>
                         <button onclick="exportToPDF()" class="btn-secondary w-full text-right">
                             <i class="fas fa-file-pdf text-red-500 ml-2"></i>
-                            <span data-ar="تصدير PDF" data-en="Export PDF">تصدير PDF</span>
+                            تصدير PDF
                         </button>
                         <button onclick="exportToImage()" class="btn-secondary w-full text-right">
                             <i class="fas fa-camera text-purple-500 ml-2"></i>
-                            <span data-ar="تصدير كصورة" data-en="Export as Image">تصدير كصورة</span>
+                            تصدير كصورة
                         </button>
                     </div>
                 </div>
 
                 <div class="stat-card">
-                    <h3 class="text-lg font-semibold mb-4" data-ar="إحصائيات" data-en="Statistics">إحصائيات</h3>
+                    <h3 class="text-lg font-semibold mb-4">إحصائيات</h3>
                     <div id="report-stats" class="space-y-3"></div>
                 </div>
             </div>
@@ -1329,43 +1348,43 @@
 
         <!-- Users Management Page -->
         <div id="users-page" class="page hidden">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" data-ar="إدارة المستخدمين" data-en="Users Management">إدارة المستخدمين</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">إدارة المستخدمين</h1>
 
             <div class="stat-card mb-8">
-                <h3 class="text-lg font-semibold mb-4" data-ar="إحصائيات المستخدمين" data-en="Users Statistics">إحصائيات المستخدمين</h3>
+                <h3 class="text-lg font-semibold mb-4">إحصائيات المستخدمين</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="bg-tertiary p-4 rounded-xl">
-                        <p class="text-sm text-gray-500" data-ar="إجمالي المستخدمين" data-en="Total Users">إجمالي المستخدمين</p>
+                        <p class="text-sm text-gray-500">إجمالي المستخدمين</p>
                         <p class="text-2xl font-bold" id="total-users">0</p>
                     </div>
                     <div class="bg-tertiary p-4 rounded-xl">
-                        <p class="text-sm text-gray-500" data-ar="المستخدمين النشطين" data-en="Active Users">المستخدمين النشطين</p>
+                        <p class="text-sm text-gray-500">المستخدمين النشطين</p>
                         <p class="text-2xl font-bold text-emerald-400" id="active-users">0</p>
                     </div>
                     <div class="bg-tertiary p-4 rounded-xl">
-                        <p class="text-sm text-gray-500" data-ar="المستخدمين المتوقفين" data-en="Inactive Users">المستخدمين المتوقفين</p>
+                        <p class="text-sm text-gray-500">المستخدمين المتوقفين</p>
                         <p class="text-2xl font-bold text-rose-400" id="inactive-users">0</p>
                     </div>
                     <div class="bg-tertiary p-4 rounded-xl">
-                        <p class="text-sm text-gray-500" data-ar="إجمالي العملاء" data-en="Total Clients">إجمالي العملاء</p>
+                        <p class="text-sm text-gray-500">إجمالي العملاء</p>
                         <p class="text-2xl font-bold text-amber-400" id="total-clients-all">0</p>
                     </div>
                 </div>
             </div>
 
             <div class="stat-card">
-                <h3 class="text-lg font-semibold mb-4" data-ar="قائمة المستخدمين" data-en="Users List">قائمة المستخدمين</h3>
+                <h3 class="text-lg font-semibold mb-4">قائمة المستخدمين</h3>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th data-ar="المستخدم" data-en="User">المستخدم</th>
-                                <th data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</th>
-                                <th data-ar="نوع الحساب" data-en="Account Type">نوع الحساب</th>
-                                <th data-ar="تاريخ التسجيل" data-en="Registration Date">تاريخ التسجيل</th>
-                                <th data-ar="عدد العملاء" data-en="Clients Count">عدد العملاء</th>
-                                <th data-ar="الحالة" data-en="Status">الحالة</th>
-                                <th data-ar="التحكم" data-en="Actions">التحكم</th>
+                                <th>المستخدم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>نوع الحساب</th>
+                                <th>تاريخ التسجيل</th>
+                                <th>عدد العملاء</th>
+                                <th>الحالة</th>
+                                <th>التحكم</th>
                             </tr>
                         </thead>
                         <tbody id="users-table-body"></tbody>
@@ -1376,57 +1395,57 @@
 
         <!-- Settings Page -->
         <div id="settings-page" class="page hidden">
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8" data-ar="الإعدادات" data-en="Settings">الإعدادات</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">الإعدادات</h1>
 
             <div class="max-w-2xl stat-card">
-                <h3 class="text-lg font-semibold mb-6" data-ar="إعدادات النسخ الاحتياطي" data-en="Backup Settings">إعدادات النسخ الاحتياطي</h3>
+                <h3 class="text-lg font-semibold mb-6">إعدادات النسخ الاحتياطي</h3>
 
                 <div class="space-y-4">
                     <div>
-                        <label class="input-label" data-ar="النسخ الاحتياطي التلقائي" data-en="Auto Backup">النسخ الاحتياطي التلقائي</label>
+                        <label class="input-label">النسخ الاحتياطي التلقائي</label>
                         <div class="flex items-center gap-4">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackup()">
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span id="auto-backup-status" data-ar="مفعل" data-en="Enabled">مفعل</span>
+                            <span id="auto-backup-status">مفعل</span>
                         </div>
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="عدد النسخ الاحتياطية للاحتفاظ بها" data-en="Number of backups to keep">عدد النسخ الاحتياطية للاحتفاظ بها</label>
+                        <label class="input-label">عدد النسخ الاحتياطية للاحتفاظ بها</label>
                         <select id="backup-count" class="input-field" onchange="updateBackupCount()">
                             <option value="3">3 نسخ</option>
                             <option value="5" selected>5 نسخ</option>
                             <option value="10">10 نسخ</option>
-                            <option value="0" data-ar="غير محدود" data-en="Unlimited">غير محدود</option>
+                            <option value="0">غير محدود</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="input-label" data-ar="جدولة النسخ الاحتياطي" data-en="Backup Schedule">جدولة النسخ الاحتياطي</label>
+                        <label class="input-label">جدولة النسخ الاحتياطي</label>
                         <select id="backup-schedule" class="input-field" onchange="updateBackupSchedule()">
-                            <option value="5" data-ar="كل 5 دقائق" data-en="Every 5 minutes">كل 5 دقائق</option>
-                            <option value="15" data-ar="كل 15 دقيقة" data-en="Every 15 minutes">كل 15 دقيقة</option>
-                            <option value="30" data-ar="كل 30 دقيقة" data-en="Every 30 minutes">كل 30 دقيقة</option>
-                            <option value="60" selected data-ar="كل ساعة" data-en="Every hour">كل ساعة</option>
-                            <option value="360" data-ar="كل 6 ساعات" data-en="Every 6 hours">كل 6 ساعات</option>
-                            <option value="720" data-ar="كل 12 ساعة" data-en="Every 12 hours">كل 12 ساعة</option>
-                            <option value="1440" data-ar="كل يوم" data-en="Every day">كل يوم</option>
+                            <option value="5">كل 5 دقائق</option>
+                            <option value="15">كل 15 دقيقة</option>
+                            <option value="30">كل 30 دقيقة</option>
+                            <option value="60" selected>كل ساعة</option>
+                            <option value="360">كل 6 ساعات</option>
+                            <option value="720">كل 12 ساعة</option>
+                            <option value="1440">كل يوم</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="mt-8 pt-8 border-t border-border">
-                    <h3 class="text-lg font-semibold mb-6" data-ar="تغيير كلمة المرور" data-en="Change Password">تغيير كلمة المرور</h3>
+                    <h3 class="text-lg font-semibold mb-6">تغيير كلمة المرور</h3>
                     <div class="space-y-4">
-                        <input type="password" id="current-password" class="input-field" data-ar="كلمة المرور الحالية" data-en="Current Password" placeholder="كلمة المرور الحالية">
-                        <input type="password" id="new-password" class="input-field" data-ar="كلمة المرور الجديدة" data-en="New Password" placeholder="كلمة المرور الجديدة">
-                        <input type="password" id="confirm-password" class="input-field" data-ar="تأكيد كلمة المرور" data-en="Confirm Password" placeholder="تأكيد كلمة المرور">
+                        <input type="password" id="current-password" class="input-field" placeholder="كلمة المرور الحالية">
+                        <input type="password" id="new-password" class="input-field" placeholder="كلمة المرور الجديدة">
+                        <input type="password" id="confirm-password" class="input-field" placeholder="تأكيد كلمة المرور">
 
                         <button onclick="changePassword()" class="btn-primary">
                             <i class="fas fa-key"></i>
-                            <span data-ar="تغيير كلمة المرور" data-en="Change Password">تغيير كلمة المرور</span>
+                            تغيير كلمة المرور
                         </button>
                     </div>
                 </div>
@@ -1434,15 +1453,15 @@
                 <div class="mt-8 pt-8 border-t border-border">
                     <button onclick="exportData()" class="btn-secondary ml-3">
                         <i class="fas fa-download ml-2"></i>
-                        <span data-ar="تصدير البيانات" data-en="Export Data">تصدير البيانات</span>
+                        تصدير البيانات
                     </button>
                     <button onclick="importData()" class="btn-secondary">
                         <i class="fas fa-upload ml-2"></i>
-                        <span data-ar="استيراد البيانات" data-en="Import Data">استيراد البيانات</span>
+                        استيراد البيانات
                     </button>
                     <button onclick="viewBackupHistory()" class="btn-secondary mt-3 w-full">
                         <i class="fas fa-history ml-2"></i>
-                        <span data-ar="عرض سجل النسخ الاحتياطية" data-en="View Backup History">عرض سجل النسخ الاحتياطية</span>
+                        عرض سجل النسخ الاحتياطية
                     </button>
                 </div>
             </div>
@@ -1452,7 +1471,7 @@
         <div id="client-page" class="page hidden">
             <button onclick="showPage('dashboard')" class="btn-secondary mb-6">
                 <i class="fas fa-arrow-right ml-2"></i>
-                <span data-ar="العودة" data-en="Back">العودة</span>
+                العودة
             </button>
 
             <div id="client-details" class="stat-card"></div>
@@ -1469,39 +1488,35 @@
 <!-- Transaction Modal (Money) -->
 <div id="transaction-modal" class="modal">
     <div class="modal-content">
-        <h3 class="text-xl font-bold mb-6" data-ar="إضافة معاملة نقدية" data-en="Add Money Transaction">إضافة معاملة نقدية</h3>
+        <h3 class="text-xl font-bold mb-6">إضافة معاملة نقدية</h3>
 
         <div class="space-y-4">
             <div>
-                <label class="input-label" data-ar="نوع المعاملة" data-en="Transaction Type">نوع المعاملة</label>
+                <label class="input-label">نوع المعاملة</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setTransactionType('out')" id="type-out" class="btn-primary">
-                        <span data-ar="تسليم (له)" data-en="Give (Owes)">تسليم (له)</span>
-                    </button>
-                    <button onclick="setTransactionType('in')" id="type-in" class="btn-secondary">
-                        <span data-ar="استلام (عليه)" data-en="Receive (Owed)">استلام (عليه)</span>
-                    </button>
+                    <button onclick="setTransactionType('out')" id="type-out" class="btn-primary">تسليم (له)</button>
+                    <button onclick="setTransactionType('in')" id="type-in" class="btn-secondary">استلام (عليه)</button>
                 </div>
             </div>
 
             <div>
-                <label class="input-label" data-ar="المبلغ" data-en="Amount">المبلغ</label>
-                <input type="number" id="transaction-amount" class="input-field" data-ar="أدخل المبلغ" data-en="Enter amount" placeholder="أدخل المبلغ">
+                <label class="input-label">المبلغ</label>
+                <input type="number" id="transaction-amount" class="input-field numbers" placeholder="أدخل المبلغ">
             </div>
 
             <div>
-                <label class="input-label" data-ar="المسؤول" data-en="Responsible">المسؤول</label>
-                <input type="text" id="transaction-responsible" class="input-field" data-ar="اسم المسؤول" data-en="Responsible name" placeholder="اسم المسؤول">
+                <label class="input-label">المسؤول</label>
+                <input type="text" id="transaction-responsible" class="input-field" placeholder="اسم المسؤول">
             </div>
 
             <div>
-                <label class="input-label" data-ar="ملاحظات" data-en="Notes">ملاحظات</label>
-                <textarea id="transaction-note" class="input-field" rows="3" data-ar="ملاحظات إضافية" data-en="Additional notes" placeholder="ملاحظات إضافية"></textarea>
+                <label class="input-label">ملاحظات</label>
+                <textarea id="transaction-note" class="input-field" rows="3" placeholder="ملاحظات إضافية"></textarea>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closeTransactionModal()" class="btn-secondary" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
-                <button onclick="saveTransaction()" class="btn-primary" data-ar="حفظ" data-en="Save">حفظ</button>
+                <button onclick="closeTransactionModal()" class="btn-secondary">إلغاء</button>
+                <button onclick="saveTransaction()" class="btn-primary">حفظ</button>
             </div>
         </div>
     </div>
@@ -1512,40 +1527,51 @@
     <div class="modal-content">
         <h3 class="text-xl font-bold mb-6">
             <i class="fas fa-coins text-yellow-400 ml-2"></i>
-            <span data-ar="إضافة معاملة ذهب" data-en="Add Gold Transaction">إضافة معاملة ذهب</span>
+            إضافة معاملة ذهب
         </h3>
 
         <div class="space-y-4">
             <div>
-                <label class="input-label" data-ar="نوع المعاملة" data-en="Transaction Type">نوع المعاملة</label>
+                <label class="input-label">نوع المعاملة</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setGoldType('out')" id="gold-out" class="btn-gold">
-                        <span data-ar="له ذهب" data-en="Owes Gold">له ذهب</span>
-                    </button>
-                    <button onclick="setGoldType('in')" id="gold-in" class="btn-secondary">
-                        <span data-ar="عليه ذهب" data-en="Owed Gold">عليه ذهب</span>
-                    </button>
+                    <button onclick="setGoldType('out')" id="gold-out" class="btn-gold">له ذهب</button>
+                    <button onclick="setGoldType('in')" id="gold-in" class="btn-secondary">عليه ذهب</button>
                 </div>
             </div>
 
             <div>
-                <label class="input-label" data-ar="عدد الجرامات" data-en="Grams">عدد الجرامات</label>
-                <input type="number" step="0.01" id="gold-amount" class="input-field" data-ar="أدخل الجرامات" data-en="Enter grams" placeholder="أدخل الجرامات">
+                <label class="input-label">عدد الجرامات</label>
+                <input type="number" step="0.01" id="gold-amount" class="input-field numbers" placeholder="أدخل الجرامات">
+            </div>
+
+            <!-- بيان الذهب في المعاملة -->
+            <div>
+                <label class="input-label">بيان الذهب (نوعه)</label>
+                <select id="gold-description" class="input-field">
+                    <option value="">اختر النوع</option>
+                    <option value="سبيكة">سبيكة</option>
+                    <option value="مشغولات">مشغولات ذهبية</option>
+                    <option value="عملة">عملة ذهبية</option>
+                    <option value="جنيه">جنيه ذهب</option>
+                    <option value="كسر">كسر ذهب</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+                <input type="text" id="gold-description-other" class="input-field mt-2 hidden" placeholder="اكتب وصف الذهب">
             </div>
 
             <div>
-                <label class="input-label" data-ar="المسؤول" data-en="Responsible">المسؤول</label>
-                <input type="text" id="gold-responsible" class="input-field" data-ar="اسم المسؤول" data-en="Responsible name" placeholder="اسم المسؤول">
+                <label class="input-label">المسؤول</label>
+                <input type="text" id="gold-responsible" class="input-field" placeholder="اسم المسؤول">
             </div>
 
             <div>
-                <label class="input-label" data-ar="ملاحظات" data-en="Notes">ملاحظات</label>
-                <textarea id="gold-note" class="input-field" rows="3" data-ar="ملاحظات إضافية" data-en="Additional notes" placeholder="ملاحظات إضافية"></textarea>
+                <label class="input-label">ملاحظات</label>
+                <textarea id="gold-note" class="input-field" rows="3" placeholder="ملاحظات إضافية"></textarea>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closeGoldModal()" class="btn-secondary" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
-                <button onclick="saveGoldTransaction()" class="btn-gold" data-ar="حفظ" data-en="Save">حفظ</button>
+                <button onclick="closeGoldModal()" class="btn-secondary">إلغاء</button>
+                <button onclick="saveGoldTransaction()" class="btn-gold">حفظ</button>
             </div>
         </div>
     </div>
@@ -1554,11 +1580,11 @@
 <!-- Delete Confirmation Modal -->
 <div id="delete-modal" class="modal">
     <div class="modal-content">
-        <h3 class="text-xl font-bold mb-4" data-ar="تأكيد الحذف" data-en="Confirm Delete">تأكيد الحذف</h3>
-        <p class="text-secondary mb-6" id="delete-message" data-ar="هل أنت متأكد من حذف هذا العنصر؟" data-en="Are you sure you want to delete this item?">هل أنت متأكد من حذف هذا العنصر؟</p>
+        <h3 class="text-xl font-bold mb-4">تأكيد الحذف</h3>
+        <p class="text-secondary mb-6" id="delete-message">هل أنت متأكد من حذف هذا العنصر؟</p>
         <div class="flex justify-end gap-3">
-            <button onclick="closeDeleteModal()" class="btn-secondary" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
-            <button onclick="confirmDelete()" class="bg-red-600 text-white px-6 py-2 rounded-xl hover:bg-red-700" data-ar="حذف" data-en="Delete">حذف</button>
+            <button onclick="closeDeleteModal()" class="btn-secondary">إلغاء</button>
+            <button onclick="confirmDelete()" class="bg-red-600 text-white px-6 py-2 rounded-xl hover:bg-red-700">حذف</button>
         </div>
     </div>
 </div>
@@ -1566,7 +1592,7 @@
 <!-- User Details Modal -->
 <div id="user-modal" class="modal">
     <div class="modal-content">
-        <h3 class="text-xl font-bold mb-6" data-ar="تفاصيل المستخدم" data-en="User Details">تفاصيل المستخدم</h3>
+        <h3 class="text-xl font-bold mb-6">تفاصيل المستخدم</h3>
 
         <div class="space-y-4">
             <div class="flex items-center gap-4 p-4 bg-tertiary rounded-xl">
@@ -1580,19 +1606,19 @@
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-tertiary p-4 rounded-xl">
-                    <p class="text-sm text-gray-500" data-ar="عدد العملاء" data-en="Clients">عدد العملاء</p>
+                    <p class="text-sm text-gray-500">عدد العملاء</p>
                     <p class="text-2xl font-bold" id="modal-user-clients">0</p>
                 </div>
                 <div class="bg-tertiary p-4 rounded-xl">
-                    <p class="text-sm text-gray-500" data-ar="عدد المعاملات" data-en="Transactions">عدد المعاملات</p>
+                    <p class="text-sm text-gray-500">عدد المعاملات</p>
                     <p class="text-2xl font-bold" id="modal-user-transactions">0</p>
                 </div>
             </div>
 
             <div class="bg-tertiary p-4 rounded-xl">
-                <p class="text-sm text-gray-500 mb-2" data-ar="حالة الحساب" data-en="Account Status">حالة الحساب</p>
+                <p class="text-sm text-gray-500 mb-2">حالة الحساب</p>
                 <div class="flex items-center justify-between">
-                    <span id="modal-user-status-text" data-ar="نشط" data-en="Active">نشط</span>
+                    <span id="modal-user-status-text">نشط</span>
                     <label class="toggle-switch">
                         <input type="checkbox" id="modal-user-status" onchange="toggleUserStatus()">
                         <span class="toggle-slider"></span>
@@ -1601,12 +1627,12 @@
             </div>
 
             <div class="bg-tertiary p-4 rounded-xl">
-                <p class="text-sm text-gray-500 mb-2" data-ar="تاريخ التسجيل" data-en="Registration Date">تاريخ التسجيل</p>
+                <p class="text-sm text-gray-500 mb-2">تاريخ التسجيل</p>
                 <p id="modal-user-created"></p>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closeUserModal()" class="btn-secondary" data-ar="إغلاق" data-en="Close">إغلاق</button>
+                <button onclick="closeUserModal()" class="btn-secondary">إغلاق</button>
             </div>
         </div>
     </div>
@@ -1615,12 +1641,12 @@
 <!-- Backup History Modal -->
 <div id="backup-history-modal" class="modal">
     <div class="modal-content" style="max-width: 800px;">
-        <h3 class="text-xl font-bold mb-6" data-ar="سجل النسخ الاحتياطية" data-en="Backup History">سجل النسخ الاحتياطية</h3>
+        <h3 class="text-xl font-bold mb-6">سجل النسخ الاحتياطية</h3>
 
         <div id="backup-history-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
 
         <div class="flex justify-end gap-3 mt-6">
-            <button onclick="closeBackupHistoryModal()" class="btn-secondary" data-ar="إغلاق" data-en="Close">إغلاق</button>
+            <button onclick="closeBackupHistoryModal()" class="btn-secondary">إغلاق</button>
         </div>
     </div>
 </div>
@@ -1642,7 +1668,6 @@
     const BACKUP_HISTORY_KEY = 'financial_system_backup_history';
     const SETTINGS_KEY = 'financial_system_settings';
     const LAST_CLIENT_KEY = 'last_client';
-    const LANGUAGE_KEY = 'app_language';
 
     // إعدادات النظام
     let systemSettings = {
@@ -1662,13 +1687,12 @@
     let selectedUserId = null;
     let backupInterval = null;
     let clientsCache = null;
-    let currentLanguage = 'ar'; // 'ar' or 'en'
+    let pendingBackup = false; // للتحقق من وجود تغيير يستدعي النسخ الاحتياطي
 
     // المستخدمين الافتراضيين
     const defaultUsers = [{
         id: 'admin_1',
         name: 'مدير النظام',
-        name_en: 'System Admin',
         email: 'admin@system.com',
         password: 'admin123',
         provider: 'email',
@@ -1680,27 +1704,23 @@
     const defaultClients = [{
         id: '1',
         name: 'أحمد محمد',
-        name_en: 'Ahmed Mohamed',
         phone: '0123456789',
         address: 'القاهرة',
-        address_en: 'Cairo',
         notes: 'عميل مميز',
-        notes_en: 'VIP client',
         userId: 'admin_1',
         createdAt: new Date().toISOString(),
         moneyFor: 5000,
         moneyOn: 2000,
         goldFor: 10.5,
         goldOn: 5.2,
+        goldDescription: 'سبيكة',
         transactions: [{
             id: 't1',
             date: new Date().toISOString(),
             type: 'out',
             amount: 5000,
             responsible: 'المدير',
-            responsible_en: 'Admin',
             note: 'دفعة مقدمة',
-            note_en: 'Advance payment',
             runningBalance: 5000
         }],
         goldTransactions: [{
@@ -1709,57 +1729,26 @@
             type: 'out',
             amount: 10.5,
             responsible: 'المدير',
-            responsible_en: 'Admin',
             note: 'ذهب عيار 21',
-            note_en: '21k gold',
+            description: 'سبيكة',
             runningBalance: 10.5
         }]
     }, {
         id: '2',
         name: 'سارة خالد',
-        name_en: 'Sara Khaled',
         phone: '0112345678',
         address: 'الجيزة',
-        address_en: 'Giza',
         notes: '',
-        notes_en: '',
         userId: 'admin_1',
         createdAt: new Date().toISOString(),
         moneyFor: 0,
         moneyOn: 0,
         goldFor: 0,
         goldOn: 0,
+        goldDescription: '',
         transactions: [],
         goldTransactions: []
     }];
-
-    // ==================== دوال اللغة ====================
-    function toggleLanguage() {
-        currentLanguage = currentLanguage === 'ar' ? 'en' : 'ar';
-        localStorage.setItem(LANGUAGE_KEY, currentLanguage);
-        applyLanguage();
-    }
-
-    function applyLanguage() {
-        document.body.classList.toggle('ltr', currentLanguage === 'en');
-        document.documentElement.lang = currentLanguage;
-        document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
-
-        // تحديث جميع العناصر التي تحتوي على data-ar و data-en
-        document.querySelectorAll('[data-ar][data-en]').forEach(el => {
-            el.textContent = el.getAttribute(`data-${currentLanguage}`);
-        });
-
-        document.querySelectorAll('[data-ar-placeholder][data-en-placeholder]').forEach(el => {
-            el.placeholder = el.getAttribute(`data-${currentLanguage}-placeholder`);
-        });
-
-        // تحديث نص زر اللغة
-        const langText = document.getElementById('lang-text');
-        if (langText) {
-            langText.textContent = currentLanguage === 'ar' ? 'EN' : 'عربي';
-        }
-    }
 
     // ==================== دوال التهيئة ====================
     function initializeSystem() {
@@ -1773,13 +1762,6 @@
                 localStorage.setItem(key, JSON.stringify(defaultClients));
             }
         });
-
-        // تحميل اللغة
-        const savedLang = localStorage.getItem(LANGUAGE_KEY);
-        if (savedLang) {
-            currentLanguage = savedLang;
-        }
-        applyLanguage();
 
         // تحميل الإعدادات
         const savedSettings = localStorage.getItem(SETTINGS_KEY);
@@ -1798,9 +1780,7 @@
 
         if (toggle) {
             toggle.checked = systemSettings.autoBackup;
-            status.textContent = systemSettings.autoBackup ? 
-                (currentLanguage === 'ar' ? 'مفعل' : 'Enabled') : 
-                (currentLanguage === 'ar' ? 'معطل' : 'Disabled');
+            status.textContent = systemSettings.autoBackup ? 'مفعل' : 'معطل';
         }
         if (countSelect) countSelect.value = systemSettings.backupCount;
         if (scheduleSelect) scheduleSelect.value = systemSettings.backupSchedule;
@@ -1811,21 +1791,17 @@
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(systemSettings));
     }
 
-    // ==================== دوال النسخ الاحتياطي ====================
+    // ==================== دوال النسخ الاحتياطي الذكي ====================
     function toggleAutoBackup() {
         const toggle = document.getElementById('auto-backup-toggle');
         systemSettings.autoBackup = toggle.checked;
-        document.getElementById('auto-backup-status').textContent = systemSettings.autoBackup ? 
-            (currentLanguage === 'ar' ? 'مفعل' : 'Enabled') : 
-            (currentLanguage === 'ar' ? 'معطل' : 'Disabled');
+        document.getElementById('auto-backup-status').textContent = systemSettings.autoBackup ? 'مفعل' : 'معطل';
         saveSettings();
 
         if (systemSettings.autoBackup) {
-            startAutoBackup();
-            showToast(currentLanguage === 'ar' ? 'تم تفعيل النسخ الاحتياطي التلقائي' : 'Auto backup enabled', 'success');
+            showToast('تم تفعيل النسخ الاحتياطي التلقائي', 'success');
         } else {
-            stopAutoBackup();
-            showToast(currentLanguage === 'ar' ? 'تم إلغاء النسخ الاحتياطي التلقائي' : 'Auto backup disabled', 'info');
+            showToast('تم إلغاء النسخ الاحتياطي التلقائي', 'info');
         }
     }
 
@@ -1833,41 +1809,31 @@
         const select = document.getElementById('backup-count');
         systemSettings.backupCount = parseInt(select.value);
         saveSettings();
-        showToast(currentLanguage === 'ar' ? 'تم تحديث إعدادات النسخ الاحتياطي' : 'Backup settings updated', 'success');
+        showToast('تم تحديث إعدادات النسخ الاحتياطي', 'success');
     }
 
     function updateBackupSchedule() {
         const select = document.getElementById('backup-schedule');
         systemSettings.backupSchedule = parseInt(select.value);
         saveSettings();
-
-        if (systemSettings.autoBackup) {
-            stopAutoBackup();
-            startAutoBackup();
-        }
-
-        showToast(currentLanguage === 'ar' ? 'تم تحديث جدولة النسخ الاحتياطي' : 'Backup schedule updated', 'success');
+        showToast('تم تحديث جدولة النسخ الاحتياطي', 'success');
     }
 
-    function startAutoBackup() {
-        if (backupInterval) clearInterval(backupInterval);
+    // دالة النسخ الاحتياطي عند التغيير
+    function triggerBackup() {
+        if (!systemSettings.autoBackup || !currentUser) return;
+        
+        // استخدام debounce لمنع التكرار
+        if (pendingBackup) return;
+        pendingBackup = true;
 
-        const minutes = systemSettings.backupSchedule;
-        backupInterval = setInterval(() => {
-            if (currentUser && systemSettings.autoBackup) {
-                createScheduledBackup();
-            }
-        }, minutes * 60 * 1000);
+        setTimeout(() => {
+            createBackup();
+            pendingBackup = false;
+        }, 2000); // انتظار ثانيتين للتأكد من عدم وجود تغييرات متتالية
     }
 
-    function stopAutoBackup() {
-        if (backupInterval) {
-            clearInterval(backupInterval);
-            backupInterval = null;
-        }
-    }
-
-    function createScheduledBackup() {
+    function createBackup() {
         showAutoBackupIndicator(true);
 
         const data = {
@@ -1916,22 +1882,22 @@
         const listDiv = document.getElementById('backup-history-list');
 
         if (history.length === 0) {
-            listDiv.innerHTML = `<p class="text-center text-gray-500 py-8">${currentLanguage === 'ar' ? 'لا توجد نسخ احتياطية سابقة' : 'No backup history found'}</p>`;
+            listDiv.innerHTML = '<p class="text-center text-gray-500 py-8">لا توجد نسخ احتياطية سابقة</p>';
         } else {
             listDiv.innerHTML = history.map((backup, index) => `
                 <div class="bg-tertiary p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <div class="font-medium">${currentLanguage === 'ar' ? 'نسخة احتياطية' : 'Backup'} ${history.length - index}</div>
-                        <div class="text-sm text-gray-500">${new Date(backup.timestamp).toLocaleString(currentLanguage === 'ar' ? 'ar-EG' : 'en-US')}</div>
+                        <div class="font-medium">نسخة احتياطية ${history.length - index}</div>
+                        <div class="text-sm text-gray-500">${new Date(backup.timestamp).toLocaleString('ar-EG')}</div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="restoreSpecificBackup('${backup.id}')" class="text-emerald-400 hover:text-emerald-300" title="${currentLanguage === 'ar' ? 'استعادة' : 'Restore'}">
+                        <button onclick="restoreSpecificBackup('${backup.id}')" class="text-emerald-400 hover:text-emerald-300" title="استعادة">
                             <i class="fas fa-undo"></i>
                         </button>
-                        <button onclick="downloadBackup('${backup.id}')" class="text-blue-400 hover:text-blue-300" title="${currentLanguage === 'ar' ? 'تحميل' : 'Download'}">
+                        <button onclick="downloadBackup('${backup.id}')" class="text-blue-400 hover:text-blue-300" title="تحميل">
                             <i class="fas fa-download"></i>
                         </button>
-                        <button onclick="deleteBackup('${backup.id}')" class="text-rose-400 hover:text-rose-300" title="${currentLanguage === 'ar' ? 'حذف' : 'Delete'}">
+                        <button onclick="deleteBackup('${backup.id}')" class="text-rose-400 hover:text-rose-300" title="حذف">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -1950,7 +1916,7 @@
         const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
         const backup = history.find(b => b.id === backupId);
 
-        if (backup && confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من استعادة هذه النسخة؟' : 'Are you sure you want to restore this backup?')) {
+        if (backup && confirm('هل أنت متأكد من استعادة هذه النسخة؟')) {
             showLoading();
 
             setTimeout(() => {
@@ -1967,7 +1933,7 @@
                     }
 
                     hideLoading();
-                    showToast(currentLanguage === 'ar' ? 'تم استعادة النسخة الاحتياطية بنجاح' : 'Backup restored successfully', 'success');
+                    showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
                     closeBackupHistoryModal();
 
                     if (currentUser) {
@@ -1981,7 +1947,7 @@
                     updateLastClient();
                 } catch (error) {
                     hideLoading();
-                    showToast(currentLanguage === 'ar' ? 'حدث خطأ في استعادة النسخة الاحتياطية' : 'Error restoring backup', 'error');
+                    showToast('حدث خطأ في استعادة النسخة الاحتياطية', 'error');
                 }
             }, 500);
         }
@@ -1998,24 +1964,17 @@
             a.href = url;
             a.download = `backup_${new Date(backup.timestamp).toLocaleDateString('en-CA')}.json`;
             a.click();
-            showToast(currentLanguage === 'ar' ? 'تم تحميل النسخة الاحتياطية' : 'Backup downloaded', 'success');
+            showToast('تم تحميل النسخة الاحتياطية', 'success');
         }
     }
 
     function deleteBackup(backupId) {
-        if (confirm(currentLanguage === 'ar' ? 'هل أنت متأكد من حذف هذه النسخة الاحتياطية؟' : 'Are you sure you want to delete this backup?')) {
+        if (confirm('هل أنت متأكد من حذف هذه النسخة الاحتياطية؟')) {
             let history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
             history = history.filter(b => b.id !== backupId);
             localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(history));
             viewBackupHistory();
-            showToast(currentLanguage === 'ar' ? 'تم حذف النسخة الاحتياطية' : 'Backup deleted', 'success');
-        }
-    }
-
-    function scheduleBackup() {
-        if (currentUser) {
-            createScheduledBackup();
-            showToast(currentLanguage === 'ar' ? 'تم جدولة نسخة احتياطية جديدة' : 'New backup scheduled', 'success');
+            showToast('تم حذف النسخة الاحتياطية', 'success');
         }
     }
 
@@ -2025,9 +1984,6 @@
             document.getElementById('restore-modal').style.display = 'flex';
         } else {
             initializeSystem();
-            if (systemSettings.autoBackup) {
-                startAutoBackup();
-            }
         }
     }
 
@@ -2053,18 +2009,14 @@
                 document.getElementById('restore-modal').style.display = 'none';
 
                 hideLoading();
-                showToast(currentLanguage === 'ar' ? 'تم استعادة النسخة الاحتياطية بنجاح' : 'Backup restored successfully', 'success');
-
-                if (systemSettings.autoBackup) {
-                    startAutoBackup();
-                }
+                showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
 
                 setTimeout(() => {
                     location.reload();
                 }, 1500);
             } catch (error) {
                 hideLoading();
-                showToast(currentLanguage === 'ar' ? 'حدث خطأ في استعادة النسخة الاحتياطية' : 'Error restoring backup', 'error');
+                showToast('حدث خطأ في استعادة النسخة الاحتياطية', 'error');
                 startFresh();
             }
         }, 500);
@@ -2074,34 +2026,20 @@
         localStorage.removeItem(BACKUP_KEY);
         initializeSystem();
         document.getElementById('restore-modal').style.display = 'none';
-        showToast(currentLanguage === 'ar' ? 'تم بدء نظام جديد' : 'Started fresh', 'success');
-
-        if (systemSettings.autoBackup) {
-            startAutoBackup();
-        }
+        showToast('تم بدء نظام جديد', 'success');
     }
 
-    function createBackupBeforeUnload() {
-        if (!currentUser) return;
-
-        const data = {
-            users: loadUsers(),
-            clients: {}
-        };
-
-        const users = loadUsers();
-        users.forEach(user => {
-            data.clients[user.id] = getUserClients(user.id);
-        });
-
-        localStorage.setItem(BACKUP_KEY, JSON.stringify(data));
-    }
-
-    window.addEventListener('beforeunload', function (e) {
-        if (currentUser) {
-            createBackupBeforeUnload();
+    // ==================== دوال الشريط الجانبي للهاتف ====================
+    function toggleNav() {
+        const nav = document.getElementById('nav-sidebar');
+        const btn = document.getElementById('nav-toggle-btn');
+        nav.classList.toggle('collapsed');
+        if (nav.classList.contains('collapsed')) {
+            btn.innerHTML = '<i class="fas fa-bars"></i><span>القائمة</span>';
+        } else {
+            btn.innerHTML = '<i class="fas fa-times"></i><span>إغلاق</span>';
         }
-    });
+    }
 
     // ==================== دوال المساعدة ====================
     function loadUsers() {
@@ -2129,29 +2067,21 @@
         return clients.map(c => ({
             ...c,
             address: c.address || '',
-            address_en: c.address_en || '',
             notes: c.notes || '',
-            notes_en: c.notes_en || '',
             moneyFor: c.moneyFor || 0,
             moneyOn: c.moneyOn || 0,
             goldFor: c.goldFor || 0,
             goldOn: c.goldOn || 0,
-            transactions: (c.transactions || []).map(t => ({
-                ...t,
-                responsible_en: t.responsible_en || t.responsible,
-                note_en: t.note_en || t.note
-            })),
-            goldTransactions: (c.goldTransactions || []).map(t => ({
-                ...t,
-                responsible_en: t.responsible_en || t.responsible,
-                note_en: t.note_en || t.note
-            }))
+            goldDescription: c.goldDescription || '',
+            transactions: (c.transactions || []).map(t => ({ ...t })),
+            goldTransactions: (c.goldTransactions || []).map(t => ({ ...t }))
         }));
     }
 
     function saveUserClients(userId, clients) {
         const key = CLIENTS_KEY_PREFIX + userId;
         localStorage.setItem(key, JSON.stringify(clients));
+        triggerBackup(); // تشغيل النسخ الاحتياطي عند الحفظ
     }
 
     function showLoading() {
@@ -2177,15 +2107,15 @@
     }
 
     function formatMoney(amount) {
-        return (amount || 0).toLocaleString(currentLanguage === 'ar' ? 'ar-EG' : 'en-US') + (currentLanguage === 'ar' ? ' جنيه' : ' EGP');
+        return (amount || 0).toLocaleString('en-US') + ' جنيه';
     }
 
     function formatGold(grams) {
-        return (grams || 0).toFixed(2) + (currentLanguage === 'ar' ? ' جم' : ' g');
+        return (grams || 0).toFixed(2) + ' جم';
     }
 
     function formatDate(dateString) {
-        return new Date(dateString).toLocaleString(currentLanguage === 'ar' ? 'ar-EG' : 'en-US', {
+        return new Date(dateString).toLocaleString('ar-EG', {
             year: 'numeric',
             month: 'short',
             day: 'numeric',
@@ -2240,25 +2170,25 @@
         section.classList.remove('hidden');
         info.innerHTML = `
             <div class="bg-tertiary p-3 rounded-xl">
-                <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'الاسم' : 'Name'}</p>
-                <p class="font-semibold">${currentLanguage === 'ar' ? client.name : (client.name_en || client.name)}</p>
+                <p class="text-xs text-gray-500">الاسم</p>
+                <p class="font-semibold">${client.name}</p>
             </div>
             <div class="bg-tertiary p-3 rounded-xl">
-                <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'الهاتف' : 'Phone'}</p>
+                <p class="text-xs text-gray-500">الهاتف</p>
                 <p class="font-semibold">${client.phone || '-'}</p>
             </div>
             <div class="bg-tertiary p-3 rounded-xl">
-                <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'صافي المال' : 'Net Money'}</p>
-                <p class="font-semibold ${summary.netMoney > 0 ? 'text-amber-400' : summary.netMoney < 0 ? 'text-emerald-400' : ''}">
+                <p class="text-xs text-gray-500">صافي المال</p>
+                <p class="font-semibold ${summary.netMoney > 0 ? 'text-amber-400' : summary.netMoney < 0 ? 'text-emerald-400' : ''} numbers">
                     ${formatMoney(Math.abs(summary.netMoney))}
-                    ${summary.netMoney > 0 ? (currentLanguage === 'ar' ? 'له' : 'Owes') : summary.netMoney < 0 ? (currentLanguage === 'ar' ? 'عليه' : 'Owed') : ''}
+                    ${summary.netMoney > 0 ? 'له' : summary.netMoney < 0 ? 'عليه' : ''}
                 </p>
             </div>
             <div class="bg-tertiary p-3 rounded-xl">
-                <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'صافي الذهب' : 'Net Gold'}</p>
-                <p class="font-semibold text-yellow-400">
+                <p class="text-xs text-gray-500">صافي الذهب</p>
+                <p class="font-semibold text-yellow-400 numbers">
                     ${formatGold(Math.abs(summary.netGold))}
-                    ${summary.netGold > 0 ? (currentLanguage === 'ar' ? 'له' : 'Owes') : summary.netGold < 0 ? (currentLanguage === 'ar' ? 'عليه' : 'Owed') : ''}
+                    ${summary.netGold > 0 ? 'له' : summary.netGold < 0 ? 'عليه' : ''}
                 </p>
             </div>
         `;
@@ -2283,9 +2213,7 @@
         errorDiv.classList.add('hidden');
 
         if (!email || !password) {
-            errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                'الرجاء إدخال البريد الإلكتروني وكلمة المرور' : 
-                'Please enter email and password';
+            errorDiv.querySelector('span').textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
             errorDiv.classList.remove('hidden');
             return;
         }
@@ -2298,9 +2226,7 @@
 
             if (!user) {
                 hideLoading();
-                errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                    'البريد الإلكتروني أو كلمة المرور غير صحيحة' : 
-                    'Invalid email or password';
+                errorDiv.querySelector('span').textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -2309,9 +2235,7 @@
 
             if (userStatus !== 'active') {
                 hideLoading();
-                errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                    'هذا الحساب غير نشط. الرجاء التواصل مع المدير' : 
-                    'This account is inactive. Please contact admin';
+                errorDiv.querySelector('span').textContent = 'هذا الحساب غير نشط. الرجاء التواصل مع المدير';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -2319,7 +2243,6 @@
             currentUser = {
                 id: user.id,
                 name: user.name,
-                name_en: user.name_en || user.name,
                 email: user.email,
                 role: user.role || 'user',
                 provider: user.provider
@@ -2329,7 +2252,7 @@
 
             updateUserUI();
             hideLoading();
-            showToast(currentLanguage === 'ar' ? `مرحباً بك ${user.name}` : `Welcome ${user.name}`, 'success');
+            showToast(`مرحباً بك ${user.name}`, 'success');
         }, 1000);
     }
 
@@ -2342,8 +2265,8 @@
                 'user' + Math.floor(Math.random() * 1000) + '@outlook.com';
 
             const name = provider === 'google' ?
-                (currentLanguage === 'ar' ? 'مستخدم Google' : 'Google User') + ' ' + Math.floor(Math.random() * 100) :
-                (currentLanguage === 'ar' ? 'مستخدم Microsoft' : 'Microsoft User') + ' ' + Math.floor(Math.random() * 100);
+                'مستخدم Google ' + Math.floor(Math.random() * 100) :
+                'مستخدم Microsoft ' + Math.floor(Math.random() * 100);
 
             const users = loadUsers();
             let user = users.find(u => u.email === email);
@@ -2352,7 +2275,6 @@
                 user = {
                     id: provider + '_' + Date.now(),
                     name: name,
-                    name_en: name,
                     email: email,
                     password: 'social_' + Date.now(),
                     provider: provider,
@@ -2370,14 +2292,13 @@
 
             if (userStatus !== 'active') {
                 hideLoading();
-                showToast(currentLanguage === 'ar' ? 'هذا الحساب غير نشط. الرجاء التواصل مع المدير' : 'This account is inactive. Please contact admin', 'error');
+                showToast('هذا الحساب غير نشط. الرجاء التواصل مع المدير', 'error');
                 return;
             }
 
             currentUser = {
                 id: user.id,
                 name: user.name,
-                name_en: user.name_en || user.name,
                 email: user.email,
                 role: user.role || 'user',
                 provider: user.provider
@@ -2387,7 +2308,7 @@
 
             updateUserUI();
             hideLoading();
-            showToast(currentLanguage === 'ar' ? `مرحباً بك ${user.name}` : `Welcome ${user.name}`, 'success');
+            showToast(`مرحباً بك ${user.name}`, 'success');
         }, 1500);
     }
 
@@ -2403,25 +2324,19 @@
         successDiv.classList.add('hidden');
 
         if (!name || !email || !password || !confirm) {
-            errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                'الرجاء إدخال جميع البيانات' : 
-                'Please fill all fields';
+            errorDiv.querySelector('span').textContent = 'الرجاء إدخال جميع البيانات';
             errorDiv.classList.remove('hidden');
             return;
         }
 
         if (password !== confirm) {
-            errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                'كلمة المرور غير متطابقة' : 
-                'Passwords do not match';
+            errorDiv.querySelector('span').textContent = 'كلمة المرور غير متطابقة';
             errorDiv.classList.remove('hidden');
             return;
         }
 
         if (password.length < 6) {
-            errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 
-                'Password must be at least 6 characters';
+            errorDiv.querySelector('span').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
             errorDiv.classList.remove('hidden');
             return;
         }
@@ -2433,9 +2348,7 @@
 
             if (users.some(u => u.email === email)) {
                 hideLoading();
-                errorDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                    'البريد الإلكتروني مستخدم بالفعل' : 
-                    'Email already exists';
+                errorDiv.querySelector('span').textContent = 'البريد الإلكتروني مستخدم بالفعل';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -2443,7 +2356,6 @@
             const newUser = {
                 id: 'user_' + Date.now(),
                 name: name,
-                name_en: name,
                 email: email,
                 password: password,
                 provider: 'email',
@@ -2458,9 +2370,7 @@
             saveUserClients(newUser.id, []);
 
             hideLoading();
-            successDiv.querySelector('span').textContent = currentLanguage === 'ar' ? 
-                'تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن' : 
-                'Account created successfully! You can now login';
+            successDiv.querySelector('span').textContent = 'تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن';
             successDiv.classList.remove('hidden');
 
             setTimeout(() => {
@@ -2475,25 +2385,20 @@
         clientsCache = null;
         document.getElementById('main-app').style.display = 'none';
         document.getElementById('login-container').style.display = 'flex';
-        showToast(currentLanguage === 'ar' ? 'تم تسجيل الخروج بنجاح' : 'Logged out successfully', 'success');
-
-        if (backupInterval) {
-            clearInterval(backupInterval);
-        }
+        showToast('تم تسجيل الخروج بنجاح', 'success');
     }
 
     function updateUserUI() {
-        const displayName = currentLanguage === 'ar' ? currentUser.name : (currentUser.name_en || currentUser.name);
-        document.getElementById('user-name').textContent = displayName;
+        document.getElementById('user-name').textContent = currentUser.name;
         document.getElementById('user-email').textContent = currentUser.email;
-        document.getElementById('user-avatar').textContent = displayName.charAt(0);
+        document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
 
         const roleBadge = document.getElementById('user-role-badge');
         if (currentUser.role === 'admin') {
-            roleBadge.textContent = currentLanguage === 'ar' ? 'مدير النظام' : 'Admin';
+            roleBadge.textContent = 'مدير النظام';
             roleBadge.className = 'text-xs mt-1 text-emerald-400';
         } else {
-            roleBadge.textContent = currentLanguage === 'ar' ? 'مستخدم عادي' : 'User';
+            roleBadge.textContent = 'مستخدم عادي';
             roleBadge.className = 'text-xs mt-1 text-gray-500';
         }
 
@@ -2561,58 +2466,58 @@
         document.getElementById('stats-cards').innerHTML = `
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-emerald-400">${currentLanguage === 'ar' ? 'لنا على العملاء' : 'We Owe'}</h3>
+                    <h3 class="text-emerald-400">لنا على العملاء</h3>
                     <i class="fas fa-arrow-down text-emerald-400"></i>
                 </div>
-                <p class="text-2xl font-bold text-emerald-400">${formatMoney(totalMoneyOn)}</p>
+                <p class="text-2xl font-bold text-emerald-400 numbers">${formatMoney(totalMoneyOn)}</p>
             </div>
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-amber-400">${currentLanguage === 'ar' ? 'لهم علينا' : 'They Owe'}</h3>
+                    <h3 class="text-amber-400">لهم علينا</h3>
                     <i class="fas fa-arrow-up text-amber-400"></i>
                 </div>
-                <p class="text-2xl font-bold text-amber-400">${formatMoney(totalMoneyFor)}</p>
+                <p class="text-2xl font-bold text-amber-400 numbers">${formatMoney(totalMoneyFor)}</p>
             </div>
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-blue-400">${currentLanguage === 'ar' ? 'صافي المال' : 'Net Money'}</h3>
+                    <h3 class="text-blue-400">صافي المال</h3>
                     <i class="fas fa-chart-line text-blue-400"></i>
                 </div>
-                <p class="text-2xl font-bold text-blue-400">${formatMoney(Math.abs(netMoney))}</p>
+                <p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p>
                 <p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-                    ${netMoney >= 0 ? (currentLanguage === 'ar' ? '✅ لنا على العملاء' : '✅ We Owe') : (currentLanguage === 'ar' ? '⚠️ علينا للعملاء' : '⚠️ They Owe Us')}
+                    ${netMoney >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}
                 </p>
             </div>
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-yellow-400">${currentLanguage === 'ar' ? 'ذهب لنا' : 'Gold We Owe'}</h3>
+                    <h3 class="text-yellow-400">ذهب لنا</h3>
                     <i class="fas fa-coins text-yellow-400"></i>
                 </div>
-                <p class="text-2xl font-bold text-yellow-400">${formatGold(totalGoldOn)}</p>
+                <p class="text-2xl font-bold text-yellow-400 numbers">${formatGold(totalGoldOn)}</p>
             </div>
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-yellow-600">${currentLanguage === 'ar' ? 'ذهب لهم' : 'Gold They Owe'}</h3>
+                    <h3 class="text-yellow-600">ذهب لهم</h3>
                     <i class="fas fa-coins text-yellow-600"></i>
                 </div>
-                <p class="text-2xl font-bold text-yellow-600">${formatGold(totalGoldFor)}</p>
+                <p class="text-2xl font-bold text-yellow-600 numbers">${formatGold(totalGoldFor)}</p>
             </div>
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-purple-400">${currentLanguage === 'ar' ? 'صافي الذهب' : 'Net Gold'}</h3>
+                    <h3 class="text-purple-400">صافي الذهب</h3>
                     <i class="fas fa-balance-scale text-purple-400"></i>
                 </div>
-                <p class="text-2xl font-bold text-purple-400">${formatGold(Math.abs(netGold))}</p>
+                <p class="text-2xl font-bold text-purple-400 numbers">${formatGold(Math.abs(netGold))}</p>
                 <p class="text-xs mt-2 ${netGold >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-                    ${netGold >= 0 ? (currentLanguage === 'ar' ? '✅ ذهب لنا' : '✅ Gold We Owe') : (currentLanguage === 'ar' ? '⚠️ ذهب علينا' : '⚠️ Gold They Owe')}
+                    ${netGold >= 0 ? '✅ ذهب لنا' : '⚠️ ذهب علينا'}
                 </p>
             </div>
             <div class="stat-card">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-gray-400">${currentLanguage === 'ar' ? 'عدد العملاء' : 'Clients'}</h3>
+                    <h3 class="text-gray-400">عدد العملاء</h3>
                     <i class="fas fa-users text-gray-400"></i>
                 </div>
-                <p class="text-2xl font-bold">${clients.length}</p>
+                <p class="text-2xl font-bold numbers">${clients.length}</p>
             </div>
         `;
 
@@ -2644,7 +2549,7 @@
             grid.innerHTML = `
                 <div class="col-span-full text-center py-12 text-gray-500">
                     <i class="fas fa-users text-4xl mb-3"></i>
-                    <p>${currentLanguage === 'ar' ? 'لا يوجد عملاء' : 'No clients found'}</p>
+                    <p>لا يوجد عملاء</p>
                 </div>
             `;
             return;
@@ -2656,58 +2561,58 @@
                 <div class="client-card animate-fadeIn" onclick="viewClient('${client.id}')">
                     <div class="flex justify-between items-start mb-3">
                         <div>
-                            <h3 class="font-semibold">${currentLanguage === 'ar' ? client.name : (client.name_en || client.name)}</h3>
+                            <h3 class="font-semibold">${client.name}</h3>
                             ${client.phone ? `<p class="text-xs text-gray-500">${client.phone}</p>` : ''}
                         </div>
                         <div class="flex gap-1 flex-wrap justify-end">
                             ${summary.netMoney !== 0 ? `
                                 <span class="badge ${summary.netMoney > 0 ? 'badge-warning' : 'badge-success'}">
-                                    ${summary.netMoney > 0 ? (currentLanguage === 'ar' ? 'له' : 'Owes') : (currentLanguage === 'ar' ? 'عليه' : 'Owed')}
+                                    ${summary.netMoney > 0 ? 'له' : 'عليه'}
                                 </span>
                             ` : ''}
                             ${summary.netGold !== 0 ? `
                                 <span class="badge badge-gold">
-                                    ${summary.netGold > 0 ? (currentLanguage === 'ar' ? 'ذهب له' : 'Gold Owes') : (currentLanguage === 'ar' ? 'ذهب عليه' : 'Gold Owed')}
+                                    ${summary.netGold > 0 ? 'ذهب له' : 'ذهب عليه'}
                                 </span>
                             ` : ''}
                             ${summary.netMoney === 0 && summary.netGold === 0 ? `
-                                <span class="badge badge-info">${currentLanguage === 'ar' ? 'متوازن' : 'Balanced'}</span>
+                                <span class="badge badge-info">متوازن</span>
                             ` : ''}
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 mb-3">
                         <div class="bg-tertiary p-2 rounded-lg">
-                            <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'له مال' : 'Owes'}</p>
-                            <p class="font-medium text-amber-400">${formatMoney(summary.moneyFor)}</p>
+                            <p class="text-xs text-gray-500">له مال</p>
+                            <p class="font-medium text-amber-400 numbers">${formatMoney(summary.moneyFor)}</p>
                         </div>
                         <div class="bg-tertiary p-2 rounded-lg">
-                            <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'عليه مال' : 'Owed'}</p>
-                            <p class="font-medium text-emerald-400">${formatMoney(summary.moneyOn)}</p>
+                            <p class="text-xs text-gray-500">عليه مال</p>
+                            <p class="font-medium text-emerald-400 numbers">${formatMoney(summary.moneyOn)}</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 mb-3">
                         <div class="bg-tertiary p-2 rounded-lg">
-                            <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'له ذهب' : 'Gold Owes'}</p>
-                            <p class="font-medium text-yellow-400">${formatGold(summary.goldFor)}</p>
+                            <p class="text-xs text-gray-500">له ذهب</p>
+                            <p class="font-medium text-yellow-400 numbers">${formatGold(summary.goldFor)}</p>
                         </div>
                         <div class="bg-tertiary p-2 rounded-lg">
-                            <p class="text-xs text-gray-500">${currentLanguage === 'ar' ? 'عليه ذهب' : 'Gold Owed'}</p>
-                            <p class="font-medium text-yellow-600">${formatGold(summary.goldOn)}</p>
+                            <p class="text-xs text-gray-500">عليه ذهب</p>
+                            <p class="font-medium text-yellow-600 numbers">${formatGold(summary.goldOn)}</p>
                         </div>
                     </div>
 
                     ${client.address ? `
                         <div class="text-xs text-gray-500 mb-2">
                             <i class="fas fa-map-marker-alt ml-1"></i>
-                            ${currentLanguage === 'ar' ? client.address : (client.address_en || client.address)}
+                            ${client.address}
                         </div>
                     ` : ''}
 
                     <div class="flex justify-between items-center text-xs text-gray-500 mt-3 pt-2 border-t border-border">
-                        <span><i class="fas fa-receipt ml-1"></i>${client.transactions.length} ${currentLanguage === 'ar' ? 'نقدية' : 'Cash'}</span>
-                        <span><i class="fas fa-coins ml-1"></i>${client.goldTransactions.length} ${currentLanguage === 'ar' ? 'ذهب' : 'Gold'}</span>
+                        <span><i class="fas fa-receipt ml-1"></i>${client.transactions.length} نقدية</span>
+                        <span><i class="fas fa-coins ml-1"></i>${client.goldTransactions.length} ذهب</span>
                         <span><i class="fas fa-calendar ml-1"></i>${formatDate(client.createdAt)}</span>
                     </div>
                 </div>
@@ -2722,7 +2627,7 @@
             container.innerHTML = `
                 <div class="col-span-full text-center py-12 text-gray-500">
                     <i class="fas fa-users text-4xl mb-3"></i>
-                    <p>${currentLanguage === 'ar' ? 'لا يوجد عملاء' : 'No clients found'}</p>
+                    <p>لا يوجد عملاء</p>
                 </div>
             `;
             return;
@@ -2734,24 +2639,24 @@
                 <div class="client-card" onclick="viewClient('${client.id}')">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h3 class="font-semibold">${currentLanguage === 'ar' ? client.name : (client.name_en || client.name)}</h3>
-                            <p class="text-sm text-gray-500">${client.phone || (currentLanguage === 'ar' ? 'لا يوجد رقم' : 'No phone')}</p>
+                            <h3 class="font-semibold">${client.name}</h3>
+                            <p class="text-sm text-gray-500">${client.phone || 'لا يوجد رقم'}</p>
                         </div>
                         <div class="text-left">
-                            <div class="${summary.netMoney > 0 ? 'text-amber-400' : summary.netMoney < 0 ? 'text-emerald-400' : 'text-gray-400'}">
-                                ${formatMoney(Math.abs(summary.netMoney))} ${summary.netMoney > 0 ? (currentLanguage === 'ar' ? 'له' : 'Owes') : summary.netMoney < 0 ? (currentLanguage === 'ar' ? 'عليه' : 'Owed') : ''}
+                            <div class="${summary.netMoney > 0 ? 'text-amber-400' : summary.netMoney < 0 ? 'text-emerald-400' : 'text-gray-400'} numbers">
+                                ${formatMoney(Math.abs(summary.netMoney))} ${summary.netMoney > 0 ? 'له' : summary.netMoney < 0 ? 'عليه' : ''}
                             </div>
                             ${summary.netGold !== 0 ? `
-                                <div class="text-yellow-400 text-sm">
-                                    ${formatGold(Math.abs(summary.netGold))} ${summary.netGold > 0 ? (currentLanguage === 'ar' ? 'له' : 'Owes') : (currentLanguage === 'ar' ? 'عليه' : 'Owed')}
+                                <div class="text-yellow-400 text-sm numbers">
+                                    ${formatGold(Math.abs(summary.netGold))} ${summary.netGold > 0 ? 'له' : 'عليه'}
                                 </div>
                             ` : ''}
                         </div>
                     </div>
                     <div class="mt-2 text-xs text-gray-500">
-                        <span>${client.transactions.length} ${currentLanguage === 'ar' ? 'معاملات نقدية' : 'Cash transactions'}</span>
+                        <span>${client.transactions.length} معاملات نقدية</span>
                         <span class="mx-2">|</span>
-                        <span>${client.goldTransactions.length} ${currentLanguage === 'ar' ? 'معاملات ذهب' : 'Gold transactions'}</span>
+                        <span>${client.goldTransactions.length} معاملات ذهب</span>
                     </div>
                 </div>
             `;
@@ -2768,13 +2673,10 @@
         }
 
         const filtered = clients.filter(c =>
-            (c.name && c.name.toLowerCase().includes(query)) ||
-            (c.name_en && c.name_en.toLowerCase().includes(query)) ||
+            c.name.toLowerCase().includes(query) ||
             (c.phone && c.phone.toLowerCase().includes(query)) ||
             (c.address && c.address.toLowerCase().includes(query)) ||
-            (c.address_en && c.address_en.toLowerCase().includes(query)) ||
-            (c.notes && c.notes.toLowerCase().includes(query)) ||
-            (c.notes_en && c.notes_en.toLowerCase().includes(query))
+            (c.notes && c.notes.toLowerCase().includes(query))
         );
 
         renderClientsList(filtered);
@@ -2793,18 +2695,45 @@
         renderClientsList(clients);
     }
 
+    // إدارة حقل بيان الذهب
+    document.addEventListener('DOMContentLoaded', function() {
+        const goldDesc = document.getElementById('client-gold-description');
+        const goldDescOther = document.getElementById('client-gold-description-other');
+        if (goldDesc) {
+            goldDesc.addEventListener('change', function() {
+                if (this.value === 'أخرى') {
+                    goldDescOther.classList.remove('hidden');
+                } else {
+                    goldDescOther.classList.add('hidden');
+                }
+            });
+        }
+
+        const goldDescModal = document.getElementById('gold-description');
+        const goldDescOtherModal = document.getElementById('gold-description-other');
+        if (goldDescModal) {
+            goldDescModal.addEventListener('change', function() {
+                if (this.value === 'أخرى') {
+                    goldDescOtherModal.classList.remove('hidden');
+                } else {
+                    goldDescOtherModal.classList.add('hidden');
+                }
+            });
+        }
+    });
+
     function addNewClient(andNew = false) {
         const name = document.getElementById('client-name').value.trim();
 
         if (!name) {
-            showToast(currentLanguage === 'ar' ? 'الرجاء إدخال اسم العميل' : 'Please enter client name', 'error');
+            showToast('الرجاء إدخال اسم العميل', 'error');
             return;
         }
 
         const clients = getCurrentUserClients();
 
-        if (clients.some(c => c.name === name || c.name_en === name)) {
-            showToast(currentLanguage === 'ar' ? 'هذا الاسم موجود مسبقاً' : 'This name already exists', 'error');
+        if (clients.some(c => c.name === name)) {
+            showToast('هذا الاسم موجود مسبقاً', 'error');
             return;
         }
 
@@ -2817,21 +2746,24 @@
         const goldFor = parseFloat(document.getElementById('client-gold-for').value) || 0;
         const goldOn = parseFloat(document.getElementById('client-gold-on').value) || 0;
 
+        let goldDescription = document.getElementById('client-gold-description').value;
+        if (goldDescription === 'أخرى') {
+            goldDescription = document.getElementById('client-gold-description-other').value.trim() || 'أخرى';
+        }
+
         const newClient = {
             id: Date.now().toString(),
             name: name,
-            name_en: name,
             phone: phone,
             address: address,
-            address_en: address,
             notes: notes,
-            notes_en: notes,
             userId: currentUser.id,
             createdAt: new Date().toISOString(),
             moneyFor: moneyFor,
             moneyOn: moneyOn,
             goldFor: goldFor,
             goldOn: goldOn,
+            goldDescription: goldDescription,
             transactions: [],
             goldTransactions: []
         };
@@ -2847,9 +2779,7 @@
                 type: txType,
                 amount: txAmount,
                 responsible: txResponsible,
-                responsible_en: txResponsible,
                 note: document.getElementById('initial-tx-note').value.trim(),
-                note_en: document.getElementById('initial-tx-note').value.trim(),
                 runningBalance: txType === 'out' ? txAmount : -txAmount
             });
         }
@@ -2867,7 +2797,7 @@
         localStorage.setItem(LAST_CLIENT_KEY, newClient.id);
         clientsCache = null;
 
-        showToast(currentLanguage === 'ar' ? 'تم إضافة العميل بنجاح' : 'Client added successfully', 'success');
+        showToast('تم إضافة العميل بنجاح', 'success');
 
         if (andNew) {
             document.getElementById('client-name').value = '';
@@ -2878,6 +2808,9 @@
             document.getElementById('client-money-on').value = '0';
             document.getElementById('client-gold-for').value = '0';
             document.getElementById('client-gold-on').value = '0';
+            document.getElementById('client-gold-description').value = '';
+            document.getElementById('client-gold-description-other').value = '';
+            document.getElementById('client-gold-description-other').classList.add('hidden');
             document.getElementById('initial-tx-type').value = '';
             document.getElementById('initial-tx-amount').value = '0';
             document.getElementById('initial-tx-responsible').value = '';
@@ -2901,24 +2834,24 @@
 
         let transactionsHtml = '';
         if (client.transactions.length === 0) {
-            transactionsHtml = `<p class="text-center py-4 text-gray-500">${currentLanguage === 'ar' ? 'لا توجد معاملات نقدية' : 'No cash transactions'}</p>`;
+            transactionsHtml = '<p class="text-center py-4 text-gray-500">لا توجد معاملات نقدية</p>';
         } else {
             transactionsHtml = client.transactions.map(t => `
                 <div class="bg-tertiary p-3 sm:p-4 rounded-lg mb-2">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">
-                            ${t.type === 'out' ? (currentLanguage === 'ar' ? 'تسليم' : 'Give') : (currentLanguage === 'ar' ? 'استلام' : 'Receive')}
+                            ${t.type === 'out' ? 'تسليم' : 'استلام'}
                         </span>
-                        <span class="font-bold text-lg">${formatMoney(t.amount)}</span>
+                        <span class="font-bold text-lg numbers">${formatMoney(t.amount)}</span>
                     </div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-gray-500 mt-2 gap-2">
-                        <span><i class="fas fa-user ml-1"></i>${currentLanguage === 'ar' ? t.responsible : (t.responsible_en || t.responsible)}</span>
+                        <span><i class="fas fa-user ml-1"></i>${t.responsible}</span>
                         <span><i class="fas fa-clock ml-1"></i>${formatDate(t.date)}</span>
                     </div>
-                    ${t.note ? `<div class="text-xs text-gray-500 mt-2"><i class="fas fa-sticky-note ml-1"></i>${currentLanguage === 'ar' ? t.note : (t.note_en || t.note)}</div>` : ''}
+                    ${t.note ? `<div class="text-xs text-gray-500 mt-2"><i class="fas fa-sticky-note ml-1"></i>${t.note}</div>` : ''}
                     <div class="text-left mt-3">
                         <button onclick="deleteTransaction('${t.id}')" class="text-rose-500 hover:text-rose-400 text-xs">
-                            <i class="fas fa-trash"></i> ${currentLanguage === 'ar' ? 'حذف' : 'Delete'}
+                            <i class="fas fa-trash"></i> حذف
                         </button>
                     </div>
                 </div>
@@ -2927,24 +2860,25 @@
 
         let goldTransactionsHtml = '';
         if (client.goldTransactions.length === 0) {
-            goldTransactionsHtml = `<p class="text-center py-4 text-gray-500">${currentLanguage === 'ar' ? 'لا توجد معاملات ذهب' : 'No gold transactions'}</p>`;
+            goldTransactionsHtml = '<p class="text-center py-4 text-gray-500">لا توجد معاملات ذهب</p>';
         } else {
             goldTransactionsHtml = client.goldTransactions.map(t => `
                 <div class="bg-tertiary p-3 sm:p-4 rounded-lg mb-2">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <span class="badge badge-gold">
-                            ${t.type === 'out' ? (currentLanguage === 'ar' ? 'له ذهب' : 'Gold Owes') : (currentLanguage === 'ar' ? 'عليه ذهب' : 'Gold Owed')}
+                            ${t.type === 'out' ? 'له ذهب' : 'عليه ذهب'}
                         </span>
-                        <span class="font-bold text-lg text-yellow-400">${formatGold(t.amount)}</span>
+                        <span class="font-bold text-lg text-yellow-400 numbers">${formatGold(t.amount)}</span>
                     </div>
+                    ${t.description ? `<div class="text-xs text-yellow-400 mt-1"><i class="fas fa-tag ml-1"></i>${t.description}</div>` : ''}
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-gray-500 mt-2 gap-2">
-                        <span><i class="fas fa-user ml-1"></i>${currentLanguage === 'ar' ? t.responsible : (t.responsible_en || t.responsible)}</span>
+                        <span><i class="fas fa-user ml-1"></i>${t.responsible}</span>
                         <span><i class="fas fa-clock ml-1"></i>${formatDate(t.date)}</span>
                     </div>
-                    ${t.note ? `<div class="text-xs text-gray-500 mt-2"><i class="fas fa-sticky-note ml-1"></i>${currentLanguage === 'ar' ? t.note : (t.note_en || t.note)}</div>` : ''}
+                    ${t.note ? `<div class="text-xs text-gray-500 mt-2"><i class="fas fa-sticky-note ml-1"></i>${t.note}</div>` : ''}
                     <div class="text-left mt-3">
                         <button onclick="deleteGoldTransaction('${t.id}')" class="text-rose-500 hover:text-rose-400 text-xs">
-                            <i class="fas fa-trash"></i> ${currentLanguage === 'ar' ? 'حذف' : 'Delete'}
+                            <i class="fas fa-trash"></i> حذف
                         </button>
                     </div>
                 </div>
@@ -2954,12 +2888,12 @@
         document.getElementById('client-details').innerHTML = `
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
-                    <h2 class="text-2xl font-bold">${currentLanguage === 'ar' ? client.name : (client.name_en || client.name)}</h2>
+                    <h2 class="text-2xl font-bold">${client.name}</h2>
                     ${client.phone ? `<p class="text-gray-500 mt-2"><i class="fas fa-phone ml-2"></i>${client.phone}</p>` : ''}
-                    ${client.address ? `<p class="text-gray-500 mt-1"><i class="fas fa-map-marker-alt ml-2"></i>${currentLanguage === 'ar' ? client.address : (client.address_en || client.address)}</p>` : ''}
+                    ${client.address ? `<p class="text-gray-500 mt-1"><i class="fas fa-map-marker-alt ml-2"></i>${client.address}</p>` : ''}
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="deleteClient('${client.id}')" class="btn-icon" title="${currentLanguage === 'ar' ? 'حذف العميل' : 'Delete client'}">
+                    <button onclick="deleteClient('${client.id}')" class="btn-icon" title="حذف العميل">
                         <i class="fas fa-trash text-rose-500"></i>
                     </button>
                 </div>
@@ -2967,44 +2901,50 @@
 
             ${client.notes ? `
                 <div class="mb-6 p-4 bg-tertiary rounded-xl">
-                    <p class="text-sm text-gray-400"><i class="fas fa-sticky-note ml-2"></i>${currentLanguage === 'ar' ? 'ملاحظات' : 'Notes'}: ${currentLanguage === 'ar' ? client.notes : (client.notes_en || client.notes)}</p>
+                    <p class="text-sm text-gray-400"><i class="fas fa-sticky-note ml-2"></i>ملاحظات: ${client.notes}</p>
                 </div>
             ` : ''}
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div class="bg-tertiary p-4 rounded-xl text-center">
-                    <p class="text-sm text-gray-500">${currentLanguage === 'ar' ? 'له مال' : 'Owes'}</p>
-                    <p class="text-xl font-bold text-amber-400">${formatMoney(summary.moneyFor)}</p>
+                    <p class="text-sm text-gray-500">له مال</p>
+                    <p class="text-xl font-bold text-amber-400 numbers">${formatMoney(summary.moneyFor)}</p>
                 </div>
                 <div class="bg-tertiary p-4 rounded-xl text-center">
-                    <p class="text-sm text-gray-500">${currentLanguage === 'ar' ? 'عليه مال' : 'Owed'}</p>
-                    <p class="text-xl font-bold text-emerald-400">${formatMoney(summary.moneyOn)}</p>
+                    <p class="text-sm text-gray-500">عليه مال</p>
+                    <p class="text-xl font-bold text-emerald-400 numbers">${formatMoney(summary.moneyOn)}</p>
                 </div>
                 <div class="bg-tertiary p-4 rounded-xl text-center">
-                    <p class="text-sm text-gray-500">${currentLanguage === 'ar' ? 'له ذهب' : 'Gold Owes'}</p>
-                    <p class="text-xl font-bold text-yellow-400">${formatGold(summary.goldFor)}</p>
+                    <p class="text-sm text-gray-500">له ذهب</p>
+                    <p class="text-xl font-bold text-yellow-400 numbers">${formatGold(summary.goldFor)}</p>
                 </div>
                 <div class="bg-tertiary p-4 rounded-xl text-center">
-                    <p class="text-sm text-gray-500">${currentLanguage === 'ar' ? 'عليه ذهب' : 'Gold Owed'}</p>
-                    <p class="text-xl font-bold text-yellow-600">${formatGold(summary.goldOn)}</p>
+                    <p class="text-sm text-gray-500">عليه ذهب</p>
+                    <p class="text-xl font-bold text-yellow-600 numbers">${formatGold(summary.goldOn)}</p>
                 </div>
             </div>
+
+            ${client.goldDescription ? `
+                <div class="mb-6 p-3 bg-tertiary rounded-lg">
+                    <p class="text-sm"><span class="text-gray-500">بيان الذهب:</span> <span class="text-yellow-400">${client.goldDescription}</span></p>
+                </div>
+            ` : ''}
 
             <div class="flex flex-col sm:flex-row gap-4 mb-8">
                 <button onclick="openTransactionModal()" class="btn-primary flex-1">
                     <i class="fas fa-plus ml-2"></i>
-                    ${currentLanguage === 'ar' ? 'إضافة معاملة نقدية' : 'Add Money Transaction'}
+                    إضافة معاملة نقدية
                 </button>
                 <button onclick="openGoldModal()" class="btn-gold flex-1">
                     <i class="fas fa-coins ml-2"></i>
-                    ${currentLanguage === 'ar' ? 'إضافة معاملة ذهب' : 'Add Gold Transaction'}
+                    إضافة معاملة ذهب
                 </button>
             </div>
 
             <div class="mb-8">
                 <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
                     <i class="fas fa-money-bill-wave text-emerald-400"></i>
-                    ${currentLanguage === 'ar' ? 'المعاملات النقدية' : 'Cash Transactions'}
+                    المعاملات النقدية
                 </h3>
                 ${transactionsHtml}
             </div>
@@ -3012,7 +2952,7 @@
             <div>
                 <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
                     <i class="fas fa-coins text-yellow-400"></i>
-                    ${currentLanguage === 'ar' ? 'معاملات الذهب' : 'Gold Transactions'}
+                    معاملات الذهب
                 </h3>
                 ${goldTransactionsHtml}
             </div>
@@ -3022,9 +2962,7 @@
     }
 
     function deleteClient(clientId) {
-        document.getElementById('delete-message').textContent = currentLanguage === 'ar' ? 
-            'هل أنت متأكد من حذف هذا العميل وجميع معاملاته؟' : 
-            'Are you sure you want to delete this client and all their transactions?';
+        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف هذا العميل وجميع معاملاته؟';
         document.getElementById('delete-modal').classList.add('active');
 
         deleteCallback = () => {
@@ -3050,7 +2988,7 @@
             clientsCache = null;
             loadUserData();
             showPage('dashboard');
-            showToast(currentLanguage === 'ar' ? 'تم حذف العميل' : 'Client deleted', 'success');
+            showToast('تم حذف العميل', 'success');
         };
     }
 
@@ -3086,12 +3024,12 @@
         const note = document.getElementById('transaction-note').value.trim();
 
         if (isNaN(amount) || amount <= 0) {
-            showToast(currentLanguage === 'ar' ? 'الرجاء إدخال مبلغ صحيح' : 'Please enter a valid amount', 'error');
+            showToast('الرجاء إدخال مبلغ صحيح', 'error');
             return;
         }
 
         if (!responsible) {
-            showToast(currentLanguage === 'ar' ? 'الرجاء إدخال اسم المسؤول' : 'Please enter responsible name', 'error');
+            showToast('الرجاء إدخال اسم المسؤول', 'error');
             return;
         }
 
@@ -3114,9 +3052,7 @@
             type: currentTransactionType,
             amount: amount,
             responsible: responsible,
-            responsible_en: responsible,
             note: note,
-            note_en: note,
             runningBalance: newRunningBalance
         };
 
@@ -3136,13 +3072,11 @@
         clientsCache = null;
         closeTransactionModal();
         viewClient(currentClientId);
-        showToast(currentLanguage === 'ar' ? 'تم إضافة المعاملة بنجاح' : 'Transaction added successfully', 'success');
+        showToast('تم إضافة المعاملة بنجاح', 'success');
     }
 
     function deleteTransaction(transactionId) {
-        document.getElementById('delete-message').textContent = currentLanguage === 'ar' ? 
-            'هل أنت متأكد من حذف هذه المعاملة؟' : 
-            'Are you sure you want to delete this transaction?';
+        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف هذه المعاملة؟';
         document.getElementById('delete-modal').classList.add('active');
 
         deleteCallback = () => {
@@ -3177,7 +3111,7 @@
 
             clientsCache = null;
             viewClient(currentClientId);
-            showToast(currentLanguage === 'ar' ? 'تم حذف المعاملة' : 'Transaction deleted', 'success');
+            showToast('تم حذف المعاملة', 'success');
         };
     }
 
@@ -3186,6 +3120,9 @@
         document.getElementById('gold-amount').value = '';
         document.getElementById('gold-responsible').value = '';
         document.getElementById('gold-note').value = '';
+        document.getElementById('gold-description').value = '';
+        document.getElementById('gold-description-other').value = '';
+        document.getElementById('gold-description-other').classList.add('hidden');
         setGoldType('out');
     }
 
@@ -3212,13 +3149,18 @@
         const responsible = document.getElementById('gold-responsible').value.trim();
         const note = document.getElementById('gold-note').value.trim();
 
+        let description = document.getElementById('gold-description').value;
+        if (description === 'أخرى') {
+            description = document.getElementById('gold-description-other').value.trim() || 'أخرى';
+        }
+
         if (isNaN(amount) || amount <= 0) {
-            showToast(currentLanguage === 'ar' ? 'الرجاء إدخال عدد جرامات صحيح' : 'Please enter a valid amount of grams', 'error');
+            showToast('الرجاء إدخال عدد جرامات صحيح', 'error');
             return;
         }
 
         if (!responsible) {
-            showToast(currentLanguage === 'ar' ? 'الرجاء إدخال اسم المسؤول' : 'Please enter responsible name', 'error');
+            showToast('الرجاء إدخال اسم المسؤول', 'error');
             return;
         }
 
@@ -3241,9 +3183,8 @@
             type: currentGoldType,
             amount: amount,
             responsible: responsible,
-            responsible_en: responsible,
             note: note,
-            note_en: note,
+            description: description,
             runningBalance: newRunningBalance
         };
 
@@ -3263,13 +3204,11 @@
         clientsCache = null;
         closeGoldModal();
         viewClient(currentClientId);
-        showToast(currentLanguage === 'ar' ? 'تم إضافة معاملة الذهب بنجاح' : 'Gold transaction added successfully', 'success');
+        showToast('تم إضافة معاملة الذهب بنجاح', 'success');
     }
 
     function deleteGoldTransaction(transactionId) {
-        document.getElementById('delete-message').textContent = currentLanguage === 'ar' ? 
-            'هل أنت متأكد من حذف معاملة الذهب هذه؟' : 
-            'Are you sure you want to delete this gold transaction?';
+        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف معاملة الذهب هذه؟';
         document.getElementById('delete-modal').classList.add('active');
 
         deleteCallback = () => {
@@ -3304,7 +3243,7 @@
 
             clientsCache = null;
             viewClient(currentClientId);
-            showToast(currentLanguage === 'ar' ? 'تم حذف معاملة الذهب' : 'Gold transaction deleted', 'success');
+            showToast('تم حذف معاملة الذهب', 'success');
         };
     }
 
@@ -3312,13 +3251,20 @@
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById(`${page}-page`).classList.remove('hidden');
 
-        document.querySelectorAll('.vertical-nav-item').forEach(item => {
+        document.querySelectorAll('.nav-item').forEach(item => {
             item.classList.remove('active');
         });
 
         const navItem = document.querySelector(`[data-page="${page}"]`);
         if (navItem) {
             navItem.classList.add('active');
+        }
+
+        // على الهاتف، إغلاق القائمة بعد الاختيار
+        if (window.innerWidth <= 768) {
+            const nav = document.getElementById('nav-sidebar');
+            nav.classList.add('collapsed');
+            document.getElementById('nav-toggle-btn').innerHTML = '<i class="fas fa-bars"></i><span>القائمة</span>';
         }
 
         if (page === 'dashboard') {
@@ -3350,26 +3296,147 @@
 
         document.getElementById('report-stats').innerHTML = `
             <div class="flex justify-between py-2 border-b border-border">
-                <span>${currentLanguage === 'ar' ? 'عدد العملاء' : 'Total Clients'}</span>
-                <span class="font-bold">${totalClients}</span>
+                <span>عدد العملاء</span>
+                <span class="font-bold numbers">${totalClients}</span>
             </div>
             <div class="flex justify-between py-2 border-b border-border">
-                <span>${currentLanguage === 'ar' ? 'عدد المعاملات النقدية' : 'Cash Transactions'}</span>
-                <span class="font-bold">${totalTransactions}</span>
+                <span>عدد المعاملات النقدية</span>
+                <span class="font-bold numbers">${totalTransactions}</span>
             </div>
             <div class="flex justify-between py-2 border-b border-border">
-                <span>${currentLanguage === 'ar' ? 'عدد معاملات الذهب' : 'Gold Transactions'}</span>
-                <span class="font-bold">${totalGoldTransactions}</span>
+                <span>عدد معاملات الذهب</span>
+                <span class="font-bold numbers">${totalGoldTransactions}</span>
             </div>
             <div class="flex justify-between py-2 border-b border-border">
-                <span>${currentLanguage === 'ar' ? 'إجمالي المبالغ' : 'Total Amount'}</span>
-                <span class="font-bold text-emerald-400">${formatMoney(totalAmount)}</span>
+                <span>إجمالي المبالغ</span>
+                <span class="font-bold text-emerald-400 numbers">${formatMoney(totalAmount)}</span>
             </div>
             <div class="flex justify-between py-2">
-                <span>${currentLanguage === 'ar' ? 'إجمالي الذهب' : 'Total Gold'}</span>
-                <span class="font-bold text-yellow-400">${formatGold(totalGold)}</span>
+                <span>إجمالي الذهب</span>
+                <span class="font-bold text-yellow-400 numbers">${formatGold(totalGold)}</span>
             </div>
         `;
+    }
+
+    // ==================== دوال التصدير (PDF المحسّن) ====================
+    async function exportToPDF() {
+        showLoading();
+
+        try {
+            // التقاط لقطة للصفحة الحالية أو إنشاء تقرير منظم
+            const element = document.createElement('div');
+            element.style.padding = '30px';
+            element.style.background = '#ffffff';
+            element.style.color = '#000000';
+            element.style.direction = 'rtl';
+            element.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
+            
+            const clients = getCurrentUserClients();
+            
+            // عنوان التقرير
+            element.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="color: #22c55e; font-size: 28px; margin-bottom: 10px;">تقرير العملاء</h1>
+                    <p style="color: #666;">${new Date().toLocaleDateString('ar-EG')}</p>
+                </div>
+            `;
+
+            // إحصائيات عامة
+            const totalMoneyFor = clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0);
+            const totalMoneyOn = clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0);
+            const totalGoldFor = clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0);
+            const totalGoldOn = clients.reduce((s, c) => s + getClientSummary(c).goldOn, 0);
+
+            element.innerHTML += `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; padding: 20px; background: #f3f4f6; border-radius: 10px;">
+                    <div>
+                        <div style="color: #22c55e;">إجمالي ما لنا</div>
+                        <div style="font-size: 18px; font-weight: bold;">${formatMoney(totalMoneyOn)}</div>
+                    </div>
+                    <div>
+                        <div style="color: #f59e0b;">إجمالي ما لهم</div>
+                        <div style="font-size: 18px; font-weight: bold;">${formatMoney(totalMoneyFor)}</div>
+                    </div>
+                    <div>
+                        <div style="color: #fbbf24;">ذهب لنا</div>
+                        <div style="font-size: 18px; font-weight: bold;">${formatGold(totalGoldOn)}</div>
+                    </div>
+                    <div>
+                        <div style="color: #b45309;">ذهب لهم</div>
+                        <div style="font-size: 18px; font-weight: bold;">${formatGold(totalGoldFor)}</div>
+                    </div>
+                </div>
+            `;
+
+            // تفاصيل العملاء
+            clients.forEach((client, index) => {
+                const summary = getClientSummary(client);
+                element.innerHTML += `
+                    <div style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; margin-bottom: 20px; page-break-inside: avoid;">
+                        <h2 style="color: #22c55e; font-size: 20px; margin-bottom: 15px;">${client.name}</h2>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #f59e0b;">له مال</div>
+                                <div style="font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
+                            </div>
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #22c55e;">عليه مال</div>
+                                <div style="font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
+                            </div>
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #fbbf24;">له ذهب</div>
+                                <div style="font-weight: bold;">${formatGold(summary.goldFor)}</div>
+                            </div>
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #b45309;">عليه ذهب</div>
+                                <div style="font-weight: bold;">${formatGold(summary.goldOn)}</div>
+                            </div>
+                        </div>
+                        
+                        ${client.phone ? `<p style="color: #666;"><strong>الهاتف:</strong> ${client.phone}</p>` : ''}
+                        ${client.address ? `<p style="color: #666;"><strong>العنوان:</strong> ${client.address}</p>` : ''}
+                        ${client.goldDescription ? `<p style="color: #fbbf24;"><strong>بيان الذهب:</strong> ${client.goldDescription}</p>` : ''}
+                        
+                        <div style="margin-top: 15px; color: #666;">
+                            <span>${client.transactions.length} معاملة نقدية | ${client.goldTransactions.length} معاملة ذهب</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // تحويل إلى canvas ثم إلى PDF
+            document.body.appendChild(element);
+            
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                allowTaint: true,
+                useCORS: true
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [canvas.width * 0.75, canvas.height * 0.75]
+            });
+
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width * 0.75, canvas.height * 0.75);
+            pdf.save(`financial_report_${new Date().toISOString().split('T')[0]}.pdf`);
+
+            document.body.removeChild(element);
+            
+            showToast('تم تصدير التقرير PDF بنجاح', 'success');
+        } catch (error) {
+            console.error('PDF Error:', error);
+            showToast('حدث خطأ في تصدير PDF', 'error');
+        } finally {
+            hideLoading();
+        }
     }
 
     function exportToExcel() {
@@ -3379,323 +3446,111 @@
         const clientsData = clients.map(client => {
             const summary = getClientSummary(client);
             return {
-                [currentLanguage === 'ar' ? 'الاسم' : 'Name']: currentLanguage === 'ar' ? client.name : (client.name_en || client.name),
-                [currentLanguage === 'ar' ? 'الجوال' : 'Phone']: client.phone || '-',
-                [currentLanguage === 'ar' ? 'العنوان' : 'Address']: currentLanguage === 'ar' ? client.address || '-' : (client.address_en || client.address || '-'),
-                [currentLanguage === 'ar' ? 'له مال' : 'Owes Money']: summary.moneyFor,
-                [currentLanguage === 'ar' ? 'عليه مال' : 'Owed Money']: summary.moneyOn,
-                [currentLanguage === 'ar' ? 'له ذهب' : 'Owes Gold']: summary.goldFor,
-                [currentLanguage === 'ar' ? 'عليه ذهب' : 'Owed Gold']: summary.goldOn
+                'الاسم': client.name,
+                'الجوال': client.phone || '-',
+                'العنوان': client.address || '-',
+                'له مال': summary.moneyFor,
+                'عليه مال': summary.moneyOn,
+                'صافي المال': summary.netMoney,
+                'له ذهب': summary.goldFor,
+                'عليه ذهب': summary.goldOn,
+                'صافي الذهب': summary.netGold,
+                'بيان الذهب': client.goldDescription || '-',
+                'ملاحظات': client.notes || '-'
             };
         });
 
         const wsClients = XLSX.utils.json_to_sheet(clientsData);
-        XLSX.utils.book_append_sheet(wb, wsClients, currentLanguage === 'ar' ? 'العملاء' : 'Clients');
+        XLSX.utils.book_append_sheet(wb, wsClients, 'العملاء');
 
         clients.forEach(client => {
             const transactions = [];
 
             client.transactions.forEach(t => {
                 transactions.push({
-                    [currentLanguage === 'ar' ? 'التاريخ' : 'Date']: formatDate(t.date),
-                    [currentLanguage === 'ar' ? 'النوع' : 'Type']: currentLanguage === 'ar' ? 
-                        (t.type === 'out' ? 'تسليم' : 'استلام') : 
-                        (t.type === 'out' ? 'Give' : 'Receive'),
-                    [currentLanguage === 'ar' ? 'المبلغ' : 'Amount']: t.amount,
-                    [currentLanguage === 'ar' ? 'المسؤول' : 'Responsible']: currentLanguage === 'ar' ? t.responsible : (t.responsible_en || t.responsible),
-                    [currentLanguage === 'ar' ? 'ملاحظات' : 'Notes']: currentLanguage === 'ar' ? t.note || '-' : (t.note_en || t.note || '-')
+                    'التاريخ': formatDate(t.date),
+                    'النوع': 'نقدي - ' + (t.type === 'out' ? 'تسليم' : 'استلام'),
+                    'المبلغ': t.amount,
+                    'المسؤول': t.responsible,
+                    'ملاحظات': t.note || '-'
                 });
             });
 
             client.goldTransactions.forEach(t => {
                 transactions.push({
-                    [currentLanguage === 'ar' ? 'التاريخ' : 'Date']: formatDate(t.date),
-                    [currentLanguage === 'ar' ? 'النوع' : 'Type']: currentLanguage === 'ar' ? 
-                        (t.type === 'out' ? 'له ذهب' : 'عليه ذهب') : 
-                        (t.type === 'out' ? 'Gold Owes' : 'Gold Owed'),
-                    [currentLanguage === 'ar' ? 'المبلغ' : 'Amount']: t.amount,
-                    [currentLanguage === 'ar' ? 'المسؤول' : 'Responsible']: currentLanguage === 'ar' ? t.responsible : (t.responsible_en || t.responsible),
-                    [currentLanguage === 'ar' ? 'ملاحظات' : 'Notes']: currentLanguage === 'ar' ? t.note || '-' : (t.note_en || t.note || '-')
+                    'التاريخ': formatDate(t.date),
+                    'النوع': 'ذهب - ' + (t.type === 'out' ? 'له' : 'عليه'),
+                    'الكمية': t.amount,
+                    'البيان': t.description || '-',
+                    'المسؤول': t.responsible,
+                    'ملاحظات': t.note || '-'
                 });
             });
 
             if (transactions.length > 0) {
                 const wsClient = XLSX.utils.json_to_sheet(transactions);
-                const sheetName = (currentLanguage === 'ar' ? client.name : (client.name_en || client.name)).substring(0, 20);
-                XLSX.utils.book_append_sheet(wb, wsClient, sheetName);
+                XLSX.utils.book_append_sheet(wb, wsClient, client.name.substring(0, 20));
             }
         });
 
         XLSX.writeFile(wb, `financial_report_${new Date().toISOString().split('T')[0]}.xlsx`);
-        showToast(currentLanguage === 'ar' ? 'تم تصدير التقرير بنجاح' : 'Report exported successfully', 'success');
-    }
-
-    async function exportToPDF() {
-        showLoading();
-
-        try {
-            const clients = getCurrentUserClients();
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'pt', 'a4');
-
-            doc.setFont(currentLanguage === 'ar' ? 'helvetica' : 'helvetica');
-            if (currentLanguage === 'ar') {
-                doc.setR2L(true);
-            }
-
-            // Cover Page
-            doc.setFontSize(28);
-            doc.setTextColor(34, 197, 94);
-            doc.text(currentLanguage === 'ar' ? 'تقرير العملاء' : 'Clients Report', doc.internal.pageSize.width / 2, 100, { align: 'center' });
-
-            doc.setFontSize(14);
-            doc.setTextColor(100);
-            doc.text(new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : 'en-US'), doc.internal.pageSize.width / 2, 140, { align: 'center' });
-
-            doc.setFontSize(16);
-            doc.setTextColor(34, 197, 94);
-            doc.text(currentLanguage === 'ar' ? 'ملخص عام' : 'Summary', doc.internal.pageSize.width / 2, 180, { align: 'center' });
-
-            const totalMoneyFor = clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0);
-            const totalMoneyOn = clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0);
-            const totalGoldFor = clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0);
-            const totalGoldOn = clients.reduce((s, c) => s + getClientSummary(c).goldOn, 0);
-
-            doc.setFontSize(12);
-            doc.setTextColor(50);
-            let yPos = 220;
-            const lineHeight = 20;
-
-            doc.text(`${currentLanguage === 'ar' ? 'إجمالي العملاء' : 'Total Clients'}: ${clients.length}`, 70, yPos);
-            yPos += lineHeight;
-            doc.text(`${currentLanguage === 'ar' ? 'إجمالي ما لنا' : 'Total We Owe'}: ${formatMoney(totalMoneyOn)}`, 70, yPos);
-            yPos += lineHeight;
-            doc.text(`${currentLanguage === 'ar' ? 'إجمالي ما لهم' : 'Total They Owe'}: ${formatMoney(totalMoneyFor)}`, 70, yPos);
-            yPos += lineHeight;
-            doc.text(`${currentLanguage === 'ar' ? 'إجمالي الذهب لنا' : 'Total Gold We Owe'}: ${formatGold(totalGoldOn)}`, 70, yPos);
-            yPos += lineHeight;
-            doc.text(`${currentLanguage === 'ar' ? 'إجمالي الذهب لهم' : 'Total Gold They Owe'}: ${formatGold(totalGoldFor)}`, 70, yPos);
-
-            // Each client
-            for (let i = 0; i < clients.length; i++) {
-                const client = clients[i];
-                const summary = getClientSummary(client);
-
-                doc.addPage();
-                yPos = 50;
-
-                doc.setFontSize(20);
-                doc.setTextColor(34, 197, 94);
-                doc.text(currentLanguage === 'ar' ? client.name : (client.name_en || client.name), 70, yPos);
-                yPos += 30;
-
-                doc.setFontSize(11);
-                doc.setTextColor(80);
-                if (client.phone) {
-                    doc.text(`${currentLanguage === 'ar' ? 'الجوال' : 'Phone'}: ${client.phone}`, 70, yPos);
-                    yPos += 20;
-                }
-                if (client.address) {
-                    doc.text(`${currentLanguage === 'ar' ? 'العنوان' : 'Address'}: ${currentLanguage === 'ar' ? client.address : (client.address_en || client.address)}`, 70, yPos);
-                    yPos += 20;
-                }
-                if (client.notes) {
-                    doc.text(`${currentLanguage === 'ar' ? 'ملاحظات' : 'Notes'}: ${currentLanguage === 'ar' ? client.notes : (client.notes_en || client.notes)}`, 70, yPos);
-                    yPos += 30;
-                }
-
-                // Money Summary
-                doc.setFontSize(14);
-                doc.setTextColor(34, 197, 94);
-                doc.text(currentLanguage === 'ar' ? 'المبالغ المالية' : 'Money', 70, yPos);
-                yPos += 20;
-
-                doc.setFontSize(11);
-                doc.setTextColor(245, 158, 11);
-                doc.text(`${currentLanguage === 'ar' ? 'له' : 'Owes'}: ${formatMoney(summary.moneyFor)}`, 90, yPos);
-                yPos += 15;
-                doc.setTextColor(34, 197, 94);
-                doc.text(`${currentLanguage === 'ar' ? 'عليه' : 'Owed'}: ${formatMoney(summary.moneyOn)}`, 90, yPos);
-                yPos += 20;
-
-                // Gold Summary
-                doc.setFontSize(14);
-                doc.setTextColor(251, 191, 36);
-                doc.text(currentLanguage === 'ar' ? 'الذهب' : 'Gold', 70, yPos);
-                yPos += 20;
-
-                doc.setFontSize(11);
-                doc.setTextColor(251, 191, 36);
-                doc.text(`${currentLanguage === 'ar' ? 'له ذهب' : 'Gold Owes'}: ${formatGold(summary.goldFor)}`, 90, yPos);
-                yPos += 15;
-                doc.setTextColor(180, 130, 0);
-                doc.text(`${currentLanguage === 'ar' ? 'عليه ذهب' : 'Gold Owed'}: ${formatGold(summary.goldOn)}`, 90, yPos);
-                yPos += 20;
-
-                // Transactions
-                if (client.transactions.length > 0 || client.goldTransactions.length > 0) {
-                    doc.setFontSize(14);
-                    doc.setTextColor(34, 197, 94);
-                    doc.text(currentLanguage === 'ar' ? 'المعاملات' : 'Transactions', 70, yPos);
-                    yPos += 20;
-
-                    // Cash transactions
-                    if (client.transactions.length > 0) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(34, 197, 94);
-                        doc.text(currentLanguage === 'ar' ? 'المعاملات النقدية' : 'Cash Transactions', 90, yPos);
-                        yPos += 20;
-
-                        client.transactions.forEach((t, idx) => {
-                            if (yPos > 700) {
-                                doc.addPage();
-                                yPos = 50;
-                            }
-
-                            doc.setFontSize(10);
-                            doc.setTextColor(100);
-                            doc.text(`${idx + 1}. ${currentLanguage === 'ar' ? 'التاريخ' : 'Date'}: ${formatDate(t.date)}`, 110, yPos);
-                            yPos += 15;
-                            doc.text(`   ${currentLanguage === 'ar' ? 'النوع' : 'Type'}: ${t.type === 'out' ? (currentLanguage === 'ar' ? 'تسليم' : 'Give') : (currentLanguage === 'ar' ? 'استلام' : 'Receive')}`, 110, yPos);
-                            yPos += 15;
-                            doc.text(`   ${currentLanguage === 'ar' ? 'المبلغ' : 'Amount'}: ${formatMoney(t.amount)}`, 110, yPos);
-                            yPos += 15;
-                            doc.text(`   ${currentLanguage === 'ar' ? 'المسؤول' : 'Responsible'}: ${currentLanguage === 'ar' ? t.responsible : (t.responsible_en || t.responsible)}`, 110, yPos);
-                            yPos += 20;
-                        });
-                    }
-
-                    // Gold transactions
-                    if (client.goldTransactions.length > 0) {
-                        doc.setFontSize(12);
-                        doc.setTextColor(251, 191, 36);
-                        doc.text(currentLanguage === 'ar' ? 'معاملات الذهب' : 'Gold Transactions', 90, yPos);
-                        yPos += 20;
-
-                        client.goldTransactions.forEach((t, idx) => {
-                            if (yPos > 700) {
-                                doc.addPage();
-                                yPos = 50;
-                            }
-
-                            doc.setFontSize(10);
-                            doc.setTextColor(100);
-                            doc.text(`${idx + 1}. ${currentLanguage === 'ar' ? 'التاريخ' : 'Date'}: ${formatDate(t.date)}`, 110, yPos);
-                            yPos += 15;
-                            doc.text(`   ${currentLanguage === 'ar' ? 'النوع' : 'Type'}: ${t.type === 'out' ? (currentLanguage === 'ar' ? 'له ذهب' : 'Gold Owes') : (currentLanguage === 'ar' ? 'عليه ذهب' : 'Gold Owed')}`, 110, yPos);
-                            yPos += 15;
-                            doc.text(`   ${currentLanguage === 'ar' ? 'الكمية' : 'Amount'}: ${formatGold(t.amount)}`, 110, yPos);
-                            yPos += 15;
-                            doc.text(`   ${currentLanguage === 'ar' ? 'المسؤول' : 'Responsible'}: ${currentLanguage === 'ar' ? t.responsible : (t.responsible_en || t.responsible)}`, 110, yPos);
-                            yPos += 20;
-                        });
-                    }
-                }
-            }
-
-            doc.save(`financial_report_${new Date().toISOString().split('T')[0]}.pdf`);
-            showToast(currentLanguage === 'ar' ? 'تم تصدير التقرير بنجاح' : 'Report exported successfully', 'success');
-        } catch (error) {
-            console.error('PDF Error:', error);
-            showToast(currentLanguage === 'ar' ? 'حدث خطأ في تصدير PDF' : 'Error exporting PDF', 'error');
-        } finally {
-            hideLoading();
-        }
+        showToast('تم تصدير التقرير بنجاح', 'success');
     }
 
     async function exportToImage() {
         showLoading();
 
         try {
+            const element = document.createElement('div');
+            element.style.padding = '30px';
+            element.style.background = '#ffffff';
+            element.style.color = '#000000';
+            element.style.direction = 'rtl';
+            element.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
+            
             const clients = getCurrentUserClients();
-            const container = document.createElement('div');
-            container.style.direction = currentLanguage === 'ar' ? 'rtl' : 'ltr';
-            container.style.padding = '30px';
-            container.style.background = '#ffffff';
-            container.style.color = '#1a1a2e';
-            container.style.fontFamily = currentLanguage === 'ar' ? "'IBM Plex Sans Arabic', sans-serif" : "'Inter', sans-serif";
-            container.style.maxWidth = '1000px';
-            container.style.margin = '0 auto';
-
-            let html = `
+            
+            element.innerHTML = `
                 <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #22c55e; font-size: 28px; margin-bottom: 10px;">${currentLanguage === 'ar' ? 'تقرير العملاء' : 'Clients Report'}</h1>
-                    <p style="color: #666;">${new Date().toLocaleDateString(currentLanguage === 'ar' ? 'ar-EG' : 'en-US')}</p>
-                    <p style="color: #666;">${currentLanguage === 'ar' ? 'إجمالي العملاء' : 'Total Clients'}: ${clients.length}</p>
-                </div>
-            `;
-
-            const summary = {
-                totalMoneyFor: clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0),
-                totalMoneyOn: clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0),
-                totalGoldFor: clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0),
-                totalGoldOn: clients.reduce((s, c) => s + getClientSummary(c).goldOn, 0)
-            };
-
-            html += `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px;">
-                    <div style="background: #f3f4f6; padding: 15px; border-radius: 10px;">
-                        <div style="color: #22c55e; font-size: 14px;">${currentLanguage === 'ar' ? 'إجمالي ما لنا' : 'Total We Owe'}</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatMoney(summary.totalMoneyOn)}</div>
-                    </div>
-                    <div style="background: #f3f4f6; padding: 15px; border-radius: 10px;">
-                        <div style="color: #f59e0b; font-size: 14px;">${currentLanguage === 'ar' ? 'إجمالي ما لهم' : 'Total They Owe'}</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatMoney(summary.totalMoneyFor)}</div>
-                    </div>
-                    <div style="background: #f3f4f6; padding: 15px; border-radius: 10px;">
-                        <div style="color: #fbbf24; font-size: 14px;">${currentLanguage === 'ar' ? 'إجمالي الذهب لنا' : 'Total Gold We Owe'}</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatGold(summary.totalGoldOn)}</div>
-                    </div>
-                    <div style="background: #f3f4f6; padding: 15px; border-radius: 10px;">
-                        <div style="color: #b45309; font-size: 14px;">${currentLanguage === 'ar' ? 'إجمالي الذهب لهم' : 'Total Gold They Owe'}</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatGold(summary.totalGoldFor)}</div>
-                    </div>
+                    <h1 style="color: #22c55e; font-size: 28px; margin-bottom: 10px;">تقرير العملاء</h1>
+                    <p style="color: #666;">${new Date().toLocaleDateString('ar-EG')}</p>
                 </div>
             `;
 
             clients.forEach(client => {
-                const s = getClientSummary(client);
-                html += `
-                    <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 20px; background: #f9fafb;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h2 style="color: #22c55e; margin: 0; font-size: 20px;">${currentLanguage === 'ar' ? client.name : (client.name_en || client.name)}</h2>
-                            ${client.phone ? `<span style="color: #666;">${client.phone}</span>` : ''}
-                        </div>
+                const summary = getClientSummary(client);
+                element.innerHTML += `
+                    <div style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <h2 style="color: #22c55e; font-size: 20px; margin-bottom: 15px;">${client.name}</h2>
                         
-                        ${client.address ? `<p style="color: #666; margin-bottom: 10px;"><strong>${currentLanguage === 'ar' ? 'العنوان' : 'Address'}:</strong> ${currentLanguage === 'ar' ? client.address : (client.address_en || client.address)}</p>` : ''}
-                        
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 15px 0;">
-                            <div style="background: white; padding: 10px; border-radius: 8px;">
-                                <div style="color: #f59e0b; font-size: 12px;">${currentLanguage === 'ar' ? 'له مال' : 'Owes'}</div>
-                                <div style="font-size: 18px; font-weight: bold;">${formatMoney(s.moneyFor)}</div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #f59e0b;">له مال</div>
+                                <div style="font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
                             </div>
-                            <div style="background: white; padding: 10px; border-radius: 8px;">
-                                <div style="color: #22c55e; font-size: 12px;">${currentLanguage === 'ar' ? 'عليه مال' : 'Owed'}</div>
-                                <div style="font-size: 18px; font-weight: bold;">${formatMoney(s.moneyOn)}</div>
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #22c55e;">عليه مال</div>
+                                <div style="font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
                             </div>
-                            <div style="background: white; padding: 10px; border-radius: 8px;">
-                                <div style="color: #fbbf24; font-size: 12px;">${currentLanguage === 'ar' ? 'له ذهب' : 'Gold Owes'}</div>
-                                <div style="font-size: 18px; font-weight: bold;">${formatGold(s.goldFor)}</div>
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #fbbf24;">له ذهب</div>
+                                <div style="font-weight: bold;">${formatGold(summary.goldFor)}</div>
                             </div>
-                            <div style="background: white; padding: 10px; border-radius: 8px;">
-                                <div style="color: #b45309; font-size: 12px;">${currentLanguage === 'ar' ? 'عليه ذهب' : 'Gold Owed'}</div>
-                                <div style="font-size: 18px; font-weight: bold;">${formatGold(s.goldOn)}</div>
+                            <div style="background: #f9fafb; padding: 10px; border-radius: 8px;">
+                                <div style="color: #b45309;">عليه ذهب</div>
+                                <div style="font-weight: bold;">${formatGold(summary.goldOn)}</div>
                             </div>
                         </div>
                         
-                        <div style="color: #666; font-size: 12px;">
-                            <span>${client.transactions.length} ${currentLanguage === 'ar' ? 'معاملة نقدية' : 'Cash transactions'}</span> | 
-                            <span>${client.goldTransactions.length} ${currentLanguage === 'ar' ? 'معاملة ذهب' : 'Gold transactions'}</span> | 
-                            <span>${formatDate(client.createdAt)}</span>
-                        </div>
+                        ${client.phone ? `<p style="color: #666;"><strong>الهاتف:</strong> ${client.phone}</p>` : ''}
+                        ${client.address ? `<p style="color: #666;"><strong>العنوان:</strong> ${client.address}</p>` : ''}
                     </div>
                 `;
             });
 
-            container.innerHTML = html;
-            document.body.appendChild(container);
+            document.body.appendChild(element);
 
-            const canvas = await html2canvas(container, {
+            const canvas = await html2canvas(element, {
                 scale: 2,
                 backgroundColor: '#ffffff'
             });
@@ -3705,11 +3560,11 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
 
-            document.body.removeChild(container);
-            showToast(currentLanguage === 'ar' ? 'تم تصدير التقرير كصورة بنجاح' : 'Report exported as image successfully', 'success');
+            document.body.removeChild(element);
+            showToast('تم تصدير التقرير كصورة بنجاح', 'success');
         } catch (error) {
             console.error('Image Error:', error);
-            showToast(currentLanguage === 'ar' ? 'حدث خطأ في تصدير الصورة' : 'Error exporting image', 'error');
+            showToast('حدث خطأ في تصدير الصورة', 'error');
         } finally {
             hideLoading();
         }
@@ -3749,11 +3604,11 @@
                     <td>
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold">
-                                ${(currentLanguage === 'ar' ? user.name : (user.name_en || user.name)).charAt(0)}
+                                ${user.name.charAt(0)}
                             </div>
                             <div>
-                                <div class="font-medium">${currentLanguage === 'ar' ? user.name : (user.name_en || user.name)}</div>
-                                <div class="text-xs text-gray-500">${user.role === 'admin' ? (currentLanguage === 'ar' ? 'مدير' : 'Admin') : (currentLanguage === 'ar' ? 'مستخدم' : 'User')}</div>
+                                <div class="font-medium">${user.name}</div>
+                                <div class="text-xs text-gray-500">${user.role === 'admin' ? 'مدير' : 'مستخدم'}</div>
                             </div>
                         </div>
                     </td>
@@ -3764,17 +3619,17 @@
                             'bg-gray-700 text-gray-400'
                     }">
                                 ${user.provider === 'google' ? 'Google' :
-                        user.provider === 'microsoft' ? 'Microsoft' : (currentLanguage === 'ar' ? 'بريد إلكتروني' : 'Email')}
+                        user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}
                             </span>
                     </td>
                     <td>${formatDate(user.createdAt)}</td>
                     <td>
-                        <div>${userClients.length} ${currentLanguage === 'ar' ? 'عميل' : 'clients'}</div>
-                        <div class="text-xs text-gray-500">${totalTransactions} ${currentLanguage === 'ar' ? 'معاملة' : 'transactions'}</div>
+                        <div>${userClients.length} عميل</div>
+                        <div class="text-xs text-gray-500">${totalTransactions} معاملة</div>
                     </td>
                     <td>
                         <span class="status-badge ${status === 'active' ? 'active' : 'inactive'}">
-                            ${status === 'active' ? (currentLanguage === 'ar' ? 'نشط' : 'Active') : (currentLanguage === 'ar' ? 'موقوف' : 'Inactive')}
+                            ${status === 'active' ? 'نشط' : 'موقوف'}
                         </span>
                     </td>
                     <td>
@@ -3805,8 +3660,8 @@
         const totalTransactions = userClients.reduce((sum, c) => sum + c.transactions.length + c.goldTransactions.length, 0);
         const status = getUserStatus(userId);
 
-        document.getElementById('modal-user-avatar').textContent = (currentLanguage === 'ar' ? user.name : (user.name_en || user.name)).charAt(0);
-        document.getElementById('modal-user-name').textContent = currentLanguage === 'ar' ? user.name : (user.name_en || user.name);
+        document.getElementById('modal-user-avatar').textContent = user.name.charAt(0);
+        document.getElementById('modal-user-name').textContent = user.name;
         document.getElementById('modal-user-email').textContent = user.email;
         document.getElementById('modal-user-provider').innerHTML = `
             <span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' :
@@ -3814,15 +3669,13 @@
                     'bg-gray-700 text-gray-400'
             }">
                 ${user.provider === 'google' ? 'Google' :
-                user.provider === 'microsoft' ? 'Microsoft' : (currentLanguage === 'ar' ? 'بريد إلكتروني' : 'Email')}
+                user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}
             </span>
         `;
         document.getElementById('modal-user-clients').textContent = userClients.length;
         document.getElementById('modal-user-transactions').textContent = totalTransactions;
         document.getElementById('modal-user-status').checked = status === 'active';
-        document.getElementById('modal-user-status-text').textContent = status === 'active' ? 
-            (currentLanguage === 'ar' ? 'نشط' : 'Active') : 
-            (currentLanguage === 'ar' ? 'موقوف' : 'Inactive');
+        document.getElementById('modal-user-status-text').textContent = status === 'active' ? 'نشط' : 'موقوف';
         document.getElementById('modal-user-created').textContent = formatDate(user.createdAt);
 
         document.getElementById('user-modal').classList.add('active');
@@ -3839,13 +3692,9 @@
         const newStatus = document.getElementById('modal-user-status').checked ? 'active' : 'inactive';
         setUserStatus(selectedUserId, newStatus);
 
-        document.getElementById('modal-user-status-text').textContent = newStatus === 'active' ? 
-            (currentLanguage === 'ar' ? 'نشط' : 'Active') : 
-            (currentLanguage === 'ar' ? 'موقوف' : 'Inactive');
+        document.getElementById('modal-user-status-text').textContent = newStatus === 'active' ? 'نشط' : 'موقوف';
 
-        showToast(currentLanguage === 'ar' ? 
-            `تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح` : 
-            `User ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`, 'success');
+        showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح`, 'success');
 
         renderUsersList();
     }
@@ -3856,9 +3705,7 @@
 
         setUserStatus(userId, newStatus);
 
-        showToast(currentLanguage === 'ar' ? 
-            `تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح` : 
-            `User ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`, 'success');
+        showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح`, 'success');
 
         renderUsersList();
     }
@@ -3869,17 +3716,17 @@
         const confirm = document.getElementById('confirm-password').value;
 
         if (!current || !newPass || !confirm) {
-            showToast(currentLanguage === 'ar' ? 'الرجاء إدخال جميع الحقول' : 'Please fill all fields', 'error');
+            showToast('الرجاء إدخال جميع الحقول', 'error');
             return;
         }
 
         if (newPass !== confirm) {
-            showToast(currentLanguage === 'ar' ? 'كلمة المرور غير متطابقة' : 'Passwords do not match', 'error');
+            showToast('كلمة المرور غير متطابقة', 'error');
             return;
         }
 
         if (newPass.length < 6) {
-            showToast(currentLanguage === 'ar' ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' : 'Password must be at least 6 characters', 'error');
+            showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
             return;
         }
 
@@ -3891,7 +3738,7 @@
 
             if (users[userIndex].password !== current) {
                 hideLoading();
-                showToast(currentLanguage === 'ar' ? 'كلمة المرور الحالية غير صحيحة' : 'Current password is incorrect', 'error');
+                showToast('كلمة المرور الحالية غير صحيحة', 'error');
                 return;
             }
 
@@ -3899,7 +3746,7 @@
             saveUsers(users);
 
             hideLoading();
-            showToast(currentLanguage === 'ar' ? 'تم تغيير كلمة المرور بنجاح' : 'Password changed successfully', 'success');
+            showToast('تم تغيير كلمة المرور بنجاح', 'success');
 
             document.getElementById('current-password').value = '';
             document.getElementById('new-password').value = '';
@@ -3925,7 +3772,7 @@
         a.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
 
-        showToast(currentLanguage === 'ar' ? 'تم تصدير البيانات بنجاح' : 'Data exported successfully', 'success');
+        showToast('تم تصدير البيانات بنجاح', 'success');
     }
 
     function importData() {
@@ -3952,7 +3799,7 @@
                         });
                     }
 
-                    showToast(currentLanguage === 'ar' ? 'تم استيراد البيانات بنجاح' : 'Data imported successfully', 'success');
+                    showToast('تم استيراد البيانات بنجاح', 'success');
 
                     if (currentUser) {
                         clientsCache = null;
@@ -3963,7 +3810,7 @@
                     }
 
                 } catch (error) {
-                    showToast(currentLanguage === 'ar' ? 'ملف غير صالح' : 'Invalid file', 'error');
+                    showToast('ملف غير صالح', 'error');
                 }
             };
 
@@ -3999,7 +3846,7 @@
             const userStatus = getUserStatus(currentUser.id);
             if (userStatus !== 'active') {
                 localStorage.removeItem(CURRENT_USER_KEY);
-                showToast(currentLanguage === 'ar' ? 'تم إيقاف هذا الحساب. الرجاء التواصل مع المدير' : 'This account is inactive. Please contact admin', 'error');
+                showToast('تم إيقاف هذا الحساب. الرجاء التواصل مع المدير', 'error');
                 return;
             }
 
@@ -4008,11 +3855,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        updateConnectionStatus();
         checkForBackup();
         checkSavedSession();
 
         document.querySelectorAll('.filter-btn')[0]?.classList.add('active');
+        
+        // تهيئة الشريط الجانبي للهاتف
+        if (window.innerWidth <= 768) {
+            document.getElementById('nav-sidebar').classList.add('collapsed');
+        }
     });
 </script>
 
