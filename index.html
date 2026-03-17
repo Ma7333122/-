@@ -1186,7 +1186,7 @@
             <div id="all-clients-list" class="grid-container"></div>
         </div>
 
-        <!-- Add Client Page -->
+        <!-- Add Client Page (معدلة حسب الطلب) -->
         <div id="add-page" class="page hidden">
             <h1 class="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8">إضافة عميل جديد</h1>
 
@@ -1219,87 +1219,81 @@
                     <textarea id="client-notes" class="input-field" rows="2" placeholder="ملاحظات إضافية عن العميل"></textarea>
                 </div>
 
-                <!-- Money Section -->
-                <div class="section-header mt-8">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span class="font-semibold">المبالغ المالية</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label class="input-label">له (جنيه)</label>
-                        <input type="number" id="client-money-for" class="input-field numbers" placeholder="0" min="0" value="0">
-                    </div>
-
-                    <div>
-                        <label class="input-label">عليه (جنيه)</label>
-                        <input type="number" id="client-money-on" class="input-field numbers" placeholder="0" min="0" value="0">
-                    </div>
-                </div>
-
-                <!-- Gold Section -->
-                <div class="section-header gold mt-8">
-                    <i class="fas fa-coins gold-icon"></i>
-                    <span class="font-semibold">جرامات الذهب</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label class="input-label">له ذهب (جرام)</label>
-                        <input type="number" id="client-gold-for" class="input-field numbers" placeholder="0" min="0" step="0.01" value="0">
-                    </div>
-
-                    <div>
-                        <label class="input-label">عليه ذهب (جرام)</label>
-                        <input type="number" id="client-gold-on" class="input-field numbers" placeholder="0" min="0" step="0.01" value="0">
-                    </div>
-                </div>
-
-                <!-- Gold Description (جديد) -->
-                <div class="mb-6">
-                    <label class="input-label">بيان الذهب (نوعه)</label>
-                    <select id="client-gold-description" class="input-field">
-                        <option value="">اختر النوع</option>
-                        <option value="سبيكة">سبيكة</option>
-                        <option value="مشغولات">مشغولات ذهبية</option>
-                        <option value="عملة">عملة ذهبية</option>
-                        <option value="جنيه">جنيه ذهب</option>
-                        <option value="كسر">كسر ذهب</option>
-                        <option value="أخرى">أخرى</option>
-                    </select>
-                    <input type="text" id="client-gold-description-other" class="input-field mt-2 hidden" placeholder="اكتب وصف الذهب">
-                </div>
-
-                <!-- Initial Transaction -->
+                <!-- قسم المعاملات الأولية (موحد) -->
                 <div class="section-header mt-8">
                     <i class="fas fa-receipt"></i>
-                    <span class="font-semibold">معاملة أولية (اختياري)</span>
+                    <span class="font-semibold">المعاملات الأولية (اختياري)</span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                    <div>
-                        <label class="input-label">نوع المعاملة</label>
-                        <select id="initial-tx-type" class="input-field">
-                            <option value="">بدون معاملة</option>
-                            <option value="out">تسليم (له)</option>
-                            <option value="in">استلام (عليه)</option>
-                        </select>
-                    </div>
+                <!-- معاملة نقدية أولى -->
+                <div class="bg-tertiary/30 p-4 rounded-xl mb-4">
+                    <h4 class="font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-money-bill-wave text-emerald-400"></i>
+                        معاملة نقدية
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="input-label">نوع المعاملة النقدية</label>
+                            <select id="initial-cash-type" class="input-field">
+                                <option value="">بدون معاملة</option>
+                                <option value="out">تسليم (له)</option>
+                                <option value="in">استلام (عليه)</option>
+                            </select>
+                        </div>
 
-                    <div>
-                        <label class="input-label">المبلغ</label>
-                        <input type="number" id="initial-tx-amount" class="input-field numbers" placeholder="0" min="0" value="0">
-                    </div>
+                        <div>
+                            <label class="input-label">المبلغ (جنيه)</label>
+                            <input type="number" id="initial-cash-amount" class="input-field numbers" placeholder="0" min="0" value="0">
+                        </div>
 
-                    <div>
-                        <label class="input-label">المسؤول</label>
-                        <input type="text" id="initial-tx-responsible" class="input-field" placeholder="اسم المسؤول">
+                        <div>
+                            <label class="input-label">المسؤول</label>
+                            <input type="text" id="initial-cash-responsible" class="input-field" placeholder="اسم المسؤول">
+                        </div>
+
+                        <div>
+                            <label class="input-label">ملاحظات</label>
+                            <input type="text" id="initial-cash-note" class="input-field" placeholder="ملاحظات">
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="input-label">ملاحظات المعاملة</label>
-                    <input type="text" id="initial-tx-note" class="input-field" placeholder="ملاحظات">
+                <!-- معاملة ذهب أولى -->
+                <div class="bg-tertiary/30 p-4 rounded-xl">
+                    <h4 class="font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-coins text-yellow-400"></i>
+                        معاملة ذهب
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="input-label">نوع معاملة الذهب</label>
+                            <select id="initial-gold-type" class="input-field">
+                                <option value="">بدون معاملة</option>
+                                <option value="out">له ذهب</option>
+                                <option value="in">عليه ذهب</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="input-label">الكمية (جرام)</label>
+                            <input type="number" step="0.01" id="initial-gold-amount" class="input-field numbers" placeholder="0" min="0" value="0">
+                        </div>
+
+                        <div>
+                            <label class="input-label">بيان الذهب</label>
+                            <input type="text" id="initial-gold-description" class="input-field" placeholder="اكتب نوع الذهب (سبيكة، مشغولات، ...)">
+                        </div>
+
+                        <div>
+                            <label class="input-label">المسؤول</label>
+                            <input type="text" id="initial-gold-responsible" class="input-field" placeholder="اسم المسؤول">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="input-label">ملاحظات</label>
+                            <input type="text" id="initial-gold-note" class="input-field" placeholder="ملاحظات">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Actions -->
@@ -1544,19 +1538,10 @@
                 <input type="number" step="0.01" id="gold-amount" class="input-field numbers" placeholder="أدخل الجرامات">
             </div>
 
-            <!-- بيان الذهب في المعاملة -->
+            <!-- بيان الذهب - نص حر -->
             <div>
                 <label class="input-label">بيان الذهب (نوعه)</label>
-                <select id="gold-description" class="input-field">
-                    <option value="">اختر النوع</option>
-                    <option value="سبيكة">سبيكة</option>
-                    <option value="مشغولات">مشغولات ذهبية</option>
-                    <option value="عملة">عملة ذهبية</option>
-                    <option value="جنيه">جنيه ذهب</option>
-                    <option value="كسر">كسر ذهب</option>
-                    <option value="أخرى">أخرى</option>
-                </select>
-                <input type="text" id="gold-description-other" class="input-field mt-2 hidden" placeholder="اكتب وصف الذهب">
+                <input type="text" id="gold-description" class="input-field" placeholder="اكتب وصف الذهب (سبيكة، مشغولات، ...)">
             </div>
 
             <div>
@@ -1687,7 +1672,7 @@
     let selectedUserId = null;
     let backupInterval = null;
     let clientsCache = null;
-    let pendingBackup = false; // للتحقق من وجود تغيير يستدعي النسخ الاحتياطي
+    let pendingBackup = false;
 
     // المستخدمين الافتراضيين
     const defaultUsers = [{
@@ -1713,7 +1698,7 @@
         moneyOn: 2000,
         goldFor: 10.5,
         goldOn: 5.2,
-        goldDescription: 'سبيكة',
+        goldDescription: 'سبيكة ذهب عيار 21',
         transactions: [{
             id: 't1',
             date: new Date().toISOString(),
@@ -1730,7 +1715,7 @@
             amount: 10.5,
             responsible: 'المدير',
             note: 'ذهب عيار 21',
-            description: 'سبيكة',
+            description: 'سبيكة ذهب',
             runningBalance: 10.5
         }]
     }, {
@@ -1763,7 +1748,6 @@
             }
         });
 
-        // تحميل الإعدادات
         const savedSettings = localStorage.getItem(SETTINGS_KEY);
         if (savedSettings) {
             systemSettings = { ...systemSettings, ...JSON.parse(savedSettings) };
@@ -1771,7 +1755,6 @@
         }
     }
 
-    // تحديث واجهة الإعدادات
     function updateSettingsUI() {
         const toggle = document.getElementById('auto-backup-toggle');
         const status = document.getElementById('auto-backup-status');
@@ -1786,7 +1769,6 @@
         if (scheduleSelect) scheduleSelect.value = systemSettings.backupSchedule;
     }
 
-    // حفظ الإعدادات
     function saveSettings() {
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(systemSettings));
     }
@@ -1819,18 +1801,16 @@
         showToast('تم تحديث جدولة النسخ الاحتياطي', 'success');
     }
 
-    // دالة النسخ الاحتياطي عند التغيير
     function triggerBackup() {
         if (!systemSettings.autoBackup || !currentUser) return;
         
-        // استخدام debounce لمنع التكرار
         if (pendingBackup) return;
         pendingBackup = true;
 
         setTimeout(() => {
             createBackup();
             pendingBackup = false;
-        }, 2000); // انتظار ثانيتين للتأكد من عدم وجود تغييرات متتالية
+        }, 2000);
     }
 
     function createBackup() {
@@ -2081,7 +2061,7 @@
     function saveUserClients(userId, clients) {
         const key = CLIENTS_KEY_PREFIX + userId;
         localStorage.setItem(key, JSON.stringify(clients));
-        triggerBackup(); // تشغيل النسخ الاحتياطي عند الحفظ
+        triggerBackup();
     }
 
     function showLoading() {
@@ -2695,33 +2675,6 @@
         renderClientsList(clients);
     }
 
-    // إدارة حقل بيان الذهب
-    document.addEventListener('DOMContentLoaded', function() {
-        const goldDesc = document.getElementById('client-gold-description');
-        const goldDescOther = document.getElementById('client-gold-description-other');
-        if (goldDesc) {
-            goldDesc.addEventListener('change', function() {
-                if (this.value === 'أخرى') {
-                    goldDescOther.classList.remove('hidden');
-                } else {
-                    goldDescOther.classList.add('hidden');
-                }
-            });
-        }
-
-        const goldDescModal = document.getElementById('gold-description');
-        const goldDescOtherModal = document.getElementById('gold-description-other');
-        if (goldDescModal) {
-            goldDescModal.addEventListener('change', function() {
-                if (this.value === 'أخرى') {
-                    goldDescOtherModal.classList.remove('hidden');
-                } else {
-                    goldDescOtherModal.classList.add('hidden');
-                }
-            });
-        }
-    });
-
     function addNewClient(andNew = false) {
         const name = document.getElementById('client-name').value.trim();
 
@@ -2741,16 +2694,6 @@
         const address = document.getElementById('client-address').value.trim();
         const notes = document.getElementById('client-notes').value.trim();
 
-        const moneyFor = parseFloat(document.getElementById('client-money-for').value) || 0;
-        const moneyOn = parseFloat(document.getElementById('client-money-on').value) || 0;
-        const goldFor = parseFloat(document.getElementById('client-gold-for').value) || 0;
-        const goldOn = parseFloat(document.getElementById('client-gold-on').value) || 0;
-
-        let goldDescription = document.getElementById('client-gold-description').value;
-        if (goldDescription === 'أخرى') {
-            goldDescription = document.getElementById('client-gold-description-other').value.trim() || 'أخرى';
-        }
-
         const newClient = {
             id: Date.now().toString(),
             name: name,
@@ -2759,29 +2702,54 @@
             notes: notes,
             userId: currentUser.id,
             createdAt: new Date().toISOString(),
-            moneyFor: moneyFor,
-            moneyOn: moneyOn,
-            goldFor: goldFor,
-            goldOn: goldOn,
-            goldDescription: goldDescription,
+            moneyFor: 0,
+            moneyOn: 0,
+            goldFor: 0,
+            goldOn: 0,
+            goldDescription: '',
             transactions: [],
             goldTransactions: []
         };
 
-        const txType = document.getElementById('initial-tx-type').value;
-        const txAmount = parseFloat(document.getElementById('initial-tx-amount').value) || 0;
-        const txResponsible = document.getElementById('initial-tx-responsible').value.trim();
+        // معاملة نقدية أولى
+        const cashType = document.getElementById('initial-cash-type').value;
+        const cashAmount = parseFloat(document.getElementById('initial-cash-amount').value) || 0;
+        const cashResponsible = document.getElementById('initial-cash-responsible').value.trim();
 
-        if (txType && txAmount > 0 && txResponsible) {
+        if (cashType && cashAmount > 0 && cashResponsible) {
             newClient.transactions.push({
                 id: 'tx_' + Date.now(),
                 date: new Date().toISOString(),
-                type: txType,
-                amount: txAmount,
-                responsible: txResponsible,
-                note: document.getElementById('initial-tx-note').value.trim(),
-                runningBalance: txType === 'out' ? txAmount : -txAmount
+                type: cashType,
+                amount: cashAmount,
+                responsible: cashResponsible,
+                note: document.getElementById('initial-cash-note').value.trim(),
+                runningBalance: cashType === 'out' ? cashAmount : -cashAmount
             });
+        }
+
+        // معاملة ذهب أولى
+        const goldType = document.getElementById('initial-gold-type').value;
+        const goldAmount = parseFloat(document.getElementById('initial-gold-amount').value) || 0;
+        const goldDescription = document.getElementById('initial-gold-description').value.trim();
+        const goldResponsible = document.getElementById('initial-gold-responsible').value.trim();
+
+        if (goldType && goldAmount > 0 && goldResponsible) {
+            newClient.goldTransactions.push({
+                id: 'g_' + Date.now(),
+                date: new Date().toISOString(),
+                type: goldType,
+                amount: goldAmount,
+                responsible: goldResponsible,
+                description: goldDescription,
+                note: document.getElementById('initial-gold-note').value.trim(),
+                runningBalance: goldType === 'out' ? goldAmount : -goldAmount
+            });
+
+            // تخزين البيان في العميل أيضاً
+            if (goldDescription) {
+                newClient.goldDescription = goldDescription;
+            }
         }
 
         if (currentUser.role === 'admin') {
@@ -2804,17 +2772,15 @@
             document.getElementById('client-phone').value = '';
             document.getElementById('client-address').value = '';
             document.getElementById('client-notes').value = '';
-            document.getElementById('client-money-for').value = '0';
-            document.getElementById('client-money-on').value = '0';
-            document.getElementById('client-gold-for').value = '0';
-            document.getElementById('client-gold-on').value = '0';
-            document.getElementById('client-gold-description').value = '';
-            document.getElementById('client-gold-description-other').value = '';
-            document.getElementById('client-gold-description-other').classList.add('hidden');
-            document.getElementById('initial-tx-type').value = '';
-            document.getElementById('initial-tx-amount').value = '0';
-            document.getElementById('initial-tx-responsible').value = '';
-            document.getElementById('initial-tx-note').value = '';
+            document.getElementById('initial-cash-type').value = '';
+            document.getElementById('initial-cash-amount').value = '0';
+            document.getElementById('initial-cash-responsible').value = '';
+            document.getElementById('initial-cash-note').value = '';
+            document.getElementById('initial-gold-type').value = '';
+            document.getElementById('initial-gold-amount').value = '0';
+            document.getElementById('initial-gold-description').value = '';
+            document.getElementById('initial-gold-responsible').value = '';
+            document.getElementById('initial-gold-note').value = '';
 
             document.getElementById('client-name').focus();
         } else {
@@ -3121,8 +3087,6 @@
         document.getElementById('gold-responsible').value = '';
         document.getElementById('gold-note').value = '';
         document.getElementById('gold-description').value = '';
-        document.getElementById('gold-description-other').value = '';
-        document.getElementById('gold-description-other').classList.add('hidden');
         setGoldType('out');
     }
 
@@ -3148,11 +3112,7 @@
         const amount = parseFloat(document.getElementById('gold-amount').value);
         const responsible = document.getElementById('gold-responsible').value.trim();
         const note = document.getElementById('gold-note').value.trim();
-
-        let description = document.getElementById('gold-description').value;
-        if (description === 'أخرى') {
-            description = document.getElementById('gold-description-other').value.trim() || 'أخرى';
-        }
+        const description = document.getElementById('gold-description').value.trim();
 
         if (isNaN(amount) || amount <= 0) {
             showToast('الرجاء إدخال عدد جرامات صحيح', 'error');
@@ -3189,6 +3149,11 @@
         };
 
         client.goldTransactions.push(newTransaction);
+
+        // تحديث بيان الذهب في العميل إذا لم يكن موجوداً
+        if (description && !client.goldDescription) {
+            client.goldDescription = description;
+        }
 
         if (currentUser.role === 'admin') {
             const userClients = getUserClients(client.userId);
@@ -3260,7 +3225,6 @@
             navItem.classList.add('active');
         }
 
-        // على الهاتف، إغلاق القائمة بعد الاختيار
         if (window.innerWidth <= 768) {
             const nav = document.getElementById('nav-sidebar');
             nav.classList.add('collapsed');
@@ -3318,12 +3282,10 @@
         `;
     }
 
-    // ==================== دوال التصدير (PDF المحسّن) ====================
     async function exportToPDF() {
         showLoading();
 
         try {
-            // التقاط لقطة للصفحة الحالية أو إنشاء تقرير منظم
             const element = document.createElement('div');
             element.style.padding = '30px';
             element.style.background = '#ffffff';
@@ -3333,7 +3295,6 @@
             
             const clients = getCurrentUserClients();
             
-            // عنوان التقرير
             element.innerHTML = `
                 <div style="text-align: center; margin-bottom: 30px;">
                     <h1 style="color: #22c55e; font-size: 28px; margin-bottom: 10px;">تقرير العملاء</h1>
@@ -3341,7 +3302,6 @@
                 </div>
             `;
 
-            // إحصائيات عامة
             const totalMoneyFor = clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0);
             const totalMoneyOn = clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0);
             const totalGoldFor = clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0);
@@ -3368,7 +3328,6 @@
                 </div>
             `;
 
-            // تفاصيل العملاء
             clients.forEach((client, index) => {
                 const summary = getClientSummary(client);
                 element.innerHTML += `
@@ -3405,7 +3364,6 @@
                 `;
             });
 
-            // تحويل إلى canvas ثم إلى PDF
             document.body.appendChild(element);
             
             const canvas = await html2canvas(element, {
@@ -3860,7 +3818,6 @@
 
         document.querySelectorAll('.filter-btn')[0]?.classList.add('active');
         
-        // تهيئة الشريط الجانبي للهاتف
         if (window.innerWidth <= 768) {
             document.getElementById('nav-sidebar').classList.add('collapsed');
         }
