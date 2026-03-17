@@ -3,2383 +3,1573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام المالي المتكامل</title>
+    <title>النظام المالي المتكامل - النسخة النهائية</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Excel, PDF, Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        :root {
-            --bg: #0a0f1a;
-            --bg-secondary: #111827;
-            --bg-card: #1a2332;
-            --fg: #f0f4f8;
-            --fg-muted: #8892a4;
-            --border: #2d3748;
-            --accent: #22d3ee;
-            --accent-glow: rgba(34, 211, 238, 0.3);
-            --success: #34d399;
-            --warning: #fbbf24;
-            --danger: #f87171;
-            --info: #60a5fa;
-        }
-
         * {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #030712;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border-color: #374151;
+            --accent-primary: #10b981;
+            --accent-secondary: #059669;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --whatsapp: #25D366;
         }
 
         body {
-            background: var(--bg);
-            color: var(--fg);
-            min-height: 100vh;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             transition: all 0.3s ease;
+            min-height: 100vh;
         }
 
         body.light-mode {
-            --bg: #f8fafc;
+            --bg-primary: #f3f4f6;
             --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --fg: #0f172a;
-            --fg-muted: #64748b;
-            --border: #e2e8f0;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
         }
 
-        /* Background Pattern */
-        body::before {
-            content: '';
+        /* Developer Info */
+        .developer-info {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(ellipse at 20% 20%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.03) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Grid Pattern */
-        .grid-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: 
-                linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .animate-fade { animation: fadeIn 0.4s ease-out; }
-        .animate-slide { animation: slideIn 0.3s ease-out; }
-
-        /* Toast */
-        .toast-container {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 20px;
+            bottom: 20px;
+            left: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            animation: slideIn 0.3s ease forwards;
+            gap: 12px;
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-
-        .toast.show { transform: translateX(0); }
-        .toast.success { border-left: 3px solid var(--success); }
-        .toast.error { border-left: 3px solid var(--danger); }
-        .toast.info { border-left: 3px solid var(--info); }
-        .toast.warning { border-left: 3px solid var(--warning); }
-
-        /* Loading */
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
+        .developer-info:hover {
+            background: var(--bg-tertiary);
+            transform: scale(1.05);
+        }
+        .developer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10001;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .developer-details { display: none; }
+        .developer-info:hover .developer-details { display: block; }
+        .developer-name { font-weight: 600; font-size: 14px; }
+        .developer-whatsapp { font-size: 12px; color: var(--whatsapp); display: flex; align-items: center; gap: 4px; }
+
+        /* WhatsApp Button */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--whatsapp);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 30px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: none;
+        }
+        .whatsapp-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .connection-status.show { transform: translateX(-50%) translateY(0); }
+        .connection-status.online { background: var(--success); color: white; }
+        .connection-status.offline { background: var(--danger); color: white; }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--info); }
+        .toast.warning { background: var(--warning); }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
-
-        .loading-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        .loading-spinner.active { opacity: 1; visibility: visible; }
         .spinner {
-            width: 48px;
-            height: 48px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent);
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--bg-tertiary);
+            border-top-color: var(--accent-primary);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 1s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Restore Modal */
         .restore-modal {
             position: fixed;
-            inset: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 20000;
         }
-
-        .restore-modal .modal-box {
-            background: var(--bg-card);
-            border: 2px solid var(--accent);
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 420px;
+        .restore-modal .modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            border-radius: 32px;
+            padding: 48px;
+            max-width: 500px;
             width: 90%;
             text-align: center;
-            animation: fadeIn 0.4s ease;
         }
+        .restore-modal h2 { font-size: 28px; font-weight: bold; color: var(--accent-primary); margin-bottom: 16px; }
+        .restore-modal p { color: var(--text-secondary); margin-bottom: 32px; }
+        .restore-modal .btn-group { display: flex; gap: 16px; justify-content: center; }
+        .restore-modal .btn-primary, .restore-modal .btn-secondary { width: auto; min-width: 150px; }
+
+        /* Auto Backup Indicator */
+        .auto-backup-indicator {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--accent-primary);
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 99;
+            font-size: 12px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
 
         /* Login */
-        .login-wrapper {
+        .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            z-index: 1;
+            background: linear-gradient(135deg, #030712 0%, #111827 100%);
             padding: 20px;
         }
-
         .login-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            padding: 48px;
             width: 100%;
-            max-width: 420px;
-            animation: fadeIn 0.5s ease;
-            position: relative;
-            overflow: hidden;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), #a855f7);
-        }
-
         .login-logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--accent), #a855f7);
-            border-radius: 20px;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 32px;
+            margin: 0 auto 24px;
+            font-size: 40px;
             color: white;
-            animation: float 3s ease-in-out infinite;
         }
-
-        .input-group { margin-bottom: 16px; }
-
-        .input-label {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--fg-muted);
-            font-size: 13px;
-            font-weight: 500;
+        .login-title {
+            font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--info));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-
+        .login-subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 32px; }
+        .input-group { margin-bottom: 20px; }
+        .input-label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-size: 14px; }
         .input-field {
             width: 100%;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 16px;
-            color: var(--fg);
-            font-size: 14px;
-            transition: all 0.2s ease;
+            padding: 14px 18px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
         }
-
         .input-field:focus {
             outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-
         .btn-primary {
             width: 100%;
-            background: linear-gradient(135deg, var(--accent), #06b6d4);
-            color: #0a0f1a;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px -5px var(--accent-glow);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
         }
-
         .btn-secondary {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--fg);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-
-        .btn-secondary:hover { background: var(--border); }
-
-        .btn-icon {
-            width: 40px;
-            height: 40px;
-            padding: 0;
+        .btn-secondary:hover { background: var(--border-color); }
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .social-btn {
+            padding: 14px;
             border-radius: 12px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--fg-muted);
+            border: 2px solid var(--border-color);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+        .social-btn:hover { background: var(--border-color); transform: translateY(-2px); }
+        .social-btn.google:hover { border-color: #ea4335; }
+        .social-btn.microsoft:hover { border-color: #00a4ef; }
 
-        .btn-icon:hover {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
         }
+        .status-badge.active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .status-badge.inactive { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
 
-        /* Navigation */
-        .nav-sidebar {
+        /* Vertical Navigation */
+        .vertical-nav {
             position: fixed;
-            top: 50%;
+            top: 20px;
             right: 20px;
-            transform: translateY(-50%);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 12px 0;
+            width: 60px;
+            background: var(--bg-secondary);
+            border-radius: 30px;
+            padding: 15px 0;
+            border: 1px solid var(--border-color);
             z-index: 100;
             transition: all 0.3s ease;
             overflow: hidden;
-            width: 52px;
         }
-
-        .nav-sidebar:hover { width: 200px; }
-
-        .nav-item {
+        .vertical-nav:hover { width: 220px; }
+        .vertical-nav-item {
             display: flex;
             align-items: center;
-            padding: 10px 16px;
-            color: var(--fg-muted);
+            padding: 15px 20px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
             cursor: pointer;
-            transition: all 0.2s ease;
             white-space: nowrap;
-            font-size: 14px;
+            position: relative;
         }
-
-        .nav-item i {
-            font-size: 18px;
-            min-width: 20px;
-        }
-
-        .nav-item span {
-            margin-right: 12px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .nav-sidebar:hover .nav-item span { opacity: 1; }
-
-        .nav-item:hover {
-            background: var(--bg-secondary);
-            color: var(--accent);
-        }
-
-        .nav-item.active {
-            color: var(--accent);
-            background: rgba(34, 211, 238, 0.1);
-        }
-
-        .nav-item.active::before {
+        .vertical-nav-item i { font-size: 20px; min-width: 20px; }
+        .vertical-nav-item span { margin-right: 20px; opacity: 0; transition: opacity 0.3s ease; }
+        .vertical-nav:hover .vertical-nav-item span { opacity: 1; }
+        .vertical-nav-item:hover { background: var(--bg-tertiary); color: var(--accent-primary); }
+        .vertical-nav-item.active { color: var(--accent-primary); background: rgba(16, 185, 129, 0.1); }
+        .vertical-nav-item.active::before {
             content: '';
             position: absolute;
             right: 0;
+            top: 50%;
+            transform: translateY(-50%);
             width: 3px;
-            height: 24px;
-            background: var(--accent);
-            border-radius: 3px 0 0 3px;
+            height: 20px;
+            background: var(--accent-primary);
+            border-radius: 0 3px 3px 0;
         }
 
         /* User Menu */
-        .user-badge {
+        .user-menu {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 50px;
-            padding: 6px 16px 6px 6px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             cursor: pointer;
             z-index: 100;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
-
-        .user-badge:hover { background: var(--bg-secondary); }
-
+        .user-menu:hover { background: var(--bg-tertiary); }
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 40px; height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent), #a855f7);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 700;
-            font-size: 14px;
+            font-weight: bold;
+            font-size: 18px;
         }
+        .user-info { display: none; }
+        .user-menu:hover .user-info { display: block; }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-email { font-size: 12px; color: var(--text-secondary); }
 
-        .user-name { font-size: 13px; font-weight: 500; }
-
-        /* Main Content */
-        .main-wrapper {
-            margin-right: 72px;
-            padding: 24px;
-            position: relative;
-            z-index: 1;
-            min-height: 100vh;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.4);
-        }
+        .main-content { margin-right: 80px; padding: 20px; transition: margin-right 0.3s ease; }
 
         .stat-card {
-            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
-            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
+
+        .client-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: var(--accent);
-            opacity: 0.05;
-            border-radius: 0 16px 0 100%;
-        }
-
-        /* Client Card */
-        .client-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 16px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+        }
+        .client-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.2);
+            border-color: var(--accent-primary);
         }
 
-        .client-item:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px -8px var(--accent-glow);
-        }
-
-        /* Badge */
         .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
             font-weight: 600;
         }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
 
-        .badge-success { background: rgba(52, 211, 153, 0.15); color: var(--success); }
-        .badge-warning { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
-        .badge-danger { background: rgba(248, 113, 113, 0.15); color: var(--danger); }
-        .badge-info { background: rgba(96, 165, 250, 0.15); color: var(--info); }
-
-        /* Filter */
-        .filter-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            color: var(--fg-muted);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn:hover { background: var(--border); }
-        .filter-btn.active {
-            background: var(--accent);
-            color: var(--bg);
-            border-color: var(--accent);
-        }
-
-        /* Modal */
-        .modal-overlay {
+        .modal {
             position: fixed;
-            inset: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        .modal.active { opacity: 1; visibility: visible; }
         .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 28px;
-            max-width: 480px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 600px;
             width: 90%;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
-            transform: scale(0.95);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.active .modal-content { transform: scale(1); }
-
-        /* Table */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .data-table th {
-            text-align: right;
-            padding: 12px;
-            background: var(--bg-secondary);
-            color: var(--fg-muted);
-            font-weight: 600;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .data-table td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .data-table tr:hover td { background: var(--bg-secondary); }
-
-        /* Toggle */
-        .toggle {
-            position: relative;
-            width: 44px;
-            height: 22px;
-        }
-
-        .toggle input { opacity: 0; width: 0; height: 0; }
-
-        .toggle-slider {
-            position: absolute;
-            inset: 0;
-            background: var(--danger);
-            border-radius: 22px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .toggle-slider::before {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            left: 2px;
-            bottom: 2px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.2s;
-        }
-
-        .toggle input:checked + .toggle-slider {
-            background: var(--success);
-        }
-
-        .toggle input:checked + .toggle-slider::before {
-            transform: translateX(22px);
-        }
-
-        /* Grid */
-        .clients-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        /* Developer Badge */
-        .dev-badge {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 8px 16px 8px 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.2s ease;
-        }
-
-        .dev-badge:hover {
-            background: var(--bg-secondary);
-            transform: scale(1.02);
-        }
-
-        .dev-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--success), #059669);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 12px;
-        }
-
-        /* WhatsApp Button */
-        .wa-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #25D366;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 26px;
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
-            z-index: 100;
-            transition: all 0.2s ease;
-        }
-
-        .wa-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
-        }
-
-        /* Export Buttons */
-        .export-btns {
-            position: fixed;
-            bottom: 20px;
-            right: 90px;
-            display: flex;
-            gap: 8px;
-            z-index: 99;
-        }
-
-        /* Auto Backup Indicator */
-        .backup-indicator {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--bg-card);
-            border: 1px solid var(--success);
-            border-radius: 50px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-            font-size: 13px;
-            color: var(--success);
+            transform: scale(0.9);
             transition: transform 0.3s ease;
         }
+        .modal.active .modal-content { transform: scale(1); }
 
-        .backup-indicator.show {
-            transform: translateX(-50%) translateY(0);
+        .table {
+            width: 100%;
+            border-collapse: collapse;
         }
+        .table th {
+            text-align: right;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .table td { padding: 16px; border-bottom: 1px solid var(--border-color); }
+        .table tr:hover { background: var(--bg-tertiary); }
 
-        /* Responsive */
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover { background: var(--border-color); }
+        .filter-btn.active { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--danger);
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider { background-color: var(--success); }
+        input:checked + .toggle-slider:before { transform: translateX(26px); }
+
         @media (max-width: 768px) {
-            .nav-sidebar {
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                transform: none;
-                width: auto;
-                display: flex;
-                padding: 8px;
-            }
-
-            .nav-sidebar:hover { width: auto; }
-            .nav-item span { display: none; }
-            .nav-item { padding: 10px 12px; }
-
-            .main-wrapper {
-                margin-right: 0;
-                margin-bottom: 80px;
-                padding: 16px;
-            }
-
-            .dev-badge { display: none; }
-            .export-btns { right: 80px; }
+            .vertical-nav { bottom: 20px; top: auto; right: 20px; width: auto; display: flex; padding: 10px; }
+            .vertical-nav:hover { width: auto; }
+            .vertical-nav-item span { display: none; }
+            .main-content { margin-right: 0; margin-bottom: 80px; }
         }
+
+        /* Export/Import Buttons */
+        .export-import-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 100px;
+            display: flex;
+            gap: 10px;
+            z-index: 99;
+        }
+        .export-import-btn {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .export-import-btn:hover { background: var(--accent-primary); color: white; transform: scale(1.1); }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="grid-pattern"></div>
-
-<!-- Backup Indicator -->
-<div id="backup-indicator" class="backup-indicator">
-    <i class="fas fa-cloud-upload-alt"></i>
-    <span>جاري الحفظ التلقائي...</span>
+<!-- Auto Backup Indicator -->
+<div id="auto-backup-indicator" class="auto-backup-indicator hidden">
+    <i class="fas fa-cloud-upload-alt text-emerald-400"></i>
+    <span>جاري حفظ نسخة احتياطية...</span>
 </div>
 
 <!-- Restore Modal -->
 <div id="restore-modal" class="restore-modal" style="display: none;">
-    <div class="modal-box">
-        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--accent), #a855f7); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; color: white;">
-            <i class="fas fa-database"></i>
-        </div>
-        <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">استعادة البيانات</h2>
-        <p style="color: var(--fg-muted); margin-bottom: 24px; font-size: 14px;">تم العثور على نسخة احتياطية سابقة</p>
-        <div style="display: flex; gap: 12px;">
-            <button onclick="restoreBackup()" class="btn btn-primary" style="flex: 1;">استعادة</button>
-            <button onclick="startFresh()" class="btn btn-secondary" style="flex: 1;">بدء جديد</button>
+    <div class="modal-content">
+        <i class="fas fa-database text-6xl text-emerald-400 mb-6"></i>
+        <h2>استعادة النسخة الاحتياطية</h2>
+        <p>تم العثور على نسخة احتياطية سابقة. هل تريد استعادتها؟</p>
+        <div class="btn-group">
+            <button onclick="restoreBackup()" class="btn-primary"><i class="fas fa-check ml-2"></i> نعم، استعادة</button>
+            <button onclick="startFresh()" class="btn-secondary"><i class="fas fa-times ml-2"></i> لا، بدء جديد</button>
         </div>
     </div>
 </div>
 
-<!-- Developer Badge -->
-<a href="https://wa.me/201010421571" target="_blank" class="dev-badge">
-    <div class="dev-avatar">م</div>
-    <div>
-        <div style="font-size: 12px; font-weight: 600;">محمد احمد فؤاد</div>
-        <div style="font-size: 11px; color: var(--success);">01010421571</div>
+<!-- Developer Info (Bottom Left) -->
+<div class="developer-info" onclick="window.open('https://wa.me/201010421571', '_blank')">
+    <div class="developer-avatar">م</div>
+    <div class="developer-details">
+        <div class="developer-name">محمد احمد فؤاد</div>
+        <div class="developer-whatsapp"><i class="fab fa-whatsapp"></i> 01010421571</div>
     </div>
-</a>
-
-<!-- WhatsApp Button -->
-<a href="https://wa.me/201010421571" target="_blank" class="wa-btn">
-    <i class="fab fa-whatsapp"></i>
-</a>
-
-<!-- Export Buttons -->
-<div class="export-btns">
-    <button onclick="exportExcel()" class="btn-icon" title="تصدير Excel">
-        <i class="fas fa-file-excel"></i>
-    </button>
-    <button onclick="exportPDF()" class="btn-icon" title="تصدير PDF">
-        <i class="fas fa-file-pdf"></i>
-    </button>
-    <button onclick="exportImage()" class="btn-icon" title="تصدير صورة">
-        <i class="fas fa-image"></i>
-    </button>
 </div>
 
-<!-- Loading -->
-<div id="loading" class="loading-overlay">
-    <div class="spinner"></div>
+<!-- WhatsApp Button (Bottom Right) -->
+<a href="https://wa.me/201010421571" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a>
+
+<!-- Loading Spinner -->
+<div id="loading-spinner" class="loading-spinner"><div class="spinner"></div></div>
+
+<!-- Connection Status -->
+<div id="connection-status" class="connection-status"><i class="fas fa-wifi"></i><span>متصل بالإنترنت</span></div>
+
+<!-- Toast Notifications -->
+<div id="toast" class="toast"></div>
+
+<!-- Export/Import Buttons -->
+<div class="export-import-buttons">
+    <button class="export-import-btn" onclick="exportData()" title="تصدير البيانات"><i class="fas fa-download"></i></button>
+    <button class="export-import-btn" onclick="importData()" title="استيراد البيانات"><i class="fas fa-upload"></i></button>
+    <button class="export-import-btn" onclick="scheduleBackup()" title="جدولة نسخ احتياطي"><i class="fas fa-clock"></i></button>
 </div>
 
-<!-- Toasts -->
-<div id="toasts" class="toast-container"></div>
-
-<!-- Login -->
-<div id="login-view" class="login-wrapper">
+<!-- Login Container -->
+<div id="login-container" class="login-container">
     <div class="login-card">
-        <div class="login-logo">
-            <i class="fas fa-chart-line"></i>
+        <div class="login-logo"><i class="fas fa-shield-alt"></i></div>
+        <h1 class="login-title">النظام المالي المتكامل</h1>
+        <p class="login-subtitle">تسجيل الدخول إلى لوحة التحكم</p>
+        <div id="login-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3"><i class="fas fa-exclamation-circle"></i><span></span></div>
+        <div class="input-group"><label class="input-label">البريد الإلكتروني</label><input type="email" id="login-email" class="input-field" placeholder="أدخل بريدك الإلكتروني" value="admin@system.com"></div>
+        <div class="input-group"><label class="input-label">كلمة المرور</label><input type="password" id="login-password" class="input-field" placeholder="أدخل كلمة المرور" value="admin123"></div>
+        <button onclick="handleLogin()" class="btn-primary"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول</button>
+        <div class="text-center my-4 text-gray-500">أو</div>
+        <div class="social-login">
+            <button onclick="handleSocialLogin('google')" class="social-btn google"><i class="fab fa-google"></i> Google</button>
+            <button onclick="handleSocialLogin('microsoft')" class="social-btn microsoft"><i class="fab fa-microsoft"></i> Microsoft</button>
         </div>
-        <h1 style="font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 4px;">النظام المالي</h1>
-        <p style="text-align: center; color: var(--fg-muted); margin-bottom: 24px; font-size: 14px;">سجل دخولك للوحة التحكم</p>
-
-        <div id="login-error" class="card" style="display: none; background: rgba(248, 113, 113, 0.1); border-color: var(--danger); margin-bottom: 16px; padding: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px; color: var(--danger); font-size: 13px;">
-                <i class="fas fa-exclamation-circle"></i>
-                <span id="login-error-text"></span>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">البريد الإلكتروني</label>
-            <input type="email" id="login-email" class="input-field" placeholder="أدخل بريدك" value="admin@system.com">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">كلمة المرور</label>
-            <input type="password" id="login-pass" class="input-field" placeholder="أدخل كلمة المرور" value="admin123">
-        </div>
-
-        <button onclick="login()" class="btn btn-primary" style="margin-bottom: 16px;">
-            <i class="fas fa-sign-in-alt"></i>
-            تسجيل الدخول
-        </button>
-
-        <div style="text-align: center; color: var(--fg-muted); font-size: 13px; margin-bottom: 12px;">أو</div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <button onclick="socialLogin('google')" class="btn btn-secondary">
-                <i class="fab fa-google" style="color: #ea4335;"></i>
-                Google
-            </button>
-            <button onclick="socialLogin('microsoft')" class="btn btn-secondary">
-                <i class="fab fa-microsoft" style="color: #00a4ef;"></i>
-                Microsoft
-            </button>
-        </div>
-
-        <div style="text-align: center;">
-            <button onclick="showRegister()" class="btn btn-secondary" style="color: var(--accent);">ليس لديك حساب؟ سجل الآن</button>
-        </div>
-
-        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--fg-muted);">
-            تطوير: محمد احمد فؤاد | واتساب: 01010421571
-        </div>
+        <div class="mt-6 text-center"><button onclick="showRegister()" class="text-emerald-400 hover:text-emerald-300">ليس لديك حساب؟ سجل الآن</button></div>
+        <div class="mt-4 text-center text-sm text-gray-500"><p>حساب المدير: admin@system.com / admin123</p></div>
+        <div class="mt-6 pt-4 text-center text-xs text-gray-600 border-t border-gray-800"><p>تطوير: محمد احمد فؤاد</p><p class="flex items-center justify-center gap-2 mt-1"><i class="fab fa-whatsapp text-whatsapp"></i>01010421571</p></div>
     </div>
 </div>
 
-<!-- Register -->
-<div id="register-view" class="login-wrapper" style="display: none;">
+<!-- Register Container -->
+<div id="register-container" class="login-container" style="display: none;">
     <div class="login-card">
-        <div class="login-logo">
-            <i class="fas fa-user-plus"></i>
-        </div>
-        <h1 style="font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 4px;">إنشاء حساب</h1>
-        <p style="text-align: center; color: var(--fg-muted); margin-bottom: 24px; font-size: 14px;">أدخل بياناتك للتسجيل</p>
-
-        <div id="register-error" class="card" style="display: none; background: rgba(248, 113, 113, 0.1); border-color: var(--danger); margin-bottom: 16px; padding: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px; color: var(--danger); font-size: 13px;"></div>
-        </div>
-
-        <div id="register-success" class="card" style="display: none; background: rgba(52, 211, 153, 0.1); border-color: var(--success); margin-bottom: 16px; padding: 12px;">
-            <div style="display: flex; align-items: center; gap: 8px; color: var(--success); font-size: 13px;"></div>
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">الاسم الكامل</label>
-            <input type="text" id="reg-name" class="input-field" placeholder="أدخل اسمك">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">البريد الإلكتروني</label>
-            <input type="email" id="reg-email" class="input-field" placeholder="أدخل بريدك">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">كلمة المرور</label>
-            <input type="password" id="reg-pass" class="input-field" placeholder="أدخل كلمة المرور">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">تأكيد كلمة المرور</label>
-            <input type="password" id="reg-confirm" class="input-field" placeholder="أعد إدخال كلمة المرور">
-        </div>
-
-        <button onclick="register()" class="btn btn-primary" style="margin-bottom: 16px;">
-            <i class="fas fa-user-plus"></i>
-            إنشاء حساب
-        </button>
-
-        <div style="text-align: center;">
-            <button onclick="showLogin()" class="btn btn-secondary" style="color: var(--accent);">لديك حساب؟ سجل دخول</button>
-        </div>
+        <div class="login-logo"><i class="fas fa-user-plus"></i></div>
+        <h1 class="login-title">إنشاء حساب جديد</h1>
+        <p class="login-subtitle">أدخل بياناتك للتسجيل في النظام</p>
+        <div id="register-error" class="bg-red-900/20 border border-red-800 rounded-xl p-4 text-red-400 mb-6 hidden items-center gap-3"><i class="fas fa-exclamation-circle"></i><span></span></div>
+        <div id="register-success" class="bg-green-900/20 border border-green-800 rounded-xl p-4 text-green-400 mb-6 hidden items-center gap-3"><i class="fas fa-check-circle"></i><span></span></div>
+        <div class="input-group"><label class="input-label">الاسم الكامل</label><input type="text" id="register-name" class="input-field" placeholder="أدخل اسمك الكامل"></div>
+        <div class="input-group"><label class="input-label">البريد الإلكتروني</label><input type="email" id="register-email" class="input-field" placeholder="أدخل بريدك الإلكتروني"></div>
+        <div class="input-group"><label class="input-label">كلمة المرور</label><input type="password" id="register-password" class="input-field" placeholder="أدخل كلمة المرور"></div>
+        <div class="input-group"><label class="input-label">تأكيد كلمة المرور</label><input type="password" id="register-confirm" class="input-field" placeholder="أعد إدخال كلمة المرور"></div>
+        <button onclick="handleRegister()" class="btn-primary"><i class="fas fa-user-plus"></i> إنشاء حساب</button>
+        <div class="mt-6 text-center"><button onclick="showLogin()" class="text-emerald-400 hover:text-emerald-300">لديك حساب بالفعل؟ سجل دخول</button></div>
     </div>
 </div>
 
-<!-- Main App -->
-<div id="app-view" style="display: none;">
-    <!-- User Badge -->
-    <div class="user-badge">
-        <div class="user-avatar" id="user-avatar">م</div>
-        <span class="user-name" id="user-name-display">المستخدم</span>
-    </div>
-
-    <!-- Navigation -->
-    <div class="nav-sidebar">
-        <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
-            <i class="fas fa-chart-pie"></i>
-            <span>الرئيسية</span>
-        </div>
-        <div class="nav-item" onclick="showPage('clients')" data-page="clients">
-            <i class="fas fa-users"></i>
-            <span>العملاء</span>
-        </div>
-        <div class="nav-item" onclick="showPage('add')" data-page="add">
-            <i class="fas fa-user-plus"></i>
-            <span>إضافة عميل</span>
-        </div>
-        <div class="nav-item" onclick="showPage('reports')" data-page="reports">
-            <i class="fas fa-file-alt"></i>
-            <span>التقارير</span>
-        </div>
-        <div class="nav-item" onclick="showPage('users')" data-page="users" id="users-nav">
-            <i class="fas fa-user-cog"></i>
-            <span>المستخدمين</span>
-        </div>
-        <div class="nav-item" onclick="showPage('settings')" data-page="settings">
-            <i class="fas fa-cog"></i>
-            <span>الإعدادات</span>
-        </div>
-        <div class="nav-item" onclick="toggleTheme()">
-            <i class="fas fa-moon" id="theme-icon"></i>
-            <span>المظهر</span>
-        </div>
-        <div class="nav-item" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>خروج</span>
+<!-- Main Application -->
+<div id="main-app" style="display: none;">
+    <!-- User Menu -->
+    <div class="user-menu" id="user-menu">
+        <div class="user-avatar" id="user-avatar"></div>
+        <div class="user-info">
+            <div class="user-name" id="user-name"></div>
+            <div class="user-email" id="user-email"></div>
+            <div class="text-xs mt-1" id="user-role-badge"></div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-        <!-- Dashboard -->
-        <div id="page-dashboard" class="page">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">لوحة التحكم</h1>
-            
-            <div id="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
+    <!-- Vertical Navigation -->
+    <div class="vertical-nav">
+        <div class="vertical-nav-item active" onclick="showPage('dashboard')" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>الرئيسية</span></div>
+        <div class="vertical-nav-item" onclick="showPage('clients')" data-page="clients"><i class="fas fa-users"></i><span>العملاء</span></div>
+        <div class="vertical-nav-item" onclick="showPage('add')" data-page="add"><i class="fas fa-user-plus"></i><span>إضافة عميل</span></div>
+        <div class="vertical-nav-item" onclick="showPage('reports')" data-page="reports"><i class="fas fa-file-alt"></i><span>التقارير</span></div>
+        <div class="vertical-nav-item" onclick="showPage('users')" data-page="users" id="users-menu"><i class="fas fa-user-cog"></i><span>المستخدمين</span></div>
+        <div class="vertical-nav-item" onclick="showPage('settings')" data-page="settings"><i class="fas fa-cog"></i><span>الإعدادات</span></div>
+        <div class="vertical-nav-item" onclick="toggleTheme()"><i class="fas fa-moon" id="theme-icon"></i><span>المظهر</span></div>
+        <div class="vertical-nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>خروج</span></div>
+    </div>
 
-            <div style="margin-bottom: 16px;">
-                <input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل..." oninput="searchClients()">
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page">
+            <h1 class="text-3xl font-bold mb-8">لوحة التحكم الرئيسية</h1>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" id="stats-cards"></div>
+            <div class="mb-8"><input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل..." oninput="searchClients()"></div>
+            <div class="flex gap-3 mb-8" id="filter-buttons">
+                <button class="filter-btn active" onclick="filterClients('all')">الكل</button>
+                <button class="filter-btn" onclick="filterClients('له')">له</button>
+                <button class="filter-btn" onclick="filterClients('عليه')">عليه</button>
+                <button class="filter-btn" onclick="filterClients('صفر')">متوازن</button>
             </div>
-
-            <div style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
-                <button class="filter-btn active" onclick="filter('all')">الكل</button>
-                <button class="filter-btn" onclick="filter('له')">له</button>
-                <button class="filter-btn" onclick="filter('عليه')">عليه</button>
-                <button class="filter-btn" onclick="filter('صفر')">متوازن</button>
-            </div>
-
-            <div id="clients-grid" class="clients-grid"></div>
+            <div id="clients-grid" class="grid-container"></div>
         </div>
 
-        <!-- Clients List -->
-        <div id="page-clients" class="page" style="display: none;">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">جميع العملاء</h1>
-            <div id="clients-list" class="clients-grid"></div>
+        <!-- Clients Page -->
+        <div id="clients-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">جميع العملاء</h1>
+            <div id="all-clients-list" class="space-y-4"></div>
         </div>
 
-        <!-- Add Client -->
-        <div id="page-add" class="page" style="display: none;">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">إضافة عميل</h1>
-            
-            <div class="card" style="max-width: 400px;">
-                <div class="input-group">
-                    <label class="input-label">اسم العميل</label>
-                    <input type="text" id="client-name" class="input-field" placeholder="أدخل الاسم">
+        <!-- Add Client Page -->
+        <div id="add-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">إضافة عميل جديد</h1>
+            <div class="max-w-2xl bg-secondary p-8 rounded-2xl border border-border">
+                <div class="space-y-6">
+                    <div><label class="input-label">اسم العميل</label><input type="text" id="client-name" class="input-field" placeholder="أدخل اسم العميل"></div>
+                    <div><label class="input-label">رقم الجوال</label><input type="tel" id="client-phone" class="input-field" placeholder="أدخل رقم الجوال"></div>
+                    <button onclick="addNewClient()" class="btn-primary"><i class="fas fa-save"></i> إضافة العميل</button>
                 </div>
-                
-                <div class="input-group">
-                    <label class="input-label">رقم الجوال</label>
-                    <input type="tel" id="client-phone" class="input-field" placeholder="أدخل الرقم">
-                </div>
-                
-                <button onclick="addClient()" class="btn btn-primary">
-                    <i class="fas fa-plus"></i>
-                    إضافة
-                </button>
             </div>
         </div>
 
-        <!-- Reports -->
-        <div id="page-reports" class="page" style="display: none;">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">التقارير</h1>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">تصدير البيانات</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button onclick="exportExcel()" class="btn btn-secondary" style="justify-content: flex-start;">
-                            <i class="fas fa-file-excel" style="color: var(--success);"></i>
-                            تصدير Excel
-                        </button>
-                        <button onclick="exportPDF()" class="btn btn-secondary" style="justify-content: flex-start;">
-                            <i class="fas fa-file-pdf" style="color: var(--danger);"></i>
-                            تصدير PDF
-                        </button>
-                        <button onclick="exportImage()" class="btn btn-secondary" style="justify-content: flex-start;">
-                            <i class="fas fa-image" style="color: #a855f7;"></i>
-                            تصدير صورة
-                        </button>
+        <!-- Reports Page -->
+        <div id="reports-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">التقارير</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-lg font-semibold mb-4">تقارير العملاء</h3>
+                    <div class="space-y-3">
+                        <button onclick="exportToExcel()" class="btn-secondary w-full text-right"><i class="fas fa-file-excel text-green-500 ml-2"></i> تصدير Excel</button>
+                        <button onclick="exportToPDF()" class="btn-secondary w-full text-right"><i class="fas fa-file-pdf text-red-500 ml-2"></i> تصدير PDF</button>
+                        <button onclick="exportToImage()" class="btn-secondary w-full text-right"><i class="fas fa-camera text-purple-500 ml-2"></i> تصدير كصورة</button>
                     </div>
                 </div>
-                
-                <div class="card">
-                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">إحصائيات</h3>
-                    <div id="report-stats"></div>
+                <div class="stat-card"><h3 class="text-lg font-semibold mb-4">إحصائيات</h3><div id="report-stats" class="space-y-3"></div></div>
+            </div>
+        </div>
+
+        <!-- Users Management Page -->
+        <div id="users-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">إدارة المستخدمين</h1>
+            <div class="stat-card mb-8">
+                <h3 class="text-lg font-semibold mb-4">إحصائيات المستخدمين</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">إجمالي المستخدمين</p><p class="text-2xl font-bold" id="total-users">0</p></div>
+                    <div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">المستخدمين النشطين</p><p class="text-2xl font-bold text-emerald-400" id="active-users">0</p></div>
+                    <div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">المستخدمين المتوقفين</p><p class="text-2xl font-bold text-rose-400" id="inactive-users">0</p></div>
+                    <div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">إجمالي العملاء</p><p class="text-2xl font-bold text-amber-400" id="total-clients-all">0</p></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <h3 class="text-lg font-semibold mb-4">قائمة المستخدمين</h3>
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead><tr><th>المستخدم</th><th>البريد الإلكتروني</th><th>نوع الحساب</th><th>تاريخ التسجيل</th><th>عدد العملاء</th><th>الحالة</th><th>التحكم</th></tr></thead>
+                        <tbody id="users-table-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- Users -->
-        <div id="page-users" class="page" style="display: none;">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">المستخدمين</h1>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px;">
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 11px; color: var(--fg-muted);">الإجمالي</div>
-                    <div style="font-size: 24px; font-weight: 700;" id="total-users">0</div>
+        <!-- Settings Page -->
+        <div id="settings-page" class="page hidden">
+            <h1 class="text-3xl font-bold mb-8">الإعدادات</h1>
+            <div class="max-w-2xl stat-card">
+                <h3 class="text-lg font-semibold mb-6">إعدادات النسخ الاحتياطي</h3>
+                <div class="space-y-4">
+                    <div><label class="input-label">النسخ الاحتياطي التلقائي</label><div class="flex items-center gap-4"><label class="toggle-switch"><input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackup()"><span class="toggle-slider"></span></label><span id="auto-backup-status">مفعل</span></div></div>
+                    <div><label class="input-label">عدد النسخ الاحتياطية للاحتفاظ بها</label><select id="backup-count" class="input-field" onchange="updateBackupCount()"><option value="3">3 نسخ</option><option value="5" selected>5 نسخ</option><option value="10">10 نسخ</option><option value="0">غير محدود</option></select></div>
+                    <div><label class="input-label">جدولة النسخ الاحتياطي</label><select id="backup-schedule" class="input-field" onchange="updateBackupSchedule()"><option value="5">كل 5 دقائق</option><option value="15">كل 15 دقيقة</option><option value="30">كل 30 دقيقة</option><option value="60" selected>كل ساعة</option><option value="360">كل 6 ساعات</option><option value="720">كل 12 ساعة</option><option value="1440">كل يوم</option></select></div>
                 </div>
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 11px; color: var(--fg-muted);">نشط</div>
-                    <div style="font-size: 24px; font-weight: 700; color: var(--success);" id="active-users">0</div>
+                <div class="mt-8 pt-8 border-t border-border">
+                    <h3 class="text-lg font-semibold mb-6">تغيير كلمة المرور</h3>
+                    <div class="space-y-4">
+                        <input type="password" id="current-password" class="input-field" placeholder="كلمة المرور الحالية">
+                        <input type="password" id="new-password" class="input-field" placeholder="كلمة المرور الجديدة">
+                        <input type="password" id="confirm-password" class="input-field" placeholder="تأكيد كلمة المرور">
+                        <button onclick="changePassword()" class="btn-primary"><i class="fas fa-key"></i> تغيير كلمة المرور</button>
+                    </div>
                 </div>
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 11px; color: var(--fg-muted);">موقوف</div>
-                    <div style="font-size: 24px; font-weight: 700; color: var(--danger);" id="inactive-users">0</div>
-                </div>
-            </div>
-
-            <div class="card" style="overflow-x: auto;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>المستخدم</th>
-                            <th>البريد</th>
-                            <th>الحالة</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-table"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Settings -->
-        <div id="page-settings" class="page" style="display: none;">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">الإعدادات</h1>
-            
-            <div class="card" style="max-width: 500px;">
-                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">النسخ الاحتياطي التلقائي</h3>
-                
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                    <span style="font-size: 14px;">التفعيل</span>
-                    <label class="toggle">
-                        <input type="checkbox" id="auto-backup-toggle" checked onchange="toggleAutoBackup()">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <label class="input-label">الفترة الزمنية</label>
-                    <select id="backup-interval" class="input-field" onchange="updateBackupInterval()">
-                        <option value="5">كل 5 دقائق</option>
-                        <option value="15">كل 15 دقيقة</option>
-                        <option value="30">كل 30 دقيقة</option>
-                        <option value="60" selected>كل ساعة</option>
-                    </select>
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <label class="input-label">عدد النسخ المحفوظة</label>
-                    <select id="backup-count" class="input-field" onchange="updateBackupCount()">
-                        <option value="3">3 نسخ</option>
-                        <option value="5" selected>5 نسخ</option>
-                        <option value="10">10 نسخ</option>
-                    </select>
-                </div>
-
-                <button onclick="viewBackupHistory()" class="btn btn-secondary" style="width: 100%; margin-bottom: 24px;">
-                    <i class="fas fa-history"></i>
-                    سجل النسخ الاحتياطية
-                </button>
-
-                <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; padding-top: 16px; border-top: 1px solid var(--border);">تغيير كلمة المرور</h3>
-                
-                <div class="input-group">
-                    <input type="password" id="current-pass" class="input-field" placeholder="كلمة المرور الحالية">
-                </div>
-                <div class="input-group">
-                    <input type="password" id="new-pass" class="input-field" placeholder="كلمة المرور الجديدة">
-                </div>
-                <div class="input-group">
-                    <input type="password" id="confirm-pass" class="input-field" placeholder="تأكيد كلمة المرور">
-                </div>
-                
-                <button onclick="changePassword()" class="btn btn-primary">
-                    <i class="fas fa-key"></i>
-                    تغيير
-                </button>
-
-                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 12px;">
-                    <button onclick="exportData()" class="btn btn-secondary" style="flex: 1;">
-                        <i class="fas fa-download"></i>
-                        تصدير
-                    </button>
-                    <button onclick="importData()" class="btn btn-secondary" style="flex: 1;">
-                        <i class="fas fa-upload"></i>
-                        استيراد
-                    </button>
+                <div class="mt-8 pt-8 border-t border-border">
+                    <button onclick="exportData()" class="btn-secondary ml-3"><i class="fas fa-download ml-2"></i> تصدير البيانات</button>
+                    <button onclick="importData()" class="btn-secondary"><i class="fas fa-upload ml-2"></i> استيراد البيانات</button>
+                    <button onclick="viewBackupHistory()" class="btn-secondary mt-3 w-full"><i class="fas fa-history ml-2"></i> عرض سجل النسخ الاحتياطية</button>
                 </div>
             </div>
         </div>
 
-        <!-- Client Details -->
-        <div id="page-client" class="page" style="display: none;">
-            <button onclick="showPage('dashboard')" class="btn btn-secondary" style="margin-bottom: 16px;">
-                <i class="fas fa-arrow-right"></i>
-                عودة
-            </button>
-            <div id="client-details" class="card"></div>
+        <!-- Client Details Page -->
+        <div id="client-page" class="page hidden">
+            <button onclick="showPage('dashboard')" class="btn-secondary mb-6"><i class="fas fa-arrow-right ml-2"></i> العودة</button>
+            <div id="client-details" class="stat-card"></div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <div class="footer"><p>تطوير: محمد احمد فؤاد | واتساب: 01010421571</p><p class="text-xs mt-1">جميع الحقوق محفوظة © 2024</p></div>
 </div>
 
 <!-- Transaction Modal -->
-<div id="transaction-modal" class="modal-overlay">
+<div id="transaction-modal" class="modal">
     <div class="modal-content">
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">إضافة معاملة</h3>
-        
-        <div style="margin-bottom: 16px;">
-            <label class="input-label">النوع</label>
-            <div style="display: flex; gap: 12px;">
-                <button onclick="setTxType('out')" id="tx-out" class="btn btn-primary" style="flex: 1;">تسليم (له)</button>
-                <button onclick="setTxType('in')" id="tx-in" class="btn btn-secondary" style="flex: 1;">استلام (عليه)</button>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">المبلغ</label>
-            <input type="number" id="tx-amount" class="input-field" placeholder="المبلغ">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">المسؤول</label>
-            <input type="text" id="tx-resp" class="input-field" placeholder="الاسم">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">ملاحظات</label>
-            <textarea id="tx-note" class="input-field" rows="2" placeholder="ملاحظات"></textarea>
-        </div>
-
-        <div style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button onclick="closeTxModal()" class="btn btn-secondary">إلغاء</button>
-            <button onclick="saveTx()" class="btn btn-primary">حفظ</button>
+        <h3 class="text-xl font-bold mb-6">إضافة معاملة جديدة</h3>
+        <div class="space-y-4">
+            <div><label class="input-label">نوع المعاملة</label><div class="grid grid-cols-2 gap-3"><button onclick="setTransactionType('out')" id="type-out" class="btn-primary">تسليم (له)</button><button onclick="setTransactionType('in')" id="type-in" class="btn-secondary">استلام (عليه)</button></div></div>
+            <div><label class="input-label">المبلغ</label><input type="number" id="transaction-amount" class="input-field" placeholder="أدخل المبلغ"></div>
+            <div><label class="input-label">المسؤول</label><input type="text" id="transaction-responsible" class="input-field" placeholder="اسم المسؤول"></div>
+            <div><label class="input-label">ملاحظات</label><textarea id="transaction-note" class="input-field" rows="3" placeholder="ملاحظات إضافية"></textarea></div>
+            <div class="flex justify-end gap-3 mt-6"><button onclick="closeTransactionModal()" class="btn-secondary">إلغاء</button><button onclick="saveTransaction()" class="btn-primary">حفظ</button></div>
         </div>
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div id="delete-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 360px; text-align: center;">
-        <div style="width: 56px; height: 56px; background: rgba(248, 113, 113, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: var(--danger); font-size: 24px;">
-            <i class="fas fa-trash"></i>
-        </div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">تأكيد الحذف</h3>
-        <p id="delete-msg" style="color: var(--fg-muted); font-size: 14px; margin-bottom: 20px;">هل أنت متأكد؟</p>
-        <div style="display: flex; gap: 12px;">
-            <button onclick="closeDeleteModal()" class="btn btn-secondary" style="flex: 1;">إلغاء</button>
-            <button onclick="confirmDelete()" class="btn btn-primary" style="flex: 1; background: var(--danger);">حذف</button>
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-xl font-bold mb-4">تأكيد الحذف</h3>
+        <p class="text-secondary mb-6" id="delete-message">هل أنت متأكد من حذف هذا العنصر؟</p>
+        <div class="flex justify-end gap-3"><button onclick="closeDeleteModal()" class="btn-secondary">إلغاء</button><button onclick="confirmDelete()" class="bg-red-600 text-white px-6 py-2 rounded-xl hover:bg-red-700">حذف</button></div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div id="user-modal" class="modal">
+    <div class="modal-content">
+        <h3 class="text-xl font-bold mb-6">تفاصيل المستخدم</h3>
+        <div class="space-y-4">
+            <div class="flex items-center gap-4 p-4 bg-tertiary rounded-xl"><div class="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-2xl font-bold text-white" id="modal-user-avatar"></div><div><h4 class="text-lg font-bold" id="modal-user-name"></h4><p class="text-gray-500" id="modal-user-email"></p><p class="text-sm mt-1" id="modal-user-provider"></p></div></div>
+            <div class="grid grid-cols-2 gap-4"><div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">عدد العملاء</p><p class="text-2xl font-bold" id="modal-user-clients">0</p></div><div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">عدد المعاملات</p><p class="text-2xl font-bold" id="modal-user-transactions">0</p></div></div>
+            <div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500 mb-2">حالة الحساب</p><div class="flex items-center justify-between"><span id="modal-user-status-text">نشط</span><label class="toggle-switch"><input type="checkbox" id="modal-user-status" onchange="toggleUserStatus()"><span class="toggle-slider"></span></label></div></div>
+            <div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500 mb-2">تاريخ التسجيل</p><p id="modal-user-created"></p></div>
+            <div class="flex justify-end gap-3 mt-6"><button onclick="closeUserModal()" class="btn-secondary">إغلاق</button></div>
         </div>
     </div>
 </div>
 
 <!-- Backup History Modal -->
-<div id="backup-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 500px;">
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">سجل النسخ الاحتياطية</h3>
-        <div id="backup-list" style="max-height: 300px; overflow-y: auto;"></div>
-        <div style="margin-top: 16px; text-align: left;">
-            <button onclick="closeBackupModal()" class="btn btn-secondary">إغلاق</button>
-        </div>
+<div id="backup-history-modal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <h3 class="text-xl font-bold mb-6">سجل النسخ الاحتياطية</h3>
+        <div id="backup-history-list" class="space-y-3 max-h-96 overflow-y-auto"></div>
+        <div class="flex justify-end gap-3 mt-6"><button onclick="closeBackupHistoryModal()" class="btn-secondary">إغلاق</button></div>
     </div>
 </div>
 
 <script>
-// ==================== التخزين ====================
-const KEYS = {
-    users: 'fs_users',
-    current: 'fs_current',
-    clients: p => 'fs_clients_' + p,
-    status: p => 'fs_status_' + p,
-    backup: 'fs_backup',
-    history: 'fs_backup_history',
-    settings: 'fs_settings'
-};
+    // ==================== معلومات المطور ====================
+    const DEVELOPER_INFO = { name: 'محمد احمد فؤاد', whatsapp: '01010421571', whatsappLink: 'https://wa.me/201010421571' };
 
-// البيانات الافتراضية
-const defaultData = {
-    users: [{
-        id: 'admin_1',
-        name: 'مدير النظام',
-        email: 'admin@system.com',
-        password: 'admin123',
-        provider: 'email',
-        role: 'admin',
-        createdAt: new Date().toISOString()
-    }],
-    clients: [{
-        id: 'c1',
-        name: 'أحمد محمد',
-        phone: '0123456789',
-        userId: 'admin_1',
-        createdAt: new Date().toISOString(),
-        transactions: []
-    }]
-};
+    // ==================== نظام التخزين المحلي المتكامل ====================
+    const USERS_KEY = 'financial_system_users';
+    const CURRENT_USER_KEY = 'current_user';
+    const CLIENTS_KEY_PREFIX = 'clients_';
+    const USER_STATUS_KEY = 'user_status_';
+    const BACKUP_KEY = 'financial_system_backup';
+    const BACKUP_HISTORY_KEY = 'financial_system_backup_history';
+    const SETTINGS_KEY = 'financial_system_settings';
 
-// ==================== متغيرات عامة ====================
-let user = null;
-let clientsCache = null;
-let currentClientId = null;
-let txType = 'out';
-let deleteCallback = null;
-let filterType = 'all';
-let backupTimer = null;
+    let systemSettings = { autoBackup: true, backupCount: 5, backupSchedule: 60, lastBackup: null };
+    let currentUser = null;
+    let deleteCallback = null;
+    let currentFilter = 'all';
+    let currentClientId = null;
+    let currentTransactionType = 'out';
+    let selectedUserId = null;
+    let backupInterval = null;
 
-let settings = {
-    autoBackup: true,
-    interval: 60,
-    count: 5
-};
+    const defaultUsers = [{ id: 'admin_1', name: 'مدير النظام', email: 'admin@system.com', password: 'admin123', provider: 'email', role: 'admin', createdAt: new Date().toISOString() }];
+    const defaultClients = [
+        { id: '1', name: 'أحمد محمد', phone: '0123456789', userId: 'admin_1', createdAt: new Date().toISOString(), transactions: [{ id: 't1', date: new Date().toISOString(), type: 'out', amount: 5000, responsible: 'المدير', note: 'دفعة مقدمة', runningBalance: 5000 }] },
+        { id: '2', name: 'سارة خالد', phone: '0112345678', userId: 'admin_1', createdAt: new Date().toISOString(), transactions: [] }
+    ];
 
-// ==================== دوال مساعدة ====================
-function load(key) {
-    return JSON.parse(localStorage.getItem(key) || 'null');
-}
-
-function save(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-}
-
-function showLoading() {
-    document.getElementById('loading').classList.add('active');
-}
-
-function hideLoading() {
-    document.getElementById('loading').classList.remove('active');
-}
-
-function toast(msg, type = 'info') {
-    const container = document.getElementById('toasts');
-    const t = document.createElement('div');
-    t.className = `toast ${type}`;
-    const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
-    t.innerHTML = `<i class="fas ${icon}"></i><span>${msg}</span>`;
-    container.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
-}
-
-function formatMoney(n) {
-    return n.toLocaleString() + ' ج';
-}
-
-function formatDate(d) {
-    return new Date(d).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
-// ==================== المصادقة ====================
-function showLogin() {
-    document.getElementById('register-view').style.display = 'none';
-    document.getElementById('login-view').style.display = 'flex';
-}
-
-function showRegister() {
-    document.getElementById('login-view').style.display = 'none';
-    document.getElementById('register-view').style.display = 'flex';
-}
-
-function login() {
-    const email = document.getElementById('login-email').value;
-    const pass = document.getElementById('login-pass').value;
-    const err = document.getElementById('login-error');
-
-    if (!email || !pass) {
-        document.getElementById('login-error-text').textContent = 'أدخل جميع البيانات';
-        err.style.display = 'block';
-        return;
+    function initializeSystem() {
+        if (!localStorage.getItem(USERS_KEY)) localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
+        defaultUsers.forEach(user => { const key = CLIENTS_KEY_PREFIX + user.id; if (!localStorage.getItem(key)) localStorage.setItem(key, JSON.stringify(defaultClients)); });
+        const savedSettings = localStorage.getItem(SETTINGS_KEY);
+        if (savedSettings) systemSettings = { ...systemSettings, ...JSON.parse(savedSettings) };
+        updateSettingsUI();
     }
 
-    showLoading();
-
-    setTimeout(() => {
-        const users = load(KEYS.users) || defaultData.users;
-        const u = users.find(x => x.email === email && x.password === pass);
-
-        if (!u) {
-            hideLoading();
-            document.getElementById('login-error-text').textContent = 'بيانات غير صحيحة';
-            err.style.display = 'block';
-            return;
-        }
-
-        if (load(KEYS.status(u.id)) === 'inactive') {
-            hideLoading();
-            document.getElementById('login-error-text').textContent = 'الحساب موقوف';
-            err.style.display = 'block';
-            return;
-        }
-
-        user = { id: u.id, name: u.name, email: u.email, role: u.role };
-        save(KEYS.current, user);
-        
-        document.getElementById('user-avatar').textContent = u.name.charAt(0);
-        document.getElementById('user-name-display').textContent = u.name;
-        document.getElementById('login-view').style.display = 'none';
-        document.getElementById('app-view').style.display = 'block';
-        
-        if (u.role === 'admin') {
-            document.getElementById('users-nav').style.display = 'flex';
-        }
-
-        hideLoading();
-        loadData();
-        startAutoBackup();
-        toast(`مرحباً ${u.name}`, 'success');
-    }, 500);
-}
-
-function socialLogin(provider) {
-    showLoading();
-    
-    setTimeout(() => {
-        const email = `${provider}_${Date.now()}@mail.com`;
-        const name = provider === 'google' ? 'مستخدم Google' : 'مستخدم Microsoft';
-        
-        let users = load(KEYS.users) || [];
-        let u = users.find(x => x.email === email);
-        
-        if (!u) {
-            u = {
-                id: `${provider}_${Date.now()}`,
-                name,
-                email,
-                password: 'social',
-                provider,
-                role: 'user',
-                createdAt: new Date().toISOString()
-            };
-            users.push(u);
-            save(KEYS.users, users);
-            save(KEYS.status(u.id), 'active');
-            save(KEYS.clients(u.id), []);
-        }
-
-        if (load(KEYS.status(u.id)) === 'inactive') {
-            hideLoading();
-            toast('الحساب موقوف', 'error');
-            return;
-        }
-
-        user = { id: u.id, name: u.name, email: u.email, role: 'user' };
-        save(KEYS.current, user);
-        
-        document.getElementById('user-avatar').textContent = u.name.charAt(0);
-        document.getElementById('user-name-display').textContent = u.name;
-        document.getElementById('login-view').style.display = 'none';
-        document.getElementById('app-view').style.display = 'block';
-        
-        hideLoading();
-        loadData();
-        startAutoBackup();
-        toast(`مرحباً ${u.name}`, 'success');
-    }, 800);
-}
-
-function register() {
-    const name = document.getElementById('reg-name').value;
-    const email = document.getElementById('reg-email').value;
-    const pass = document.getElementById('reg-pass').value;
-    const confirm = document.getElementById('reg-confirm').value;
-    const err = document.getElementById('register-error');
-    const succ = document.getElementById('register-success');
-
-    err.style.display = 'none';
-    succ.style.display = 'none';
-
-    if (!name || !email || !pass || !confirm) {
-        err.querySelector('div').innerHTML = '<i class="fas fa-exclamation-circle"></i><span>أدخل جميع البيانات</span>';
-        err.style.display = 'block';
-        return;
+    function updateSettingsUI() {
+        const toggle = document.getElementById('auto-backup-toggle');
+        const status = document.getElementById('auto-backup-status');
+        const countSelect = document.getElementById('backup-count');
+        const scheduleSelect = document.getElementById('backup-schedule');
+        if (toggle) { toggle.checked = systemSettings.autoBackup; status.textContent = systemSettings.autoBackup ? 'مفعل' : 'معطل'; }
+        if (countSelect) countSelect.value = systemSettings.backupCount;
+        if (scheduleSelect) scheduleSelect.value = systemSettings.backupSchedule;
     }
 
-    if (pass !== confirm) {
-        err.querySelector('div').innerHTML = '<i class="fas fa-exclamation-circle"></i><span>كلمة المرور غير متطابقة</span>';
-        err.style.display = 'block';
-        return;
+    function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(systemSettings)); }
+
+    function toggleAutoBackup() {
+        const toggle = document.getElementById('auto-backup-toggle');
+        systemSettings.autoBackup = toggle.checked;
+        document.getElementById('auto-backup-status').textContent = systemSettings.autoBackup ? 'مفعل' : 'معطل';
+        saveSettings();
+        if (systemSettings.autoBackup) { startAutoBackup(); showToast('تم تفعيل النسخ الاحتياطي التلقائي', 'success'); }
+        else { stopAutoBackup(); showToast('تم إلغاء النسخ الاحتياطي التلقائي', 'info'); }
     }
 
-    if (pass.length < 3) {
-        err.querySelector('div').innerHTML = '<i class="fas fa-exclamation-circle"></i><span>كلمة المرور قصيرة</span>';
-        err.style.display = 'block';
-        return;
+    function updateBackupCount() { systemSettings.backupCount = parseInt(document.getElementById('backup-count').value); saveSettings(); showToast('تم تحديث إعدادات النسخ الاحتياطي', 'success'); }
+    function updateBackupSchedule() { systemSettings.backupSchedule = parseInt(document.getElementById('backup-schedule').value); saveSettings(); if (systemSettings.autoBackup) { stopAutoBackup(); startAutoBackup(); } showToast('تم تحديث جدولة النسخ الاحتياطي', 'success'); }
+
+    function startAutoBackup() {
+        if (backupInterval) clearInterval(backupInterval);
+        backupInterval = setInterval(() => { if (currentUser && systemSettings.autoBackup) createScheduledBackup(); }, systemSettings.backupSchedule * 60 * 1000);
+    }
+    function stopAutoBackup() { if (backupInterval) { clearInterval(backupInterval); backupInterval = null; } }
+
+    function createScheduledBackup() {
+        showAutoBackupIndicator(true);
+        const data = { users: loadUsers(), clients: {} };
+        loadUsers().forEach(user => data.clients[user.id] = getUserClients(user.id));
+        const backup = { id: Date.now().toString(), timestamp: new Date().toISOString(), data: data };
+        let history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        history.push(backup);
+        if (systemSettings.backupCount > 0 && history.length > systemSettings.backupCount) history = history.slice(-systemSettings.backupCount);
+        localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(history));
+        systemSettings.lastBackup = new Date().toISOString();
+        saveSettings();
+        setTimeout(() => showAutoBackupIndicator(false), 2000);
     }
 
-    showLoading();
+    function showAutoBackupIndicator(show) { document.getElementById('auto-backup-indicator').classList.toggle('hidden', !show); }
 
-    setTimeout(() => {
-        let users = load(KEYS.users) || [];
-        
-        if (users.some(x => x.email === email)) {
-            hideLoading();
-            err.querySelector('div').innerHTML = '<i class="fas fa-exclamation-circle"></i><span>البريد مستخدم</span>';
-            err.style.display = 'block';
-            return;
-        }
-
-        const u = {
-            id: 'user_' + Date.now(),
-            name,
-            email,
-            password: pass,
-            provider: 'email',
-            role: 'user',
-            createdAt: new Date().toISOString()
-        };
-
-        users.push(u);
-        save(KEYS.users, users);
-        save(KEYS.status(u.id), 'active');
-        save(KEYS.clients(u.id), []);
-
-        hideLoading();
-        succ.querySelector('div').innerHTML = '<i class="fas fa-check-circle"></i><span>تم إنشاء الحساب</span>';
-        succ.style.display = 'block';
-        
-        setTimeout(showLogin, 1500);
-    }, 500);
-}
-
-function logout() {
-    createBackup();
-    localStorage.removeItem(KEYS.current);
-    user = null;
-    clientsCache = null;
-    stopAutoBackup();
-    document.getElementById('app-view').style.display = 'none';
-    document.getElementById('login-view').style.display = 'flex';
-    toast('تم الخروج', 'info');
-}
-
-// ==================== البيانات ====================
-function getClients() {
-    if (!user) return [];
-    
-    if (user.role === 'admin') {
-        const all = [];
-        const users = load(KEYS.users) || [];
-        users.forEach(u => {
-            if (load(KEYS.status(u.id)) !== 'inactive') {
-                all.push(...(load(KEYS.clients(u.id)) || []));
-            }
-        });
-        return all;
-    }
-    return load(KEYS.clients(user.id)) || [];
-}
-
-function loadData() {
-    clientsCache = getClients();
-    renderStats(clientsCache);
-    renderClients(clientsCache);
-}
-
-function getSummary(c) {
-    let totalFor = 0, totalOn = 0;
-    c.transactions.forEach(t => {
-        if (t.type === 'out') totalFor += t.amount;
-        else totalOn += t.amount;
-    });
-    const net = totalFor - totalOn;
-    return {
-        totalFor,
-        totalOn,
-        net,
-        status: net > 0 ? 'له' : net < 0 ? 'عليه' : 'صفر'
-    };
-}
-
-// ==================== العرض ====================
-function renderStats(clients) {
-    const totalFor = clients.reduce((s, c) => s + getSummary(c).totalFor, 0);
-    const totalOn = clients.reduce((s, c) => s + getSummary(c).totalOn, 0);
-    const net = totalFor - totalOn;
-
-    document.getElementById('stats-grid').innerHTML = `
-        <div class="stat-card">
-            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">لنا على العملاء</div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--success);">${formatMoney(totalOn)}</div>
-        </div>
-        <div class="stat-card">
-            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">لهم علينا</div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--warning);">${formatMoney(totalFor)}</div>
-        </div>
-        <div class="stat-card">
-            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">الفرق</div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--danger);">${formatMoney(Math.abs(totalFor - totalOn))}</div>
-        </div>
-        <div class="stat-card">
-            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">الصافي</div>
-            <div style="font-size: 24px; font-weight: 700; color: var(--info);">${formatMoney(Math.abs(net))}</div>
-            <div style="font-size: 11px; margin-top: 4px; color: ${net >= 0 ? 'var(--success)' : 'var(--danger)'};">
-                ${net >= 0 ? 'لنا' : 'علينا'}
-            </div>
-        </div>
-    `;
-}
-
-function renderClients(clients) {
-    const grid = document.getElementById('clients-grid');
-    const filtered = filterType === 'all' ? clients : clients.filter(c => getSummary(c).status === filterType);
-
-    if (!filtered.length) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--fg-muted);">لا يوجد عملاء</div>';
-        return;
-    }
-
-    grid.innerHTML = filtered.map(c => {
-        const s = getSummary(c);
-        return `
-            <div class="client-item animate-fade" onclick="viewClient('${c.id}')">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                    <div style="font-weight: 600;">${c.name}</div>
-                    <span class="badge ${s.status === 'له' ? 'badge-warning' : s.status === 'عليه' ? 'badge-success' : 'badge-info'}">${s.status}</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
-                    <div><span style="color: var(--fg-muted);">له:</span> <span style="color: var(--warning);">${formatMoney(s.totalFor)}</span></div>
-                    <div><span style="color: var(--fg-muted);">عليه:</span> <span style="color: var(--success);">${formatMoney(s.totalOn)}</span></div>
-                </div>
-                <div style="margin-top: 12px; font-size: 11px; color: var(--fg-muted);">
-                    ${c.transactions.length} معاملات | ${formatDate(c.createdAt)}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function renderAllClients(clients) {
-    const list = document.getElementById('clients-list');
-    
-    if (!clients.length) {
-        list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--fg-muted);">لا يوجد عملاء</div>';
-        return;
-    }
-
-    list.innerHTML = clients.map(c => {
-        const s = getSummary(c);
-        return `
-            <div class="client-item" onclick="viewClient('${c.id}')">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-weight: 600;">${c.name}</div>
-                        <div style="font-size: 12px; color: var(--fg-muted);">${c.phone || ''}</div>
+    function viewBackupHistory() {
+        const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        const listDiv = document.getElementById('backup-history-list');
+        if (history.length === 0) listDiv.innerHTML = '<p class="text-center text-gray-500 py-8">لا توجد نسخ احتياطية سابقة</p>';
+        else {
+            listDiv.innerHTML = history.map((backup, index) => `
+                <div class="bg-tertiary p-4 rounded-xl flex justify-between items-center">
+                    <div><div class="font-medium">نسخة احتياطية ${history.length - index}</div><div class="text-sm text-gray-500">${new Date(backup.timestamp).toLocaleString('ar-EG')}</div></div>
+                    <div class="flex gap-2">
+                        <button onclick="restoreSpecificBackup('${backup.id}')" class="text-emerald-400 hover:text-emerald-300"><i class="fas fa-undo"></i></button>
+                        <button onclick="downloadBackup('${backup.id}')" class="text-blue-400 hover:text-blue-300"><i class="fas fa-download"></i></button>
+                        <button onclick="deleteBackup('${backup.id}')" class="text-rose-400 hover:text-rose-300"><i class="fas fa-trash"></i></button>
                     </div>
-                    <div style="text-align: left;">
-                        <div style="font-size: 13px; color: ${s.net > 0 ? 'var(--warning)' : 'var(--success)'};">
-                            ${s.net > 0 ? '+' : ''}${formatMoney(s.net)}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-// ==================== الصفحات ====================
-function showPage(page) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.getElementById(`page-${page}`).style.display = 'block';
-    
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
-
-    if (page === 'dashboard') loadData();
-    if (page === 'clients') renderAllClients(getClients());
-    if (page === 'users' && user?.role === 'admin') renderUsers();
-    if (page === 'reports') renderReportStats();
-}
-
-// ==================== العملاء ====================
-function addClient() {
-    const name = document.getElementById('client-name').value.trim();
-    if (!name) {
-        toast('أدخل الاسم', 'error');
-        return;
-    }
-
-    const clients = getClients();
-    if (clients.some(c => c.name === name)) {
-        toast('الاسم موجود', 'error');
-        return;
-    }
-
-    const c = {
-        id: Date.now().toString(),
-        name,
-        phone: document.getElementById('client-phone').value.trim() || '',
-        userId: user.id,
-        createdAt: new Date().toISOString(),
-        transactions: []
-    };
-
-    clients.push(c);
-    
-    const userClients = load(KEYS.clients(user.id)) || [];
-    userClients.push(c);
-    save(KEYS.clients(user.id), userClients);
-    
-    clientsCache = getClients();
-    document.getElementById('client-name').value = '';
-    document.getElementById('client-phone').value = '';
-    toast('تمت الإضافة', 'success');
-    showPage('dashboard');
-}
-
-function viewClient(id) {
-    const c = getClients().find(x => x.id === id);
-    if (!c) return;
-    
-    currentClientId = id;
-    const s = getSummary(c);
-    
-    document.getElementById('client-details').innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
-            <div>
-                <h2 style="font-size: 22px; font-weight: 700;">${c.name}</h2>
-                ${c.phone ? `<div style="color: var(--fg-muted); margin-top: 4px;">${c.phone}</div>` : ''}
-            </div>
-            <span class="badge ${s.status === 'له' ? 'badge-warning' : s.status === 'عليه' ? 'badge-success' : 'badge-info'}">${s.status}</span>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
-            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 11px; color: var(--fg-muted);">له</div>
-                <div style="font-size: 20px; font-weight: 700; color: var(--warning);">${formatMoney(s.totalFor)}</div>
-            </div>
-            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 11px; color: var(--fg-muted);">عليه</div>
-                <div style="font-size: 20px; font-weight: 700; color: var(--success);">${formatMoney(s.totalOn)}</div>
-            </div>
-            <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 11px; color: var(--fg-muted);">الصافي</div>
-                <div style="font-size: 20px; font-weight: 700; color: ${s.net > 0 ? 'var(--warning)' : 'var(--success)'};">
-                    ${s.net > 0 ? '+' : ''}${formatMoney(s.net)}
-                </div>
-            </div>
-        </div>
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h3 style="font-weight: 600;">المعاملات</h3>
-            <button onclick="openTxModal()" class="btn btn-primary" style="padding: 8px 16px;">
-                <i class="fas fa-plus"></i>
-                إضافة
-            </button>
-        </div>
-        
-        ${!c.transactions.length ? 
-            '<div style="text-align: center; padding: 32px; color: var(--fg-muted);">لا توجد معاملات</div>' : 
-            c.transactions.map(t => `
-                <div style="background: var(--bg-secondary); padding: 12px; border-radius: 10px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">${t.type === 'out' ? 'تسليم' : 'استلام'}</span>
-                        <span style="font-weight: 600;">${formatMoney(t.amount)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">
-                        <span>${t.responsible}</span>
-                        <span>${formatDate(t.date)}</span>
-                    </div>
-                    ${t.note ? `<div style="font-size: 12px; color: var(--fg-muted); margin-top: 4px;">${t.note}</div>` : ''}
-                    <div style="text-align: left; margin-top: 8px;">
-                        <button onclick="deleteTx('${t.id}')" style="color: var(--danger); font-size: 12px; background: none; border: none; cursor: pointer;">حذف</button>
-                    </div>
-                </div>
-            `).join('')
+                </div>`).join('');
         }
-    `;
-    
-    showPage('client');
-}
-
-// ==================== المعاملات ====================
-function openTxModal() {
-    document.getElementById('transaction-modal').classList.add('active');
-    document.getElementById('tx-amount').value = '';
-    document.getElementById('tx-resp').value = '';
-    document.getElementById('tx-note').value = '';
-    setTxType('out');
-}
-
-function closeTxModal() {
-    document.getElementById('transaction-modal').classList.remove('active');
-}
-
-function setTxType(type) {
-    txType = type;
-    const outBtn = document.getElementById('tx-out');
-    const inBtn = document.getElementById('tx-in');
-    
-    if (type === 'out') {
-        outBtn.className = 'btn btn-primary';
-        inBtn.className = 'btn btn-secondary';
-    } else {
-        outBtn.className = 'btn btn-secondary';
-        inBtn.className = 'btn btn-primary';
-    }
-}
-
-function saveTx() {
-    const amount = parseFloat(document.getElementById('tx-amount').value);
-    const resp = document.getElementById('tx-resp').value.trim();
-
-    if (!amount || amount <= 0) {
-        toast('أدخل مبلغ صحيح', 'error');
-        return;
+        document.getElementById('backup-history-modal').classList.add('active');
     }
 
-    if (!resp) {
-        toast('أدخل اسم المسؤول', 'error');
-        return;
-    }
-
-    const clients = getClients();
-    const idx = clients.findIndex(c => c.id === currentClientId);
-    if (idx === -1) return;
-
-    const c = clients[idx];
-    const lastBal = c.transactions.length ? c.transactions[c.transactions.length - 1].runningBalance : 0;
-    const newBal = txType === 'out' ? lastBal + amount : lastBal - amount;
-
-    c.transactions.push({
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        type: txType,
-        amount,
-        responsible: resp,
-        note: document.getElementById('tx-note').value.trim(),
-        runningBalance: newBal
-    });
-
-    // Save
-    if (user.role === 'admin') {
-        const uc = load(KEYS.clients(c.userId)) || [];
-        const uIdx = uc.findIndex(x => x.id === c.id);
-        uc[uIdx] = c;
-        save(KEYS.clients(c.userId), uc);
-    } else {
-        save(KEYS.clients(user.id), clients);
-    }
-
-    closeTxModal();
-    viewClient(currentClientId);
-    clientsCache = getClients();
-    toast('تمت الإضافة', 'success');
-}
-
-function deleteTx(txId) {
-    document.getElementById('delete-msg').textContent = 'حذف المعاملة؟';
-    document.getElementById('delete-modal').classList.add('active');
-    
-    deleteCallback = () => {
-        const clients = getClients();
-        const idx = clients.findIndex(c => c.id === currentClientId);
-        if (idx === -1) return;
-
-        const c = clients[idx];
-        c.transactions = c.transactions.filter(t => t.id !== txId);
-        
-        let bal = 0;
-        c.transactions = c.transactions.map(t => {
-            bal += t.type === 'out' ? t.amount : -t.amount;
-            return { ...t, runningBalance: bal };
-        });
-
-        if (user.role === 'admin') {
-            const uc = load(KEYS.clients(c.userId)) || [];
-            const uIdx = uc.findIndex(x => x.id === c.id);
-            uc[uIdx] = c;
-            save(KEYS.clients(c.userId), uc);
-        } else {
-            save(KEYS.clients(user.id), clients);
+    function restoreSpecificBackup(backupId) {
+        const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        const backup = history.find(b => b.id === backupId);
+        if (backup && confirm('هل أنت متأكد من استعادة هذه النسخة؟')) {
+            if (backup.data.users) localStorage.setItem(USERS_KEY, JSON.stringify(backup.data.users));
+            if (backup.data.clients) Object.keys(backup.data.clients).forEach(userId => { localStorage.setItem(CLIENTS_KEY_PREFIX + userId, JSON.stringify(backup.data.clients[userId])); });
+            showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+            closeBackupHistoryModal();
+            if (currentUser) loadUserData();
         }
-
-        viewClient(currentClientId);
-        clientsCache = getClients();
-        toast('تم الحذف', 'success');
-    };
-}
-
-// ==================== البحث والفلترة ====================
-function searchClients() {
-    const q = document.getElementById('search-input').value.toLowerCase();
-    const clients = getClients();
-    
-    if (!q) {
-        renderClients(clients);
-        return;
     }
-    
-    renderClients(clients.filter(c => 
-        c.name.toLowerCase().includes(q) || 
-        (c.phone && c.phone.includes(q))
-    ));
-}
 
-function filter(type) {
-    filterType = type;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    renderClients(getClients());
-}
-
-// ==================== المستخدمين ====================
-function renderUsers() {
-    const users = load(KEYS.users) || [];
-    let active = 0, inactive = 0;
-    
-    users.forEach(u => {
-        if (load(KEYS.status(u.id)) !== 'inactive') active++;
-        else inactive++;
-    });
-    
-    document.getElementById('total-users').textContent = users.length;
-    document.getElementById('active-users').textContent = active;
-    document.getElementById('inactive-users').textContent = inactive;
-    
-    document.getElementById('users-table').innerHTML = users.map(u => {
-        const status = load(KEYS.status(u.id)) || 'active';
-        return `
-            <tr>
-                <td>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #a855f7); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">${u.name.charAt(0)}</div>
-                        <div>
-                            <div style="font-weight: 500;">${u.name}</div>
-                            ${u.role === 'admin' ? '<div style="font-size: 11px; color: var(--accent);">مدير</div>' : ''}
-                        </div>
-                    </div>
-                </td>
-                <td style="font-size: 13px;">${u.email}</td>
-                <td><span class="badge ${status === 'active' ? 'badge-success' : 'badge-danger'}">${status === 'active' ? 'نشط' : 'موقوف'}</span></td>
-                <td>
-                    ${u.role !== 'admin' ? `
-                        <button onclick="toggleUserStatus('${u.id}')" class="btn-icon" style="width: 32px; height: 32px; font-size: 12px;">
-                            <i class="fas ${status === 'active' ? 'fa-pause' : 'fa-play'}"></i>
-                        </button>
-                    ` : ''}
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-function toggleUserStatus(userId) {
-    const current = load(KEYS.status(userId)) || 'active';
-    save(KEYS.status(userId), current === 'active' ? 'inactive' : 'active');
-    renderUsers();
-    toast(`تم ${current === 'active' ? 'إيقاف' : 'تفعيل'} المستخدم`, 'success');
-}
-
-// ==================== التقارير ====================
-function renderReportStats() {
-    const clients = getClients();
-    const totalTx = clients.reduce((s, c) => s + c.transactions.length, 0);
-    const totalAmount = clients.reduce((s, c) => s + c.transactions.reduce((ss, t) => ss + t.amount, 0), 0);
-    
-    document.getElementById('report-stats').innerHTML = `
-        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
-            <span style="color: var(--fg-muted);">عدد العملاء</span>
-            <span style="font-weight: 600;">${clients.length}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
-            <span style="color: var(--fg-muted);">عدد المعاملات</span>
-            <span style="font-weight: 600;">${totalTx}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
-            <span style="color: var(--fg-muted);">إجمالي المبالغ</span>
-            <span style="font-weight: 600; color: var(--success);">${formatMoney(totalAmount)}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; padding: 12px 0;">
-            <span style="color: var(--fg-muted);">متوسط المعاملات</span>
-            <span style="font-weight: 600;">${(totalTx / clients.length || 0).toFixed(1)}</span>
-        </div>
-    `;
-}
-
-function exportExcel() {
-    const clients = getClients();
-    const wb = XLSX.utils.book_new();
-    
-    const data = clients.map(c => {
-        const s = getSummary(c);
-        return {
-            'الاسم': c.name,
-            'الجوال': c.phone || '-',
-            'له': s.totalFor,
-            'عليه': s.totalOn,
-            'الصافي': s.net,
-            'الحالة': s.status
-        };
-    });
-    
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'العملاء');
-    
-    clients.forEach(c => {
-        if (c.transactions.length) {
-            const txData = c.transactions.map(t => ({
-                'التاريخ': formatDate(t.date),
-                'النوع': t.type === 'out' ? 'تسليم' : 'استلام',
-                'المبلغ': t.amount,
-                'المسؤول': t.responsible,
-                'ملاحظات': t.note || '-'
-            }));
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(txData), c.name.substring(0, 20));
+    function downloadBackup(backupId) {
+        const history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+        const backup = history.find(b => b.id === backupId);
+        if (backup) {
+            const blob = new Blob([JSON.stringify(backup.data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `backup_${new Date(backup.timestamp).toLocaleDateString('ar-EG')}.json`; a.click();
+            showToast('تم تحميل النسخة الاحتياطية', 'success');
         }
-    });
-    
-    XLSX.writeFile(wb, `تقرير_${Date.now()}.xlsx`);
-    toast('تم التصدير', 'success');
-}
+    }
 
-function exportPDF() {
-    const clients = getClients();
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    doc.setFontSize(18);
-    doc.text('تقرير العملاء', 105, 20, { align: 'center' });
-    doc.setFontSize(10);
-    doc.text(new Date().toLocaleDateString('ar-EG'), 105, 30, { align: 'center' });
-    
-    let y = 45;
-    
-    clients.forEach((c, i) => {
-        if (y > 250) {
-            doc.addPage();
-            y = 20;
+    function deleteBackup(backupId) {
+        if (confirm('هل أنت متأكد من حذف هذه النسخة الاحتياطية؟')) {
+            let history = JSON.parse(localStorage.getItem(BACKUP_HISTORY_KEY)) || [];
+            history = history.filter(b => b.id !== backupId);
+            localStorage.setItem(BACKUP_HISTORY_KEY, JSON.stringify(history));
+            viewBackupHistory();
+            showToast('تم حذف النسخة الاحتياطية', 'success');
         }
-        
-        const s = getSummary(c);
-        doc.setFontSize(12);
-        doc.text(c.name, 20, y);
-        doc.setFontSize(9);
-        doc.text(`له: ${s.totalFor} | عليه: ${s.totalOn} | الصافي: ${s.net}`, 20, y + 6);
-        
-        y += 15;
-        
-        if (c.transactions.length) {
-            doc.autoTable({
-                startY: y,
-                head: [['التاريخ', 'النوع', 'المبلغ', 'المسؤول']],
-                body: c.transactions.map(t => [
-                    formatDate(t.date),
-                    t.type === 'out' ? 'تسليم' : 'استلام',
-                    t.amount.toString(),
-                    t.responsible
-                ]),
-                theme: 'striped',
-                headStyles: { fillColor: [34, 211, 238] },
-                styles: { fontSize: 8 }
-            });
-            y = doc.lastAutoTable.finalY + 15;
-        }
-    });
-    
-    doc.save(`تقرير_${Date.now()}.pdf`);
-    toast('تم التصدير', 'success');
-}
-
-async function exportImage() {
-    showLoading();
-    
-    try {
-        const clients = getClients();
-        const container = document.createElement('div');
-        container.style.cssText = 'direction: rtl; padding: 30px; background: white; color: #1a1a2e; font-family: IBM Plex Sans Arabic, sans-serif;';
-        
-        let html = `
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #22d3ee; margin-bottom: 10px;">تقرير العملاء</h1>
-                <p style="color: #666;">${new Date().toLocaleDateString('ar-EG')}</p>
-            </div>
-        `;
-        
-        clients.forEach(c => {
-            const s = getSummary(c);
-            html += `
-                <div style="border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <h3 style="color: #22d3ee;">${c.name}</h3>
-                        <span style="padding: 4px 12px; border-radius: 20px; background: ${s.status === 'له' ? '#fef3c7' : s.status === 'عليه' ? '#d1fae5' : '#f3f4f6'}; color: ${s.status === 'له' ? '#d97706' : s.status === 'عليه' ? '#059669' : '#6b7280'}; font-size: 12px;">${s.status}</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                        <div style="text-align: center; padding: 8px; background: #f9fafb; border-radius: 8px;">
-                            <div style="font-size: 11px; color: #9ca3af;">له</div>
-                            <div style="font-weight: 600; color: #f59e0b;">${formatMoney(s.totalFor)}</div>
-                        </div>
-                        <div style="text-align: center; padding: 8px; background: #f9fafb; border-radius: 8px;">
-                            <div style="font-size: 11px; color: #9ca3af;">عليه</div>
-                            <div style="font-weight: 600; color: #10b981;">${formatMoney(s.totalOn)}</div>
-                        </div>
-                        <div style="text-align: center; padding: 8px; background: #f9fafb; border-radius: 8px;">
-                            <div style="font-size: 11px; color: #9ca3af;">الصافي</div>
-                            <div style="font-weight: 600;">${formatMoney(s.net)}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-        
-        container.innerHTML = html;
-        document.body.appendChild(container);
-        
-        const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
-        const link = document.createElement('a');
-        link.download = `تقرير_${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        
-        document.body.removeChild(container);
-        toast('تم التصدير', 'success');
-    } catch (e) {
-        toast('خطأ في التصدير', 'error');
-    } finally {
-        hideLoading();
     }
-}
 
-// ==================== النسخ الاحتياطي ====================
-function createBackup() {
-    const data = {
-        users: load(KEYS.users),
-        clients: {}
-    };
-    
-    const users = load(KEYS.users) || [];
-    users.forEach(u => {
-        data.clients[u.id] = load(KEYS.clients(u.id)) || [];
-    });
-    
-    // Add to history
-    let history = load(KEYS.history) || [];
-    history.push({
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        data
-    });
-    
-    // Keep only last N backups
-    if (settings.count > 0 && history.length > settings.count) {
-        history = history.slice(-settings.count);
+    function closeBackupHistoryModal() { document.getElementById('backup-history-modal').classList.remove('active'); }
+    function scheduleBackup() { if (currentUser) { createScheduledBackup(); showToast('تم جدولة نسخة احتياطية جديدة', 'success'); } }
+
+    function checkForBackup() {
+        const backup = localStorage.getItem(BACKUP_KEY);
+        if (backup) document.getElementById('restore-modal').style.display = 'flex';
+        else { initializeSystem(); if (systemSettings.autoBackup) startAutoBackup(); }
     }
-    
-    save(KEYS.history, history);
-    save(KEYS.backup, data);
-}
 
-function showBackupIndicator() {
-    const indicator = document.getElementById('backup-indicator');
-    indicator.classList.add('show');
-    setTimeout(() => indicator.classList.remove('show'), 2000);
-}
-
-function startAutoBackup() {
-    if (backupTimer) clearInterval(backupTimer);
-    
-    if (settings.autoBackup) {
-        backupTimer = setInterval(() => {
-            if (user) {
-                createBackup();
-                showBackupIndicator();
-            }
-        }, settings.interval * 60 * 1000);
+    function restoreBackup() {
+        try {
+            const backup = JSON.parse(localStorage.getItem(BACKUP_KEY));
+            if (backup.users) localStorage.setItem(USERS_KEY, JSON.stringify(backup.users));
+            if (backup.clients) Object.keys(backup.clients).forEach(userId => { localStorage.setItem(CLIENTS_KEY_PREFIX + userId, JSON.stringify(backup.clients[userId])); });
+            localStorage.removeItem(BACKUP_KEY);
+            document.getElementById('restore-modal').style.display = 'none';
+            showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+            if (systemSettings.autoBackup) startAutoBackup();
+            setTimeout(() => location.reload(), 1500);
+        } catch (error) { showToast('حدث خطأ في استعادة النسخة الاحتياطية', 'error'); startFresh(); }
     }
-}
 
-function stopAutoBackup() {
-    if (backupTimer) {
-        clearInterval(backupTimer);
-        backupTimer = null;
-    }
-}
-
-function toggleAutoBackup() {
-    settings.autoBackup = document.getElementById('auto-backup-toggle').checked;
-    save(KEYS.settings, settings);
-    
-    if (settings.autoBackup) {
-        startAutoBackup();
-        toast('تم تفعيل النسخ التلقائي', 'success');
-    } else {
-        stopAutoBackup();
-        toast('تم إيقاف النسخ التلقائي', 'info');
-    }
-}
-
-function updateBackupInterval() {
-    settings.interval = parseInt(document.getElementById('backup-interval').value);
-    save(KEYS.settings, settings);
-    
-    if (settings.autoBackup) {
-        stopAutoBackup();
-        startAutoBackup();
-    }
-    toast('تم تحديث الفترة', 'success');
-}
-
-function updateBackupCount() {
-    settings.count = parseInt(document.getElementById('backup-count').value);
-    save(KEYS.settings, settings);
-    toast('تم تحديث عدد النسخ', 'success');
-}
-
-function viewBackupHistory() {
-    const history = load(KEYS.history) || [];
-    const list = document.getElementById('backup-list');
-    
-    if (!history.length) {
-        list.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--fg-muted);">لا توجد نسخ سابقة</div>';
-    } else {
-        list.innerHTML = history.reverse().map((b, i) => `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-secondary); border-radius: 10px; margin-bottom: 8px;">
-                <div>
-                    <div style="font-weight: 500;">نسخة ${history.length - i}</div>
-                    <div style="font-size: 12px; color: var(--fg-muted);">${new Date(b.timestamp).toLocaleString('ar-EG')}</div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button onclick="restoreFromHistory('${b.id}')" class="btn-icon" style="width: 32px; height: 32px; font-size: 11px;" title="استعادة">
-                        <i class="fas fa-undo"></i>
-                    </button>
-                    <button onclick="downloadBackup('${b.id}')" class="btn-icon" style="width: 32px; height: 32px; font-size: 11px;" title="تحميل">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    document.getElementById('backup-modal').classList.add('active');
-}
-
-function closeBackupModal() {
-    document.getElementById('backup-modal').classList.remove('active');
-}
-
-function restoreFromHistory(id) {
-    const history = load(KEYS.history) || [];
-    const backup = history.find(b => b.id === id);
-    
-    if (backup && confirm('هل تريد استعادة هذه النسخة؟')) {
-        if (backup.data.users) save(KEYS.users, backup.data.users);
-        if (backup.data.clients) {
-            Object.keys(backup.data.clients).forEach(uid => {
-                save(KEYS.clients(uid), backup.data.clients[uid]);
-            });
-        }
-        
-        closeBackupModal();
-        toast('تمت الاستعادة', 'success');
-        setTimeout(() => location.reload(), 1000);
-    }
-}
-
-function downloadBackup(id) {
-    const history = load(KEYS.history) || [];
-    const backup = history.find(b => b.id === id);
-    
-    if (backup) {
-        const blob = new Blob([JSON.stringify(backup.data, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `backup_${new Date(backup.timestamp).toLocaleDateString('ar-EG')}.json`;
-        a.click();
-        toast('تم التحميل', 'success');
-    }
-}
-
-function restoreBackup() {
-    try {
-        const backup = load(KEYS.backup);
-        
-        if (backup.users) save(KEYS.users, backup.users);
-        if (backup.clients) {
-            Object.keys(backup.clients).forEach(uid => {
-                save(KEYS.clients(uid), backup.clients[uid]);
-            });
-        }
-        
-        localStorage.removeItem(KEYS.backup);
+    function startFresh() {
+        localStorage.removeItem(BACKUP_KEY);
+        initializeSystem();
         document.getElementById('restore-modal').style.display = 'none';
-        toast('تمت الاستعادة', 'success');
-        setTimeout(() => location.reload(), 1000);
-    } catch (e) {
-        startFresh();
-    }
-}
-
-function startFresh() {
-    localStorage.removeItem(KEYS.backup);
-    save(KEYS.users, defaultData.users);
-    save(KEYS.clients('admin_1'), defaultData.clients);
-    document.getElementById('restore-modal').style.display = 'none';
-    toast('تم البدء من جديد', 'info');
-}
-
-// ==================== الإعدادات ====================
-function changePassword() {
-    const current = document.getElementById('current-pass').value;
-    const newP = document.getElementById('new-pass').value;
-    const confirm = document.getElementById('confirm-pass').value;
-
-    if (!current || !newP || !confirm) {
-        toast('أدخل جميع الحقول', 'error');
-        return;
+        showToast('تم بدء نظام جديد', 'success');
+        if (systemSettings.autoBackup) startAutoBackup();
     }
 
-    if (newP !== confirm) {
-        toast('كلمة المرور غير متطابقة', 'error');
-        return;
+    function createBackupBeforeUnload() {
+        if (!currentUser) return;
+        const data = { users: loadUsers(), clients: {} };
+        loadUsers().forEach(user => data.clients[user.id] = getUserClients(user.id));
+        localStorage.setItem(BACKUP_KEY, JSON.stringify(data));
     }
 
-    if (newP.length < 3) {
-        toast('كلمة المرور قصيرة', 'error');
-        return;
+    window.addEventListener('beforeunload', function() { if (currentUser) createBackupBeforeUnload(); });
+
+    // ==================== دوال المستخدمين ====================
+    function loadUsers() { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
+    function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+    function getUserStatus(userId) { return localStorage.getItem(USER_STATUS_KEY + userId) || 'active'; }
+    function setUserStatus(userId, status) { localStorage.setItem(USER_STATUS_KEY + userId, status); }
+    function getUserClients(userId) { return JSON.parse(localStorage.getItem(CLIENTS_KEY_PREFIX + userId)) || []; }
+    function saveUserClients(userId, clients) { localStorage.setItem(CLIENTS_KEY_PREFIX + userId, JSON.stringify(clients)); }
+
+    // ==================== دوال المساعدة ====================
+    function showLoading() { document.getElementById('loading-spinner').classList.add('active'); }
+    function hideLoading() { document.getElementById('loading-spinner').classList.remove('active'); }
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+        toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+    function updateConnectionStatus() {
+        const status = document.getElementById('connection-status');
+        const icon = status.querySelector('i');
+        const span = status.querySelector('span');
+        if (navigator.onLine) { icon.className = 'fas fa-wifi'; span.textContent = 'متصل بالإنترنت'; status.className = 'connection-status online show'; }
+        else { icon.className = 'fas fa-wifi-slash'; span.textContent = 'غير متصل - البيانات محفوظة محلياً'; status.className = 'connection-status offline show'; }
+        setTimeout(() => status.classList.remove('show'), 3000);
+    }
+    window.addEventListener('online', updateConnectionStatus); window.addEventListener('offline', updateConnectionStatus);
+    function formatMoney(amount) { return amount.toLocaleString() + ' جنيه'; }
+    function formatDate(dateString) { return new Date(dateString).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+
+    // ==================== دوال المصادقة ====================
+    function showRegister() { document.getElementById('login-container').style.display = 'none'; document.getElementById('register-container').style.display = 'flex'; }
+    function showLogin() { document.getElementById('register-container').style.display = 'none'; document.getElementById('login-container').style.display = 'flex'; }
+
+    function handleLogin() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorDiv = document.getElementById('login-error');
+        errorDiv.classList.add('hidden');
+        if (!email || !password) { errorDiv.querySelector('span').textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور'; errorDiv.classList.remove('hidden'); return; }
+        showLoading();
+        setTimeout(() => {
+            const users = loadUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+            if (!user) { hideLoading(); errorDiv.querySelector('span').textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة'; errorDiv.classList.remove('hidden'); return; }
+            const userStatus = getUserStatus(user.id);
+            if (userStatus !== 'active') { hideLoading(); errorDiv.querySelector('span').textContent = 'هذا الحساب غير نشط. الرجاء التواصل مع المدير'; errorDiv.classList.remove('hidden'); return; }
+            currentUser = { id: user.id, name: user.name, email: user.email, role: user.role || 'user', provider: user.provider };
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+            updateUserUI();
+            hideLoading();
+            showToast(`مرحباً بك ${user.name}`, 'success');
+        }, 1000);
     }
 
-    const users = load(KEYS.users) || [];
-    const idx = users.findIndex(u => u.id === user.id);
-    
-    if (idx === -1 || users[idx].password !== current) {
-        toast('كلمة المرور الحالية غير صحيحة', 'error');
-        return;
-    }
-
-    users[idx].password = newP;
-    save(KEYS.users, users);
-    
-    document.getElementById('current-pass').value = '';
-    document.getElementById('new-pass').value = '';
-    document.getElementById('confirm-pass').value = '';
-    
-    toast('تم تغيير كلمة المرور', 'success');
-}
-
-function exportData() {
-    const data = {
-        users: load(KEYS.users),
-        clients: {}
-    };
-    
-    const users = load(KEYS.users) || [];
-    users.forEach(u => {
-        data.clients[u.id] = load(KEYS.clients(u.id)) || [];
-    });
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `data_${Date.now()}.json`;
-    a.click();
-    toast('تم التصدير', 'success');
-}
-
-function importData() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        
-        reader.onload = (ev) => {
-            try {
-                const data = JSON.parse(ev.target.result);
-                
-                if (data.users) save(KEYS.users, data.users);
-                if (data.clients) {
-                    Object.keys(data.clients).forEach(uid => {
-                        save(KEYS.clients(uid), data.clients[uid]);
-                    });
-                }
-                
-                toast('تم الاستيراد', 'success');
-                loadData();
-                if (user?.role === 'admin') renderUsers();
-            } catch (err) {
-                toast('ملف غير صالح', 'error');
+    function handleSocialLogin(provider) {
+        showLoading();
+        setTimeout(() => {
+            const email = provider === 'google' ? 'user' + Math.floor(Math.random() * 1000) + '@gmail.com' : 'user' + Math.floor(Math.random() * 1000) + '@outlook.com';
+            const name = provider === 'google' ? 'مستخدم Google ' + Math.floor(Math.random() * 100) : 'مستخدم Microsoft ' + Math.floor(Math.random() * 100);
+            const users = loadUsers();
+            let user = users.find(u => u.email === email);
+            if (!user) {
+                user = { id: provider + '_' + Date.now(), name, email, password: 'social_' + Date.now(), provider, role: 'user', createdAt: new Date().toISOString() };
+                users.push(user); saveUsers(users); setUserStatus(user.id, 'active'); saveUserClients(user.id, []);
             }
-        };
-        
-        reader.readAsText(file);
-    };
-    
-    input.click();
-}
-
-// ==================== المظهر ====================
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    const icon = document.getElementById('theme-icon');
-    icon.className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
-}
-
-// ==================== الحذف ====================
-function closeDeleteModal() {
-    document.getElementById('delete-modal').classList.remove('active');
-    deleteCallback = null;
-}
-
-function confirmDelete() {
-    if (deleteCallback) {
-        deleteCallback();
-        closeDeleteModal();
+            const userStatus = getUserStatus(user.id);
+            if (userStatus !== 'active') { hideLoading(); showToast('هذا الحساب غير نشط. الرجاء التواصل مع المدير', 'error'); return; }
+            currentUser = { id: user.id, name: user.name, email: user.email, role: user.role || 'user', provider: user.provider };
+            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+            updateUserUI();
+            hideLoading();
+            showToast(`مرحباً بك ${user.name}`, 'success');
+        }, 1500);
     }
-}
 
-// ==================== أحداث النظام ====================
-window.addEventListener('beforeunload', () => {
-    if (user) createBackup();
-});
+    function handleRegister() {
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirm = document.getElementById('register-confirm').value;
+        const errorDiv = document.getElementById('register-error');
+        const successDiv = document.getElementById('register-success');
+        errorDiv.classList.add('hidden'); successDiv.classList.add('hidden');
+        if (!name || !email || !password || !confirm) { errorDiv.querySelector('span').textContent = 'الرجاء إدخال جميع البيانات'; errorDiv.classList.remove('hidden'); return; }
+        if (password !== confirm) { errorDiv.querySelector('span').textContent = 'كلمة المرور غير متطابقة'; errorDiv.classList.remove('hidden'); return; }
+        if (password.length < 6) { errorDiv.querySelector('span').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errorDiv.classList.remove('hidden'); return; }
+        showLoading();
+        setTimeout(() => {
+            const users = loadUsers();
+            if (users.some(u => u.email === email)) { hideLoading(); errorDiv.querySelector('span').textContent = 'البريد الإلكتروني مستخدم بالفعل'; errorDiv.classList.remove('hidden'); return; }
+            const newUser = { id: 'user_' + Date.now(), name, email, password, provider: 'email', role: 'user', createdAt: new Date().toISOString() };
+            users.push(newUser); saveUsers(users); setUserStatus(newUser.id, 'active'); saveUserClients(newUser.id, []);
+            hideLoading(); successDiv.querySelector('span').textContent = 'تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن'; successDiv.classList.remove('hidden');
+            setTimeout(() => showLogin(), 2000);
+        }, 1000);
+    }
 
-// ==================== التهيئة ====================
-document.addEventListener('DOMContentLoaded', () => {
-    // Load settings
-    const savedSettings = load(KEYS.settings);
-    if (savedSettings) {
-        settings = { ...settings, ...savedSettings };
-        document.getElementById('auto-backup-toggle').checked = settings.autoBackup;
-        document.getElementById('backup-interval').value = settings.interval;
-        document.getElementById('backup-count').value = settings.count;
+    function logout() {
+        localStorage.removeItem(CURRENT_USER_KEY);
+        currentUser = null;
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('login-container').style.display = 'flex';
+        showToast('تم تسجيل الخروج بنجاح', 'success');
+        if (backupInterval) clearInterval(backupInterval);
     }
-    
-    // Check for backup
-    if (load(KEYS.backup)) {
-        document.getElementById('restore-modal').style.display = 'flex';
-    } else {
-        // Initialize if needed
-        if (!load(KEYS.users)) {
-            save(KEYS.users, defaultData.users);
-            save(KEYS.clients('admin_1'), defaultData.clients);
-        }
+
+    function updateUserUI() {
+        document.getElementById('user-name').textContent = currentUser.name;
+        document.getElementById('user-email').textContent = currentUser.email;
+        document.getElementById('user-avatar').textContent = currentUser.name.charAt(0);
+        const roleBadge = document.getElementById('user-role-badge');
+        if (currentUser.role === 'admin') { roleBadge.textContent = 'مدير النظام'; roleBadge.className = 'text-xs mt-1 text-emerald-400'; }
+        else { roleBadge.textContent = 'مستخدم عادي'; roleBadge.className = 'text-xs mt-1 text-gray-500'; }
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('register-container').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        const usersMenu = document.getElementById('users-menu');
+        if (currentUser.role === 'admin') usersMenu.style.display = 'flex';
+        else usersMenu.style.display = 'none';
+        loadUserData();
     }
-    
-    // Check for saved session
-    const savedUser = load(KEYS.current);
-    if (savedUser) {
-        if (load(KEYS.status(savedUser.id)) !== 'inactive') {
-            user = savedUser;
-            document.getElementById('user-avatar').textContent = user.name.charAt(0);
-            document.getElementById('user-name-display').textContent = user.name;
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('app-view').style.display = 'block';
-            
-            if (user.role === 'admin') {
-                document.getElementById('users-nav').style.display = 'flex';
-            }
-            
-            loadData();
-            startAutoBackup();
+
+    function loadUserData() {
+        if (!currentUser) return;
+        if (currentUser.role === 'admin') {
+            const allClients = [];
+            loadUsers().forEach(user => { if (getUserStatus(user.id) === 'active') allClients.push(...getUserClients(user.id)); });
+            renderDashboard(allClients);
+            renderAllClientsList(allClients);
         } else {
-            localStorage.removeItem(KEYS.current);
+            const clients = getUserClients(currentUser.id);
+            renderDashboard(clients);
+            renderAllClientsList(clients);
         }
     }
-});
+
+    function getCurrentUserClients() {
+        if (!currentUser) return [];
+        if (currentUser.role === 'admin') {
+            const allClients = [];
+            loadUsers().forEach(user => { if (getUserStatus(user.id) === 'active') allClients.push(...getUserClients(user.id)); });
+            return allClients;
+        } else return getUserClients(currentUser.id);
+    }
+
+    function getClientSummary(client) {
+        const totalForClient = client.transactions.filter(t => t.type === 'out').reduce((sum, t) => sum + t.amount, 0);
+        const totalOnClient = client.transactions.filter(t => t.type === 'in').reduce((sum, t) => sum + t.amount, 0);
+        const netBalance = totalForClient - totalOnClient;
+        let status = 'صفر';
+        if (netBalance > 0) status = 'له';
+        else if (netBalance < 0) status = 'عليه';
+        return { totalForClient, totalOnClient, netBalance, status };
+    }
+
+    function renderDashboard(clients) {
+        const totalForAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalForClient, 0);
+        const totalOnAll = clients.reduce((sum, c) => sum + getClientSummary(c).totalOnClient, 0);
+        const netTotal = totalForAll - totalOnAll;
+        document.getElementById('stats-cards').innerHTML = `
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-emerald-400">إجمالي ما لنا</h3><i class="fas fa-arrow-down text-emerald-400"></i></div><p class="text-2xl font-bold text-emerald-400">${formatMoney(totalOnAll)}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-amber-400">إجمالي ما لهم</h3><i class="fas fa-arrow-up text-amber-400"></i></div><p class="text-2xl font-bold text-amber-400">${formatMoney(totalForAll)}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-rose-400">الفرق</h3><i class="fas fa-balance-scale text-rose-400"></i></div><p class="text-2xl font-bold text-rose-400">${formatMoney(Math.abs(totalForAll - totalOnAll))}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي الرصيد</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400">${formatMoney(Math.abs(netTotal))}</p><p class="text-xs mt-2 ${netTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netTotal >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>`;
+        renderClientsList(clients);
+    }
+
+    function renderClientsList(clients) {
+        const grid = document.getElementById('clients-grid');
+        let filteredClients = clients;
+        if (currentFilter !== 'all') filteredClients = clients.filter(c => getClientSummary(c).status === currentFilter);
+        if (filteredClients.length === 0) { grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500"><i class="fas fa-users text-4xl mb-3"></i><p>لا يوجد عملاء</p></div>'; return; }
+        grid.innerHTML = filteredClients.map(client => {
+            const summary = getClientSummary(client);
+            return `<div class="client-card" onclick="viewClient('${client.id}')"><div class="flex justify-between items-start mb-3"><h3 class="font-semibold">${client.name}</h3><span class="badge ${summary.status === 'له' ? 'badge-warning' : summary.status === 'عليه' ? 'badge-success' : 'bg-gray-700 text-gray-400'}">${summary.status}</span></div><div class="grid grid-cols-2 gap-3 mb-3"><div><p class="text-xs text-gray-500">له</p><p class="font-medium text-amber-400">${formatMoney(summary.totalForClient)}</p></div><div><p class="text-xs text-gray-500">عليه</p><p class="font-medium text-emerald-400">${formatMoney(summary.totalOnClient)}</p></div></div><div class="flex justify-between items-center text-sm text-gray-500"><span><i class="fas fa-calendar ml-1"></i>${formatDate(client.createdAt)}</span><span><i class="fas fa-list ml-1"></i>${client.transactions.length} معاملات</span></div></div>`;
+        }).join('');
+    }
+
+    function renderAllClientsList(clients) {
+        const container = document.getElementById('all-clients-list');
+        if (clients.length === 0) { container.innerHTML = '<div class="text-center py-12 text-gray-500"><i class="fas fa-users text-4xl mb-3"></i><p>لا يوجد عملاء</p></div>'; return; }
+        container.innerHTML = clients.map(client => {
+            const summary = getClientSummary(client);
+            return `<div class="bg-secondary p-4 rounded-xl border border-border hover:border-accent-primary transition-all cursor-pointer" onclick="viewClient('${client.id}')"><div class="flex justify-between items-center"><div><h3 class="font-semibold">${client.name}</h3><p class="text-sm text-gray-500">${client.phone || 'لا يوجد رقم'}</p></div><div class="text-left"><div class="text-amber-400">له: ${formatMoney(summary.totalForClient)}</div><div class="text-emerald-400">عليه: ${formatMoney(summary.totalOnClient)}</div><div class="text-sm ${summary.netBalance > 0 ? 'text-amber-400' : 'text-emerald-400'}">الصافي: ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}</div></div></div><div class="mt-2 text-xs text-gray-500"><span>${client.transactions.length} معاملات</span><span class="mx-2">|</span><span>${formatDate(client.createdAt)}</span></div></div>`;
+        }).join('');
+    }
+
+    function searchClients() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const clients = getCurrentUserClients();
+        if (!query) { renderClientsList(clients); return; }
+        renderClientsList(clients.filter(c => c.name.toLowerCase().includes(query) || (c.phone && c.phone.toLowerCase().includes(query))));
+    }
+
+    function filterClients(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+        renderClientsList(getCurrentUserClients());
+    }
+
+    function addNewClient() {
+        const name = document.getElementById('client-name').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+        if (!name) { showToast('الرجاء إدخال اسم العميل', 'error'); return; }
+        const clients = getCurrentUserClients();
+        if (clients.some(c => c.name.toLowerCase() === name.toLowerCase())) { showToast('هذا الاسم موجود مسبقاً', 'error'); return; }
+        const newClient = { id: Date.now().toString(), name, phone, userId: currentUser.id, createdAt: new Date().toISOString(), transactions: [] };
+        clients.push(newClient);
+        if (currentUser.role === 'admin') { const userClients = getUserClients(currentUser.id); userClients.push(newClient); saveUserClients(currentUser.id, userClients); }
+        else { const userClients = getUserClients(currentUser.id); userClients.push(newClient); saveUserClients(currentUser.id, userClients); }
+        showToast('تم إضافة العميل بنجاح', 'success');
+        document.getElementById('client-name').value = ''; document.getElementById('client-phone').value = '';
+        loadUserData();
+    }
+
+    function viewClient(clientId) {
+        currentClientId = clientId;
+        const clients = getCurrentUserClients();
+        const client = clients.find(c => c.id === clientId);
+        if (!client) return;
+        const summary = getClientSummary(client);
+        document.getElementById('client-details').innerHTML = `
+            <div class="flex justify-between items-start mb-6"><div><h2 class="text-2xl font-bold">${client.name}</h2>${client.phone ? `<p class="text-gray-500 mt-2">${client.phone}</p>` : ''}</div><span class="badge ${summary.status === 'له' ? 'badge-warning' : summary.status === 'عليه' ? 'badge-success' : 'bg-gray-700 text-gray-400'}">${summary.status}</span></div>
+            <div class="grid grid-cols-3 gap-4 mb-8"><div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">له</p><p class="text-xl font-bold text-amber-400">${formatMoney(summary.totalForClient)}</p></div><div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">عليه</p><p class="text-xl font-bold text-emerald-400">${formatMoney(summary.totalOnClient)}</p></div><div class="bg-tertiary p-4 rounded-xl"><p class="text-sm text-gray-500">الصافي</p><p class="text-xl font-bold ${summary.netBalance > 0 ? 'text-amber-400' : 'text-emerald-400'}">${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}</p></div></div>
+            <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-semibold">المعاملات</h3><button onclick="openTransactionModal()" class="btn-primary px-4 py-2 text-sm"><i class="fas fa-plus ml-2"></i>إضافة معاملة</button></div>
+            ${client.transactions.length === 0 ? '<p class="text-center py-8 text-gray-500">لا توجد معاملات</p>' : `<table class="table"><thead><tr><th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>المسؤول</th><th>الملاحظات</th><th></th></tr></thead><tbody>${client.transactions.map(t => `<tr><td>${formatDate(t.date)}</td><td><span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">${t.type === 'out' ? 'تسليم' : 'استلام'}</span></td><td>${formatMoney(t.amount)}</td><td>${t.responsible}</td><td>${t.note || '-'}</td><td><button onclick="deleteTransaction('${t.id}')" class="text-rose-500 hover:text-rose-400"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>`}
+        `;
+        showPage('client');
+    }
+
+    function openTransactionModal() {
+        document.getElementById('transaction-modal').classList.add('active');
+        document.getElementById('transaction-amount').value = ''; document.getElementById('transaction-responsible').value = ''; document.getElementById('transaction-note').value = '';
+        setTransactionType('out');
+    }
+    function closeTransactionModal() { document.getElementById('transaction-modal').classList.remove('active'); }
+    function setTransactionType(type) {
+        currentTransactionType = type;
+        const outBtn = document.getElementById('type-out'); const inBtn = document.getElementById('type-in');
+        if (type === 'out') { outBtn.className = 'btn-primary'; inBtn.className = 'btn-secondary'; }
+        else { outBtn.className = 'btn-secondary'; inBtn.className = 'btn-primary'; }
+    }
+
+    function saveTransaction() {
+        const amount = parseFloat(document.getElementById('transaction-amount').value);
+        const responsible = document.getElementById('transaction-responsible').value.trim();
+        const note = document.getElementById('transaction-note').value.trim();
+        if (isNaN(amount) || amount <= 0) { showToast('الرجاء إدخال مبلغ صحيح', 'error'); return; }
+        if (!responsible) { showToast('الرجاء إدخال اسم المسؤول', 'error'); return; }
+        const clients = getCurrentUserClients();
+        const clientIndex = clients.findIndex(c => c.id === currentClientId);
+        if (clientIndex === -1) return;
+        const client = clients[clientIndex];
+        const lastBalance = client.transactions.length > 0 ? client.transactions[client.transactions.length - 1].runningBalance : 0;
+        const newRunningBalance = currentTransactionType === 'out' ? lastBalance + amount : lastBalance - amount;
+        const newTransaction = { id: Date.now().toString(), date: new Date().toISOString(), type: currentTransactionType, amount, responsible, note, runningBalance: newRunningBalance };
+        client.transactions.push(newTransaction);
+        if (currentUser.role === 'admin') {
+            const userClients = getUserClients(client.userId);
+            const userClientIndex = userClients.findIndex(c => c.id === client.id);
+            userClients[userClientIndex] = client;
+            saveUserClients(client.userId, userClients);
+        } else {
+            const userClients = getUserClients(currentUser.id);
+            userClients[clientIndex] = client;
+            saveUserClients(currentUser.id, userClients);
+        }
+        closeTransactionModal();
+        viewClient(currentClientId);
+        showToast('تم إضافة المعاملة بنجاح', 'success');
+    }
+
+    function deleteTransaction(transactionId) {
+        document.getElementById('delete-message').textContent = 'هل أنت متأكد من حذف هذه المعاملة؟';
+        document.getElementById('delete-modal').classList.add('active');
+        deleteCallback = () => {
+            const clients = getCurrentUserClients();
+            const clientIndex = clients.findIndex(c => c.id === currentClientId);
+            if (clientIndex === -1) return;
+            const client = clients[clientIndex];
+            client.transactions = client.transactions.filter(t => t.id !== transactionId);
+            let runningBalance = 0;
+            client.transactions = client.transactions.map(t => {
+                if (t.type === 'out') runningBalance += t.amount;
+                else runningBalance -= t.amount;
+                return { ...t, runningBalance };
+            });
+            if (currentUser.role === 'admin') {
+                const userClients = getUserClients(client.userId);
+                const userClientIndex = userClients.findIndex(c => c.id === client.id);
+                userClients[userClientIndex] = client;
+                saveUserClients(client.userId, userClients);
+            } else {
+                const userClients = getUserClients(currentUser.id);
+                userClients[clientIndex] = client;
+                saveUserClients(currentUser.id, userClients);
+            }
+            viewClient(currentClientId);
+            showToast('تم حذف المعاملة', 'success');
+        };
+    }
+
+    function showPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`${page}-page`).classList.remove('hidden');
+        document.querySelectorAll('.vertical-nav-item').forEach(item => item.classList.remove('active'));
+        const navItem = document.querySelector(`[data-page="${page}"]`);
+        if (navItem) navItem.classList.add('active');
+        if (page === 'dashboard') loadUserData();
+        if (page === 'reports') renderReportStats();
+        if (page === 'users' && currentUser?.role === 'admin') renderUsersList();
+        if (page === 'clients') { const clients = getCurrentUserClients(); renderAllClientsList(clients); }
+    }
+
+    function renderReportStats() {
+        const clients = getCurrentUserClients();
+        const totalClients = clients.length;
+        const totalTransactions = clients.reduce((sum, c) => sum + c.transactions.length, 0);
+        const totalAmount = clients.reduce((sum, c) => sum + c.transactions.reduce((s, t) => s + t.amount, 0), 0);
+        document.getElementById('report-stats').innerHTML = `
+            <div class="flex justify-between py-2 border-b border-border"><span>عدد العملاء</span><span class="font-bold">${totalClients}</span></div>
+            <div class="flex justify-between py-2 border-b border-border"><span>عدد المعاملات</span><span class="font-bold">${totalTransactions}</span></div>
+            <div class="flex justify-between py-2 border-b border-border"><span>إجمالي المبالغ</span><span class="font-bold text-emerald-400">${formatMoney(totalAmount)}</span></div>
+            <div class="flex justify-between py-2"><span>متوسط المعاملات</span><span class="font-bold">${(totalTransactions / totalClients || 0).toFixed(1)}</span></div>`;
+    }
+
+    function exportToExcel() {
+        const clients = getCurrentUserClients();
+        const wb = XLSX.utils.book_new();
+        const clientsData = clients.map(client => { const s = getClientSummary(client); return { 'الاسم': client.name, 'الجوال': client.phone || '-', 'له': s.totalForClient, 'عليه': s.totalOnClient, 'الصافي': s.netBalance, 'الحالة': s.status, 'عدد المعاملات': client.transactions.length, 'رابط العميل': `client_${client.id}` }; });
+        const wsClients = XLSX.utils.json_to_sheet(clientsData);
+        wsClients['!comments'] = [];
+        for (let i = 1; i <= clientsData.length; i++) wsClients['!comments'].push({ ref: `H${i+1}`, a: { text: 'انقر نقراً مزدوجاً للانتقال إلى صفحة العميل', font: { color: { rgb: "10B981" } } } });
+        XLSX.utils.book_append_sheet(wb, wsClients, 'العملاء');
+        clients.forEach(client => {
+            const transactionsData = client.transactions.map(t => ({ 'التاريخ': formatDate(t.date), 'النوع': t.type === 'out' ? 'تسليم (له)' : 'استلام (عليه)', 'المبلغ': t.amount, 'المسؤول': t.responsible, 'الملاحظات': t.note || '-', 'الرصيد التراكمي': t.runningBalance }));
+            const wsClient = XLSX.utils.json_to_sheet(transactionsData);
+            XLSX.utils.book_append_sheet(wb, wsClient, client.name.substring(0, 20));
+        });
+        XLSX.writeFile(wb, `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.xlsx`);
+        showToast('تم تصدير التقرير بنجاح - يمكنك الضغط على اسم العميل للانتقال لصفحته', 'success');
+    }
+
+    async function exportToPDF() {
+        showLoading();
+        try {
+            const clients = getCurrentUserClients();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+            doc.setFontSize(24); doc.setTextColor(16, 185, 129); doc.text('تقرير العملاء', doc.internal.pageSize.width / 2, 100, { align: 'center' });
+            doc.setFontSize(14); doc.setTextColor(100); doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, doc.internal.pageSize.width / 2, 140, { align: 'center' });
+            doc.setFontSize(12); doc.text(`إجمالي العملاء: ${clients.length}`, doc.internal.pageSize.width / 2, 180, { align: 'center' });
+            for (let i = 0; i < clients.length; i++) {
+                const client = clients[i]; const summary = getClientSummary(client);
+                if (i > 0) doc.addPage();
+                doc.setFontSize(20); doc.setTextColor(16, 185, 129); doc.text(client.name, 50, 80);
+                doc.setFontSize(12); doc.setTextColor(50); doc.text(`رقم الجوال: ${client.phone || 'غير محدد'}`, 50, 120); doc.text(`تاريخ الإضافة: ${formatDate(client.createdAt)}`, 50, 140);
+                doc.setFontSize(16); doc.setTextColor(16, 185, 129); doc.text('الملخص المالي', 50, 180);
+                doc.setFontSize(12); doc.setTextColor(245, 158, 11); doc.text(`له: ${formatMoney(summary.totalForClient)}`, 70, 210);
+                doc.setTextColor(16, 185, 129); doc.text(`عليه: ${formatMoney(summary.totalOnClient)}`, 70, 230);
+                doc.setTextColor(summary.netBalance > 0 ? 245 : 16, summary.netBalance > 0 ? 158 : 185, summary.netBalance > 0 ? 11 : 129); doc.text(`الصافي: ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}`, 70, 250);
+                if (client.transactions.length > 0) {
+                    doc.setFontSize(16); doc.setTextColor(16, 185, 129); doc.text('المعاملات', 50, 300);
+                    let yPos = 330;
+                    client.transactions.forEach((t, index) => {
+                        if (yPos > 700) { doc.addPage(); yPos = 80; }
+                        doc.setFontSize(11); doc.setTextColor(100);
+                        doc.text(`المعاملة ${index + 1}:`, 50, yPos);
+                        doc.text(`التاريخ: ${formatDate(t.date)}`, 70, yPos + 20);
+                        doc.text(`النوع: ${t.type === 'out' ? 'تسليم' : 'استلام'}`, 70, yPos + 40);
+                        doc.text(`المبلغ: ${formatMoney(t.amount)}`, 70, yPos + 60);
+                        doc.text(`المسؤول: ${t.responsible}`, 70, yPos + 80);
+                        doc.text(`ملاحظات: ${t.note || '-'}`, 70, yPos + 100);
+                        yPos += 140;
+                    });
+                } else { doc.setFontSize(12); doc.setTextColor(150); doc.text('لا توجد معاملات', 50, 300); }
+            }
+            doc.save(`تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.pdf`);
+            showToast('تم تصدير التقرير كصورة بنجاح', 'success');
+        } catch (error) { console.error('PDF Error:', error); showToast('حدث خطأ في تصدير PDF', 'error'); } finally { hideLoading(); }
+    }
+
+    async function exportToImage() {
+        showLoading();
+        try {
+            const clients = getCurrentUserClients();
+            const container = document.createElement('div');
+            container.style.direction = 'rtl'; container.style.padding = '40px'; container.style.background = 'white'; container.style.color = 'black';
+            let html = `<div style="font-family: 'IBM Plex Sans Arabic', sans-serif;"><h1 style="color: #10b981; text-align: center;">تقرير العملاء</h1><p style="text-align: center; color: #666;">تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}</p><p style="text-align: center;">إجمالي العملاء: ${clients.length}</p>`;
+            clients.forEach(client => {
+                const summary = getClientSummary(client);
+                html += `<div style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0;"><h2 style="color: #10b981;">${client.name}</h2><p>رقم الجوال: ${client.phone || 'غير محدد'}</p><p>تاريخ الإضافة: ${formatDate(client.createdAt)}</p><h3 style="color: #10b981;">الملخص المالي</h3><p style="color: #f59e0b;">له: ${formatMoney(summary.totalForClient)}</p><p style="color: #10b981;">عليه: ${formatMoney(summary.totalOnClient)}</p><p style="color: ${summary.netBalance > 0 ? '#f59e0b' : '#10b981'};">الصافي: ${summary.netBalance > 0 ? '+' : ''}${formatMoney(summary.netBalance)}</p><h3 style="color: #10b981;">المعاملات</h3>${client.transactions.length === 0 ? '<p>لا توجد معاملات</p>' : ''}`;
+                client.transactions.forEach((t, index) => {
+                    html += `<div style="border-top: 1px solid #eee; padding: 10px 0;"><p><strong>المعاملة ${index + 1}</strong></p><p>التاريخ: ${formatDate(t.date)}</p><p>النوع: ${t.type === 'out' ? 'تسليم' : 'استلام'}</p><p>المبلغ: ${formatMoney(t.amount)}</p><p>المسؤول: ${t.responsible}</p><p>ملاحظات: ${t.note || '-'}</p></div>`;
+                });
+                html += `</div>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+            document.body.appendChild(container);
+            const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
+            const link = document.createElement('a');
+            link.download = `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            document.body.removeChild(container);
+            showToast('تم تصدير التقرير كصورة بنجاح', 'success');
+        } catch (error) { console.error('Image Error:', error); showToast('حدث خطأ في تصدير الصورة', 'error'); } finally { hideLoading(); }
+    }
+
+    function renderUsersList() {
+        if (currentUser?.role !== 'admin') return;
+        const users = loadUsers();
+        const tbody = document.getElementById('users-table-body');
+        let activeCount = 0, inactiveCount = 0, totalClientsAll = 0;
+        users.forEach(user => {
+            const status = getUserStatus(user.id);
+            if (status === 'active') activeCount++; else inactiveCount++;
+            totalClientsAll += getUserClients(user.id).length;
+        });
+        document.getElementById('total-users').textContent = users.length;
+        document.getElementById('active-users').textContent = activeCount;
+        document.getElementById('inactive-users').textContent = inactiveCount;
+        document.getElementById('total-clients-all').textContent = totalClientsAll;
+        tbody.innerHTML = users.map(user => {
+            const status = getUserStatus(user.id);
+            const userClients = getUserClients(user.id);
+            const totalTransactions = userClients.reduce((sum, c) => sum + c.transactions.length, 0);
+            return `<tr><td><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold">${user.name.charAt(0)}</div><div><div class="font-medium">${user.name}</div><div class="text-xs text-gray-500">${user.role === 'admin' ? 'مدير' : 'مستخدم'}</div></div></div></td><td>${user.email}</td><td><span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' : user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-700 text-gray-400'}">${user.provider === 'google' ? 'Google' : user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}</span></td><td>${formatDate(user.createdAt)}</td><td><div>${userClients.length} عميل</div><div class="text-xs text-gray-500">${totalTransactions} معاملة</div></td><td><span class="status-badge ${status === 'active' ? 'active' : 'inactive'}">${status === 'active' ? 'نشط' : 'موقوف'}</span></td><td><div class="flex gap-2"><button onclick="showUserDetails('${user.id}')" class="text-emerald-400 hover:text-emerald-300"><i class="fas fa-eye"></i></button>${user.role !== 'admin' ? `<button onclick="toggleUserStatusFromList('${user.id}')" class="text-amber-400 hover:text-amber-300"><i class="fas ${status === 'active' ? 'fa-pause' : 'fa-play'}"></i></button>` : ''}</div></td></tr>`;
+        }).join('');
+    }
+
+    function showUserDetails(userId) {
+        const users = loadUsers(); const user = users.find(u => u.id === userId); if (!user) return;
+        selectedUserId = userId;
+        const userClients = getUserClients(userId); const totalTransactions = userClients.reduce((sum, c) => sum + c.transactions.length, 0); const status = getUserStatus(userId);
+        document.getElementById('modal-user-avatar').textContent = user.name.charAt(0);
+        document.getElementById('modal-user-name').textContent = user.name;
+        document.getElementById('modal-user-email').textContent = user.email;
+        document.getElementById('modal-user-provider').innerHTML = `<span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' : user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-700 text-gray-400'}">${user.provider === 'google' ? 'Google' : user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}</span>`;
+        document.getElementById('modal-user-clients').textContent = userClients.length;
+        document.getElementById('modal-user-transactions').textContent = totalTransactions;
+        document.getElementById('modal-user-status').checked = status === 'active';
+        document.getElementById('modal-user-status-text').textContent = status === 'active' ? 'نشط' : 'موقوف';
+        document.getElementById('modal-user-created').textContent = formatDate(user.createdAt);
+        document.getElementById('user-modal').classList.add('active');
+    }
+    function closeUserModal() { document.getElementById('user-modal').classList.remove('active'); selectedUserId = null; }
+    function toggleUserStatus() {
+        if (!selectedUserId) return;
+        const newStatus = document.getElementById('modal-user-status').checked ? 'active' : 'inactive';
+        setUserStatus(selectedUserId, newStatus);
+        document.getElementById('modal-user-status-text').textContent = newStatus === 'active' ? 'نشط' : 'موقوف';
+        showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح`, 'success');
+        renderUsersList();
+    }
+    function toggleUserStatusFromList(userId) {
+        const currentStatus = getUserStatus(userId);
+        const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+        setUserStatus(userId, newStatus);
+        showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم بنجاح`, 'success');
+        renderUsersList();
+    }
+
+    function changePassword() {
+        const current = document.getElementById('current-password').value;
+        const newPass = document.getElementById('new-password').value;
+        const confirm = document.getElementById('confirm-password').value;
+        if (!current || !newPass || !confirm) { showToast('الرجاء إدخال جميع الحقول', 'error'); return; }
+        if (newPass !== confirm) { showToast('كلمة المرور غير متطابقة', 'error'); return; }
+        if (newPass.length < 6) { showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error'); return; }
+        showLoading();
+        setTimeout(() => {
+            const users = loadUsers();
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (users[userIndex].password !== current) { hideLoading(); showToast('كلمة المرور الحالية غير صحيحة', 'error'); return; }
+            users[userIndex].password = newPass; saveUsers(users);
+            hideLoading(); showToast('تم تغيير كلمة المرور بنجاح', 'success');
+            document.getElementById('current-password').value = ''; document.getElementById('new-password').value = ''; document.getElementById('confirm-password').value = '';
+        }, 1000);
+    }
+
+    function exportData() {
+        const data = { users: loadUsers(), clients: {} };
+        loadUsers().forEach(user => data.clients[user.id] = getUserClients(user.id));
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = `backup_${new Date().toLocaleDateString('ar-EG')}.json`; a.click();
+        showToast('تم تصدير البيانات بنجاح', 'success');
+    }
+
+    function importData() {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = '.json';
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.users) localStorage.setItem(USERS_KEY, JSON.stringify(data.users));
+                    if (data.clients) Object.keys(data.clients).forEach(userId => { localStorage.setItem(CLIENTS_KEY_PREFIX + userId, JSON.stringify(data.clients[userId])); });
+                    showToast('تم استيراد البيانات بنجاح', 'success');
+                    if (currentUser) { loadUserData(); if (currentUser.role === 'admin') renderUsersList(); }
+                } catch (error) { showToast('ملف غير صالح', 'error'); }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        const icon = document.getElementById('theme-icon');
+        icon.className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    function closeDeleteModal() { document.getElementById('delete-modal').classList.remove('active'); deleteCallback = null; }
+    function confirmDelete() { if (deleteCallback) { deleteCallback(); closeDeleteModal(); } }
+
+    function checkSavedSession() {
+        const savedUser = localStorage.getItem(CURRENT_USER_KEY);
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            const userStatus = getUserStatus(currentUser.id);
+            if (userStatus !== 'active') { localStorage.removeItem(CURRENT_USER_KEY); showToast('تم إيقاف هذا الحساب. الرجاء التواصل مع المدير', 'error'); return; }
+            updateUserUI();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateConnectionStatus();
+        checkForBackup();
+        checkSavedSession();
+        document.querySelectorAll('.filter-btn')[0]?.classList.add('active');
+    });
 </script>
 
 </body>
