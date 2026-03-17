@@ -17,6 +17,7 @@
     <!-- Excel & PDF Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -803,6 +804,16 @@
             color: var(--gold);
         }
 
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: clamp(16px, 3vw, 20px);
+            color: var(--text-secondary);
+            font-size: clamp(11px, 2vw, 12px);
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
         /* Export Buttons */
         .export-buttons {
             position: fixed;
@@ -1050,33 +1061,9 @@
     <button class="export-btn" onclick="exportToExcel()" title="تصدير Excel">
         <i class="fas fa-file-excel"></i>
     </button>
-    <button class="export-btn" onclick="openExportOptions('pdf')" title="تصدير PDF">
+    <button class="export-btn" onclick="exportToPDF()" title="تصدير PDF">
         <i class="fas fa-file-pdf"></i>
     </button>
-    <button class="export-btn" onclick="openExportOptions('image')" title="تصدير صورة">
-        <i class="fas fa-camera"></i>
-    </button>
-</div>
-
-<!-- Export Options Modal -->
-<div id="export-options-modal" class="export-options-modal">
-    <div class="modal-content">
-        <h2 id="export-options-title">خيارات التصدير</h2>
-        
-        <button class="export-option-btn" id="export-option-1" onclick="">
-            <i class="fas fa-file"></i>
-            <span></span>
-        </button>
-        
-        <button class="export-option-btn" id="export-option-2" onclick="">
-            <i class="fas fa-folder"></i>
-            <span></span>
-        </button>
-        
-        <button class="btn-secondary mt-4" onclick="closeExportOptions()">
-            إلغاء
-        </button>
-    </div>
 </div>
 
 <!-- Restore Modal -->
@@ -1472,13 +1459,9 @@
                             <i class="fas fa-file-excel text-green-500 ml-2"></i>
                             تصدير Excel
                         </button>
-                        <button onclick="openExportOptions('pdf')" class="btn-secondary w-full text-right">
+                        <button onclick="exportToPDF()" class="btn-secondary w-full text-right">
                             <i class="fas fa-file-pdf text-red-500 ml-2"></i>
                             تصدير PDF
-                        </button>
-                        <button onclick="openExportOptions('image')" class="btn-secondary w-full text-right">
-                            <i class="fas fa-camera text-purple-500 ml-2"></i>
-                            تصدير صورة
                         </button>
                     </div>
                 </div>
@@ -1621,13 +1604,25 @@
 
         <!-- Client Details Page -->
         <div id="client-page" class="page hidden">
-            <button onclick="showPage('dashboard')" class="btn-secondary mb-6">
-                <i class="fas fa-arrow-right ml-2"></i>
-                العودة
-            </button>
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="showPage('dashboard')" class="btn-secondary">
+                    <i class="fas fa-arrow-right ml-2"></i>
+                    العودة
+                </button>
+                <button onclick="exportClientImage()" class="btn-primary" style="width: auto;">
+                    <i class="fas fa-camera ml-2"></i>
+                    تصدير صورة العميل
+                </button>
+            </div>
 
             <div id="client-details" class="stat-card"></div>
         </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>تطوير: محمد احمد فؤاد | واتساب: 01010421571</p>
+        <p class="text-xs mt-1">جميع الحقوق محفوظة © 2024</p>
     </div>
 </div>
 
@@ -1829,7 +1824,6 @@
     let backupInterval = null;
     let clientsCache = null;
     let pendingBackup = false;
-    let exportType = null;
 
     // المستخدمين الافتراضيين
     const defaultUsers = [{
@@ -2214,35 +2208,6 @@
                 showToast('حدث خطأ أثناء الحذف', 'error');
             }
         }, 500);
-    }
-
-    // ==================== دوال خيارات التصدير ====================
-    function openExportOptions(type) {
-        exportType = type;
-        const modal = document.getElementById('export-options-modal');
-        const title = document.getElementById('export-options-title');
-        const option1 = document.getElementById('export-option-1');
-        const option2 = document.getElementById('export-option-2');
-        
-        if (type === 'pdf') {
-            title.textContent = 'خيارات تصدير PDF';
-            option1.innerHTML = '<i class="fas fa-file-pdf"></i><span>ملف PDF واحد لجميع العملاء</span>';
-            option1.onclick = exportToPDF;
-            option2.innerHTML = '<i class="fas fa-folder"></i><span>ملف PDF منفصل لكل عميل</span>';
-            option2.onclick = exportToPDFSeparate;
-        } else {
-            title.textContent = 'خيارات تصدير الصور';
-            option1.innerHTML = '<i class="fas fa-image"></i><span>صورة واحدة لجميع العملاء</span>';
-            option1.onclick = exportToImage;
-            option2.innerHTML = '<i class="fas fa-folder"></i><span>صور منفصلة لكل عميل (ملف مضغوط)</span>';
-            option2.onclick = exportToImageSeparate;
-        }
-        
-        modal.classList.add('active');
-    }
-
-    function closeExportOptions() {
-        document.getElementById('export-options-modal').classList.remove('active');
     }
 
     // ==================== دوال الشريط الجانبي للهاتف ====================
@@ -3538,533 +3503,7 @@
 
     // ==================== دوال التصدير المحسّنة ====================
     
-    // تصدير PDF - ملف واحد لجميع العملاء (باستخدام الصور)
-    async function exportToPDF() {
-        const clients = getCurrentUserClients();
-        if (!clients.length) {
-            showToast('لا توجد بيانات للتصدير', 'warning');
-            closeExportOptions();
-            return;
-        }
-        showLoading();
-
-        try {
-            const { jsPDF } = window.jspdf;
-            
-            // إنشاء PDF بحجم A4
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            // إنشاء عنصر HTML للتقرير
-            const container = document.createElement('div');
-            container.style.direction = 'rtl';
-            container.style.padding = '20px';
-            container.style.background = '#ffffff';
-            container.style.color = '#000000';
-            container.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
-            container.style.width = '800px';
-            container.style.margin = '0 auto';
-
-            // عنوان التقرير
-            let html = `
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #22c55e; font-size: 28px; margin-bottom: 10px;">تقرير العملاء</h1>
-                    <p style="color: #666; font-size: 14px;">${new Date().toLocaleDateString('ar-EG')}</p>
-                    <p style="color: #666;">إجمالي العملاء: ${clients.length}</p>
-                </div>
-            `;
-
-            // إحصائيات عامة
-            const totalMoneyFor = clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0);
-            const totalMoneyOn = clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0);
-            const totalGoldFor = clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0);
-            const totalGoldOn = clients.reduce((s, c) => s + getClientSummary(c).goldOn, 0);
-
-            html += `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; padding: 15px; background: #f3f4f6; border-radius: 10px;">
-                    <div style="text-align: center;">
-                        <div style="color: #22c55e;">إجمالي ما لنا</div>
-                        <div style="font-size: 18px; font-weight: bold;">${formatMoney(totalMoneyOn)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="color: #f59e0b;">إجمالي ما لهم</div>
-                        <div style="font-size: 18px; font-weight: bold;">${formatMoney(totalMoneyFor)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="color: #fbbf24;">ذهب لنا</div>
-                        <div style="font-size: 18px; font-weight: bold;">${formatGold(totalGoldOn)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="color: #b45309;">ذهب لهم</div>
-                        <div style="font-size: 18px; font-weight: bold;">${formatGold(totalGoldFor)}</div>
-                    </div>
-                </div>
-            `;
-
-            // إنشاء صفحات لكل عميل
-            for (let i = 0; i < clients.length; i++) {
-                const client = clients[i];
-                const summary = getClientSummary(client);
-
-                const clientHtml = `
-                    <div style="border: 2px solid #e5e7eb; border-radius: 15px; padding: 20px; margin-bottom: 25px; background: #f9fafb;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h2 style="color: #22c55e; font-size: 22px; margin: 0;">${client.name}</h2>
-                            <div style="display: flex; gap: 8px;">
-                                ${summary.netMoney > 0 ? '<span style="padding: 4px 12px; background: rgba(245,158,11,0.2); color: #f59e0b; border-radius: 20px;">له مال</span>' : ''}
-                                ${summary.netMoney < 0 ? '<span style="padding: 4px 12px; background: rgba(34,197,94,0.2); color: #22c55e; border-radius: 20px;">عليه مال</span>' : ''}
-                                ${summary.netGold > 0 ? '<span style="padding: 4px 12px; background: rgba(251,191,36,0.2); color: #fbbf24; border-radius: 20px;">له ذهب</span>' : ''}
-                                ${summary.netGold < 0 ? '<span style="padding: 4px 12px; background: rgba(180,83,9,0.2); color: #b45309; border-radius: 20px;">عليه ذهب</span>' : ''}
-                            </div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
-                            <div style="background: white; padding: 12px; border-radius: 10px;">
-                                <div style="color: #f59e0b; margin-bottom: 5px;">له مال</div>
-                                <div style="font-size: 20px; font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
-                            </div>
-                            <div style="background: white; padding: 12px; border-radius: 10px;">
-                                <div style="color: #22c55e; margin-bottom: 5px;">عليه مال</div>
-                                <div style="font-size: 20px; font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
-                            </div>
-                            <div style="background: white; padding: 12px; border-radius: 10px;">
-                                <div style="color: #fbbf24; margin-bottom: 5px;">له ذهب</div>
-                                <div style="font-size: 20px; font-weight: bold;">${formatGold(summary.goldFor)}</div>
-                            </div>
-                            <div style="background: white; padding: 12px; border-radius: 10px;">
-                                <div style="color: #b45309; margin-bottom: 5px;">عليه ذهب</div>
-                                <div style="font-size: 20px; font-weight: bold;">${formatGold(summary.goldOn)}</div>
-                            </div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; color: #666;">
-                            ${client.phone ? `<div><strong>الهاتف:</strong> ${client.phone}</div>` : ''}
-                            ${client.address ? `<div><strong>العنوان:</strong> ${client.address}</div>` : ''}
-                            ${client.goldKarat ? `<div><strong>عيار الذهب:</strong> <span style="color: #fbbf24;">${client.goldKarat}</span></div>` : ''}
-                            ${client.goldDescription ? `<div><strong>بيان الذهب:</strong> <span style="color: #fbbf24;">${client.goldDescription}</span></div>` : ''}
-                        </div>
-                        
-                        ${client.notes ? `
-                            <div style="margin-top: 15px; padding: 12px; background: white; border-radius: 10px;">
-                                <strong>ملاحظات:</strong> ${client.notes}
-                            </div>
-                        ` : ''}
-                        
-                        <div style="margin-top: 15px; color: #666; font-size: 13px;">
-                            <span>${client.transactions.length} معاملة نقدية</span> • 
-                            <span>${client.goldTransactions.length} معاملة ذهب</span>
-                        </div>
-                    </div>
-                `;
-
-                html += clientHtml;
-            }
-
-            container.innerHTML = html;
-            document.body.appendChild(container);
-
-            // تحويل الصفحة إلى صورة
-            const canvas = await html2canvas(container, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                logging: false,
-                allowTaint: true,
-                useCORS: true
-            });
-
-            // إضافة الصورة إلى PDF
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = 210; // عرض A4 بالملم
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
-
-            // حفظ الملف
-            pdf.save(`تقرير_العملاء_${new Date().toISOString().split('T')[0]}.pdf`);
-
-            document.body.removeChild(container);
-            
-            showToast('تم تصدير التقرير PDF بنجاح', 'success');
-        } catch (error) {
-            console.error('PDF Error:', error);
-            showToast('حدث خطأ في تصدير PDF', 'error');
-        } finally {
-            hideLoading();
-            closeExportOptions();
-        }
-    }
-
-    // تصدير PDF - ملف منفصل لكل عميل (باستخدام الصور)
-    async function exportToPDFSeparate() {
-        const clients = getCurrentUserClients();
-        if (!clients.length) {
-            showToast('لا توجد بيانات للتصدير', 'warning');
-            closeExportOptions();
-            return;
-        }
-        showLoading();
-
-        try {
-            const { jsPDF } = window.jspdf;
-            const zip = new JSZip();
-            const folder = zip.folder("clients");
-
-            for (let i = 0; i < clients.length; i++) {
-                const client = clients[i];
-                const summary = getClientSummary(client);
-                
-                // إنشاء PDF جديد لكل عميل
-                const pdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-
-                // إنشاء عنصر HTML للعميل
-                const container = document.createElement('div');
-                container.style.direction = 'rtl';
-                container.style.padding = '20px';
-                container.style.background = '#ffffff';
-                container.style.color = '#000000';
-                container.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
-                container.style.width = '800px';
-                container.style.margin = '0 auto';
-
-                const html = `
-                    <div style="border: 2px solid #22c55e; border-radius: 20px; padding: 25px;">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <h1 style="color: #22c55e; font-size: 26px; margin: 0;">${client.name}</h1>
-                            <p style="color: #666;">${formatDate(new Date().toISOString())}</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #f59e0b; margin-bottom: 5px;">له مال</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
-                            </div>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #22c55e; margin-bottom: 5px;">عليه مال</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
-                            </div>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #fbbf24; margin-bottom: 5px;">له ذهب</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatGold(summary.goldFor)}</div>
-                            </div>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #b45309; margin-bottom: 5px;">عليه ذهب</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatGold(summary.goldOn)}</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            ${client.phone ? `<p><strong>الهاتف:</strong> ${client.phone}</p>` : ''}
-                            ${client.address ? `<p><strong>العنوان:</strong> ${client.address}</p>` : ''}
-                            ${client.goldKarat ? `<p><strong>عيار الذهب:</strong> <span style="color: #fbbf24;">${client.goldKarat}</span></p>` : ''}
-                            ${client.goldDescription ? `<p><strong>بيان الذهب:</strong> <span style="color: #fbbf24;">${client.goldDescription}</span></p>` : ''}
-                        </div>
-                        
-                        ${client.notes ? `
-                            <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 12px;">
-                                <strong>ملاحظات:</strong> ${client.notes}
-                            </div>
-                        ` : ''}
-                        
-                        <div style="color: #666; font-size: 14px;">
-                            <span>${client.transactions.length} معاملة نقدية</span> • 
-                            <span>${client.goldTransactions.length} معاملة ذهب</span>
-                        </div>
-                    </div>
-                `;
-
-                container.innerHTML = html;
-                document.body.appendChild(container);
-
-                // تحويل الصفحة إلى صورة
-                const canvas = await html2canvas(container, {
-                    scale: 2,
-                    backgroundColor: '#ffffff',
-                    logging: false
-                });
-
-                // إضافة الصورة إلى PDF
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = 210;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                
-                const tempPdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
-                tempPdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, undefined, 'FAST');
-
-                // إضافة PDF إلى المجلد
-                const fileName = `${client.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-                folder.file(fileName, tempPdf.output('arraybuffer'));
-
-                document.body.removeChild(container);
-            }
-
-            // إنشاء ملف ZIP وتحميله
-            const content = await zip.generateAsync({ type: 'blob' });
-            saveAs(content, `تقارير_العملاء_${new Date().toISOString().split('T')[0]}.zip`);
-            
-            showToast(`تم تصدير ${clients.length} ملف PDF`, 'success');
-        } catch (error) {
-            console.error('PDF Separate Error:', error);
-            showToast('حدث خطأ في تصدير الملفات', 'error');
-        } finally {
-            hideLoading();
-            closeExportOptions();
-        }
-    }
-
-    // تصدير صورة - صورة واحدة لجميع العملاء
-    async function exportToImage() {
-        const clients = getCurrentUserClients();
-        if (!clients.length) {
-            showToast('لا توجد بيانات للتصدير', 'warning');
-            closeExportOptions();
-            return;
-        }
-        showLoading();
-
-        try {
-            const container = document.createElement('div');
-            container.style.direction = 'rtl';
-            container.style.padding = '30px';
-            container.style.background = '#ffffff';
-            container.style.color = '#000000';
-            container.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
-            container.style.maxWidth = '1000px';
-            container.style.margin = '0 auto';
-
-            // عنوان التقرير
-            let html = `
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #22c55e; font-size: 32px; margin-bottom: 10px;">تقرير العملاء</h1>
-                    <p style="color: #666; font-size: 16px;">${new Date().toLocaleDateString('ar-EG')}</p>
-                    <p style="color: #666;">إجمالي العملاء: ${clients.length}</p>
-                </div>
-            `;
-
-            // إحصائيات عامة
-            const totalMoneyFor = clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0);
-            const totalMoneyOn = clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0);
-            const totalGoldFor = clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0);
-            const totalGoldOn = clients.reduce((s, c) => s + getClientSummary(c).goldOn, 0);
-
-            html += `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; padding: 20px; background: #f3f4f6; border-radius: 12px;">
-                    <div style="text-align: center;">
-                        <div style="color: #22c55e; font-size: 14px;">إجمالي ما لنا</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatMoney(totalMoneyOn)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="color: #f59e0b; font-size: 14px;">إجمالي ما لهم</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatMoney(totalMoneyFor)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="color: #fbbf24; font-size: 14px;">ذهب لنا</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatGold(totalGoldOn)}</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="color: #b45309; font-size: 14px;">ذهب لهم</div>
-                        <div style="font-size: 20px; font-weight: bold;">${formatGold(totalGoldFor)}</div>
-                    </div>
-                </div>
-            `;
-
-            // تفاصيل العملاء
-            clients.forEach((client, index) => {
-                const summary = getClientSummary(client);
-                html += `
-                    <div style="border: 2px solid #e5e7eb; border-radius: 16px; padding: 25px; margin-bottom: 25px; background: #f9fafb; page-break-inside: avoid;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <h2 style="color: #22c55e; font-size: 24px; margin: 0;">${client.name}</h2>
-                            <div style="display: flex; gap: 10px;">
-                                ${summary.netMoney > 0 ? '<span style="padding: 5px 15px; background: rgba(245,158,11,0.2); color: #f59e0b; border-radius: 20px;">له مال</span>' : ''}
-                                ${summary.netMoney < 0 ? '<span style="padding: 5px 15px; background: rgba(34,197,94,0.2); color: #22c55e; border-radius: 20px;">عليه مال</span>' : ''}
-                                ${summary.netGold > 0 ? '<span style="padding: 5px 15px; background: rgba(251,191,36,0.2); color: #fbbf24; border-radius: 20px;">له ذهب</span>' : ''}
-                                ${summary.netGold < 0 ? '<span style="padding: 5px 15px; background: rgba(180,83,9,0.2); color: #b45309; border-radius: 20px;">عليه ذهب</span>' : ''}
-                            </div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 20px;">
-                            <div style="background: white; padding: 15px; border-radius: 12px;">
-                                <div style="color: #f59e0b; margin-bottom: 5px;">له مال</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
-                            </div>
-                            <div style="background: white; padding: 15px; border-radius: 12px;">
-                                <div style="color: #22c55e; margin-bottom: 5px;">عليه مال</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
-                            </div>
-                            <div style="background: white; padding: 15px; border-radius: 12px;">
-                                <div style="color: #fbbf24; margin-bottom: 5px;">له ذهب</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatGold(summary.goldFor)}</div>
-                            </div>
-                            <div style="background: white; padding: 15px; border-radius: 12px;">
-                                <div style="color: #b45309; margin-bottom: 5px;">عليه ذهب</div>
-                                <div style="font-size: 22px; font-weight: bold;">${formatGold(summary.goldOn)}</div>
-                            </div>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; color: #666;">
-                            ${client.phone ? `<div><strong>الهاتف:</strong> ${client.phone}</div>` : ''}
-                            ${client.address ? `<div><strong>العنوان:</strong> ${client.address}</div>` : ''}
-                            ${client.goldKarat ? `<div><strong>عيار الذهب:</strong> <span style="color: #fbbf24;">${client.goldKarat}</span></div>` : ''}
-                            ${client.goldDescription ? `<div><strong>بيان الذهب:</strong> <span style="color: #fbbf24;">${client.goldDescription}</span></div>` : ''}
-                        </div>
-                        
-                        ${client.notes ? `
-                            <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 12px;">
-                                <strong>ملاحظات:</strong> ${client.notes}
-                            </div>
-                        ` : ''}
-                        
-                        <div style="margin-top: 15px; color: #666; font-size: 14px;">
-                            <span>${client.transactions.length} معاملة نقدية</span> • 
-                            <span>${client.goldTransactions.length} معاملة ذهب</span> • 
-                            <span>${formatDate(client.createdAt)}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            document.body.appendChild(container);
-
-            const canvas = await html2canvas(container, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                logging: false,
-                allowTaint: true,
-                useCORS: true
-            });
-
-            const link = document.createElement('a');
-            link.download = `تقرير_العملاء_${new Date().toISOString().split('T')[0]}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-
-            document.body.removeChild(container);
-            
-            showToast('تم تصدير التقرير كصورة بنجاح', 'success');
-        } catch (error) {
-            console.error('Image Error:', error);
-            showToast('حدث خطأ في تصدير الصورة', 'error');
-        } finally {
-            hideLoading();
-            closeExportOptions();
-        }
-    }
-
-    // تصدير صور منفصلة لكل عميل
-    async function exportToImageSeparate() {
-        const clients = getCurrentUserClients();
-        if (!clients.length) {
-            showToast('لا توجد بيانات للتصدير', 'warning');
-            closeExportOptions();
-            return;
-        }
-        showLoading();
-
-        try {
-            const zip = new JSZip();
-            const folder = zip.folder("clients_images");
-
-            for (let i = 0; i < clients.length; i++) {
-                const client = clients[i];
-                const summary = getClientSummary(client);
-                
-                const container = document.createElement('div');
-                container.style.direction = 'rtl';
-                container.style.padding = '30px';
-                container.style.background = '#ffffff';
-                container.style.color = '#000000';
-                container.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
-                container.style.maxWidth = '800px';
-                container.style.margin = '0 auto';
-
-                const html = `
-                    <div style="border: 2px solid #22c55e; border-radius: 20px; padding: 30px;">
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <h1 style="color: #22c55e; font-size: 28px; margin: 0;">${client.name}</h1>
-                            <p style="color: #666;">${formatDate(new Date().toISOString())}</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #f59e0b; margin-bottom: 5px;">له مال</div>
-                                <div style="font-size: 24px; font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
-                            </div>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #22c55e; margin-bottom: 5px;">عليه مال</div>
-                                <div style="font-size: 24px; font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
-                            </div>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #fbbf24; margin-bottom: 5px;">له ذهب</div>
-                                <div style="font-size: 24px; font-weight: bold;">${formatGold(summary.goldFor)}</div>
-                            </div>
-                            <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
-                                <div style="color: #b45309; margin-bottom: 5px;">عليه ذهب</div>
-                                <div style="font-size: 24px; font-weight: bold;">${formatGold(summary.goldOn)}</div>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-bottom: 20px;">
-                            ${client.phone ? `<p><strong>الهاتف:</strong> ${client.phone}</p>` : ''}
-                            ${client.address ? `<p><strong>العنوان:</strong> ${client.address}</p>` : ''}
-                            ${client.goldKarat ? `<p><strong>عيار الذهب:</strong> <span style="color: #fbbf24;">${client.goldKarat}</span></p>` : ''}
-                            ${client.goldDescription ? `<p><strong>بيان الذهب:</strong> <span style="color: #fbbf24;">${client.goldDescription}</span></p>` : ''}
-                        </div>
-                        
-                        ${client.notes ? `
-                            <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 12px;">
-                                <strong>ملاحظات:</strong> ${client.notes}
-                            </div>
-                        ` : ''}
-                        
-                        <div style="color: #666; font-size: 14px;">
-                            <span>${client.transactions.length} معاملة نقدية</span> • 
-                            <span>${client.goldTransactions.length} معاملة ذهب</span>
-                        </div>
-                    </div>
-                `;
-
-                container.innerHTML = html;
-                document.body.appendChild(container);
-
-                const canvas = await html2canvas(container, {
-                    scale: 2,
-                    backgroundColor: '#ffffff',
-                    logging: false
-                });
-
-                const imageData = canvas.toDataURL('image/png').split(',')[1];
-                const fileName = `${client.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
-                folder.file(fileName, imageData, { base64: true });
-
-                document.body.removeChild(container);
-            }
-
-            const content = await zip.generateAsync({ type: 'blob' });
-            saveAs(content, `صور_العملاء_${new Date().toISOString().split('T')[0]}.zip`);
-            
-            showToast(`تم تصدير ${clients.length} صورة`, 'success');
-        } catch (error) {
-            console.error('Image Separate Error:', error);
-            showToast('حدث خطأ في تصدير الصور', 'error');
-        } finally {
-            hideLoading();
-            closeExportOptions();
-        }
-    }
-
+    // تصدير Excel محسّن ليشبه الملف المطلوب
     function exportToExcel() {
         const clients = getCurrentUserClients();
         if (!clients.length) {
@@ -4074,53 +3513,80 @@
 
         const wb = XLSX.utils.book_new();
 
-        const clientsData = clients.map(client => {
+        // شيت بيان (مثل الملف المطلوب)
+        const summaryData = clients.map((client, index) => {
             const summary = getClientSummary(client);
+            const netBalance = summary.netMoney;
+            
             return {
+                'م': index + 1,
                 'الاسم': client.name,
-                'الجوال': client.phone || '-',
-                'العنوان': client.address || '-',
-                'له مال': summary.moneyFor,
-                'عليه مال': summary.moneyOn,
-                'صافي المال': summary.netMoney,
-                'له ذهب': summary.goldFor,
-                'عليه ذهب': summary.goldOn,
-                'صافي الذهب': summary.netGold,
-                'عيار الذهب': client.goldKarat || '-',
-                'بيان الذهب': client.goldDescription || '-',
-                'ملاحظات': client.notes || '-'
+                'الحساب': netBalance
             };
         });
 
-        const wsClients = XLSX.utils.json_to_sheet(clientsData);
-        XLSX.utils.book_append_sheet(wb, wsClients, 'العملاء');
+        // إضافة صف المجموع في النهاية
+        const totalNet = clients.reduce((sum, c) => sum + getClientSummary(c).netMoney, 0);
+        summaryData.push({
+            'م': '',
+            'الاسم': 'المجموع',
+            'الحساب': totalNet
+        });
 
+        const wsSummary = XLSX.utils.json_to_sheet(summaryData);
+        XLSX.utils.book_append_sheet(wb, wsSummary, 'بيان');
+
+        // شيت لكل عميل
         clients.forEach(client => {
             const transactions = [];
 
+            // معاملات نقدية
             client.transactions.forEach(t => {
                 transactions.push({
+                    'م': transactions.length + 1,
                     'التاريخ': formatDate(t.date),
-                    'النوع': 'نقدي - ' + (t.type === 'out' ? 'تسليم' : 'استلام'),
-                    'المبلغ': t.amount,
-                    'المسؤول': t.responsible,
-                    'ملاحظات': t.note || '-'
+                    'البياع': t.responsible,
+                    'الرقم المرجعى': t.id,
+                    'اسم المحول او الايميل': '',
+                    'البنك المحول': '',
+                    'البنك المحول اليه': '',
+                    'المبلغ': t.type === 'out' ? t.amount : -t.amount,
+                    'الرصيد': t.runningBalance
                 });
             });
 
+            // معاملات ذهب
             client.goldTransactions.forEach(t => {
                 transactions.push({
+                    'م': transactions.length + 1,
                     'التاريخ': formatDate(t.date),
-                    'النوع': 'ذهب - ' + (t.type === 'out' ? 'له' : 'عليه'),
-                    'الكمية': t.amount,
-                    'العيار': t.karat || '-',
-                    'البيان': t.description || '-',
-                    'المسؤول': t.responsible,
-                    'ملاحظات': t.note || '-'
+                    'البياع': t.responsible,
+                    'الرقم المرجعى': t.id,
+                    'اسم المحول او الايميل': t.description || '',
+                    'البنك المحول': t.karat ? `عيار ${t.karat}` : '',
+                    'البنك المحول اليه': '',
+                    'المبلغ': t.type === 'out' ? t.amount : -t.amount,
+                    'الرصيد': t.runningBalance
                 });
             });
 
             if (transactions.length > 0) {
+                // إضافة صف الرصيد الافتتاحي
+                const openingBalance = (client.moneyFor - client.moneyOn) - 
+                    client.transactions.reduce((sum, t) => sum + (t.type === 'out' ? t.amount : -t.amount), 0);
+                
+                transactions.unshift({
+                    'م': 0,
+                    'التاريخ': formatDate(client.createdAt),
+                    'البياع': 'رصيد افتتاحي',
+                    'الرقم المرجعى': '',
+                    'اسم المحول او الايميل': '',
+                    'البنك المحول': '',
+                    'البنك المحول اليه': '',
+                    'المبلغ': openingBalance,
+                    'الرصيد': openingBalance
+                });
+
                 const wsClient = XLSX.utils.json_to_sheet(transactions);
                 XLSX.utils.book_append_sheet(wb, wsClient, client.name.substring(0, 20));
             }
@@ -4128,6 +3594,312 @@
 
         XLSX.writeFile(wb, `financial_report_${new Date().toISOString().split('T')[0]}.xlsx`);
         showToast('تم تصدير التقرير بنجاح', 'success');
+    }
+
+    // تصدير PDF محسّن
+    async function exportToPDF() {
+        const clients = getCurrentUserClients();
+        if (!clients.length) {
+            showToast('لا توجد بيانات للتصدير', 'warning');
+            return;
+        }
+        showLoading();
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // صفحة الغلاف
+            pdf.setFont('helvetica');
+            pdf.setFontSize(24);
+            pdf.setTextColor(34, 197, 94);
+            pdf.text('تقرير العملاء', 105, 30, { align: 'center' });
+            
+            pdf.setFontSize(14);
+            pdf.setTextColor(100, 100, 100);
+            pdf.text(new Date().toLocaleDateString('ar-EG'), 105, 45, { align: 'center' });
+            pdf.text(`إجمالي العملاء: ${clients.length}`, 105, 55, { align: 'center' });
+
+            // إحصائيات عامة
+            const totalMoneyFor = clients.reduce((s, c) => s + getClientSummary(c).moneyFor, 0);
+            const totalMoneyOn = clients.reduce((s, c) => s + getClientSummary(c).moneyOn, 0);
+            const totalGoldFor = clients.reduce((s, c) => s + getClientSummary(c).goldFor, 0);
+            const totalGoldOn = clients.reduce((s, c) => s + getClientSummary(c).goldOn, 0);
+
+            pdf.setFontSize(12);
+            pdf.setTextColor(0, 0, 0);
+            pdf.text('ملخص عام:', 20, 75);
+            pdf.text(`إجمالي ما لنا: ${formatMoney(totalMoneyOn)}`, 25, 85);
+            pdf.text(`إجمالي ما لهم: ${formatMoney(totalMoneyFor)}`, 25, 95);
+            pdf.text(`إجمالي الذهب لنا: ${formatGold(totalGoldOn)}`, 25, 105);
+            pdf.text(`إجمالي الذهب لهم: ${formatGold(totalGoldFor)}`, 25, 115);
+
+            let yPos = 130;
+
+            // لكل عميل صفحة منفصلة
+            for (let i = 0; i < clients.length; i++) {
+                const client = clients[i];
+                const summary = getClientSummary(client);
+                
+                if (i > 0) {
+                    pdf.addPage();
+                    yPos = 30;
+                } else {
+                    yPos = 130;
+                }
+
+                // عنوان العميل
+                pdf.setFontSize(18);
+                pdf.setTextColor(34, 197, 94);
+                pdf.text(client.name, 20, yPos);
+                yPos += 10;
+
+                // معلومات الاتصال
+                pdf.setFontSize(10);
+                pdf.setTextColor(80, 80, 80);
+                if (client.phone) {
+                    pdf.text(`الهاتف: ${client.phone}`, 20, yPos);
+                    yPos += 7;
+                }
+                if (client.address) {
+                    pdf.text(`العنوان: ${client.address}`, 20, yPos);
+                    yPos += 7;
+                }
+                if (client.notes) {
+                    pdf.text(`ملاحظات: ${client.notes}`, 20, yPos);
+                    yPos += 10;
+                } else {
+                    yPos += 3;
+                }
+
+                // الملخص المالي
+                pdf.setFontSize(12);
+                pdf.setTextColor(34, 197, 94);
+                pdf.text('الملخص المالي', 20, yPos);
+                yPos += 7;
+
+                pdf.setFontSize(10);
+                pdf.setTextColor(245, 158, 11);
+                pdf.text(`له: ${formatMoney(summary.moneyFor)}`, 25, yPos);
+                yPos += 6;
+                pdf.setTextColor(34, 197, 94);
+                pdf.text(`عليه: ${formatMoney(summary.moneyOn)}`, 25, yPos);
+                yPos += 6;
+                pdf.setTextColor(summary.netMoney > 0 ? 245 : 34, summary.netMoney > 0 ? 158 : 197, summary.netMoney > 0 ? 11 : 94);
+                pdf.text(`الصافي: ${summary.netMoney > 0 ? '+' : ''}${formatMoney(summary.netMoney)}`, 25, yPos);
+                yPos += 10;
+
+                // ملخص الذهب
+                pdf.setFontSize(12);
+                pdf.setTextColor(251, 191, 36);
+                pdf.text('الذهب', 20, yPos);
+                yPos += 7;
+
+                pdf.setFontSize(10);
+                pdf.setTextColor(251, 191, 36);
+                pdf.text(`له ذهب: ${formatGold(summary.goldFor)}`, 25, yPos);
+                yPos += 6;
+                pdf.setTextColor(180, 130, 0);
+                pdf.text(`عليه ذهب: ${formatGold(summary.goldOn)}`, 25, yPos);
+                yPos += 6;
+                pdf.setTextColor(summary.netGold > 0 ? 251 : 180, summary.netGold > 0 ? 191 : 130, summary.netGold > 0 ? 36 : 0);
+                pdf.text(`صافي الذهب: ${summary.netGold > 0 ? '+' : ''}${formatGold(summary.netGold)}`, 25, yPos);
+                yPos += 10;
+
+                // عيار وبيان الذهب
+                if (client.goldKarat || client.goldDescription) {
+                    pdf.setFontSize(10);
+                    pdf.setTextColor(251, 191, 36);
+                    if (client.goldKarat) {
+                        pdf.text(`عيار الذهب: ${client.goldKarat}`, 20, yPos);
+                        yPos += 6;
+                    }
+                    if (client.goldDescription) {
+                        pdf.text(`بيان الذهب: ${client.goldDescription}`, 20, yPos);
+                        yPos += 8;
+                    } else {
+                        yPos += 2;
+                    }
+                }
+
+                // المعاملات النقدية
+                if (client.transactions.length > 0) {
+                    pdf.setFontSize(12);
+                    pdf.setTextColor(34, 197, 94);
+                    pdf.text('المعاملات النقدية', 20, yPos);
+                    yPos += 7;
+
+                    client.transactions.forEach((t, idx) => {
+                        if (yPos > 250) {
+                            pdf.addPage();
+                            yPos = 30;
+                        }
+
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(`${idx + 1}. ${t.type === 'out' ? 'تسليم' : 'استلام'} - ${formatMoney(t.amount)}`, 25, yPos);
+                        yPos += 5;
+                        pdf.text(`   المسؤول: ${t.responsible} - ${formatDate(t.date)}`, 25, yPos);
+                        yPos += 5;
+                        if (t.note) {
+                            pdf.text(`   ملاحظات: ${t.note}`, 25, yPos);
+                            yPos += 6;
+                        } else {
+                            yPos += 1;
+                        }
+                    });
+                }
+
+                // معاملات الذهب
+                if (client.goldTransactions.length > 0) {
+                    if (yPos > 220) {
+                        pdf.addPage();
+                        yPos = 30;
+                    }
+
+                    pdf.setFontSize(12);
+                    pdf.setTextColor(251, 191, 36);
+                    pdf.text('معاملات الذهب', 20, yPos);
+                    yPos += 7;
+
+                    client.goldTransactions.forEach((t, idx) => {
+                        if (yPos > 250) {
+                            pdf.addPage();
+                            yPos = 30;
+                        }
+
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(80, 80, 80);
+                        pdf.text(`${idx + 1}. ${t.type === 'out' ? 'له ذهب' : 'عليه ذهب'} - ${formatGold(t.amount)}`, 25, yPos);
+                        yPos += 5;
+                        if (t.karat) {
+                            pdf.text(`   عيار: ${t.karat}`, 25, yPos);
+                            yPos += 5;
+                        }
+                        if (t.description) {
+                            pdf.text(`   البيان: ${t.description}`, 25, yPos);
+                            yPos += 5;
+                        }
+                        pdf.text(`   المسؤول: ${t.responsible} - ${formatDate(t.date)}`, 25, yPos);
+                        yPos += 5;
+                        if (t.note) {
+                            pdf.text(`   ملاحظات: ${t.note}`, 25, yPos);
+                            yPos += 6;
+                        } else {
+                            yPos += 1;
+                        }
+                    });
+                }
+            }
+
+            pdf.save(`تقرير_العملاء_${new Date().toISOString().split('T')[0]}.pdf`);
+            
+            showToast('تم تصدير التقرير PDF بنجاح', 'success');
+        } catch (error) {
+            console.error('PDF Error:', error);
+            showToast('حدث خطأ في تصدير PDF', 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+
+    // تصدير صورة العميل الحالي
+    async function exportClientImage() {
+        if (!currentClientId) {
+            showToast('الرجاء اختيار عميل أولاً', 'error');
+            return;
+        }
+
+        const client = getCurrentUserClients().find(c => c.id === currentClientId);
+        if (!client) return;
+
+        showLoading();
+
+        try {
+            const container = document.createElement('div');
+            container.style.direction = 'rtl';
+            container.style.padding = '30px';
+            container.style.background = '#ffffff';
+            container.style.color = '#000000';
+            container.style.fontFamily = "'IBM Plex Sans Arabic', sans-serif";
+            container.style.maxWidth = '800px';
+            container.style.margin = '0 auto';
+
+            const summary = getClientSummary(client);
+
+            const html = `
+                <div style="border: 2px solid #22c55e; border-radius: 20px; padding: 30px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h1 style="color: #22c55e; font-size: 28px; margin: 0;">${client.name}</h1>
+                        <p style="color: #666;">${formatDate(new Date().toISOString())}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        ${client.phone ? `<p><strong>الهاتف:</strong> ${client.phone}</p>` : ''}
+                        ${client.address ? `<p><strong>العنوان:</strong> ${client.address}</p>` : ''}
+                        ${client.notes ? `<p><strong>ملاحظات:</strong> ${client.notes}</p>` : ''}
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
+                            <div style="color: #f59e0b; margin-bottom: 5px;">له مال</div>
+                            <div style="font-size: 22px; font-weight: bold;">${formatMoney(summary.moneyFor)}</div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
+                            <div style="color: #22c55e; margin-bottom: 5px;">عليه مال</div>
+                            <div style="font-size: 22px; font-weight: bold;">${formatMoney(summary.moneyOn)}</div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
+                            <div style="color: #fbbf24; margin-bottom: 5px;">له ذهب</div>
+                            <div style="font-size: 22px; font-weight: bold;">${formatGold(summary.goldFor)}</div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 15px; border-radius: 12px; text-align: center;">
+                            <div style="color: #b45309; margin-bottom: 5px;">عليه ذهب</div>
+                            <div style="font-size: 22px; font-weight: bold;">${formatGold(summary.goldOn)}</div>
+                        </div>
+                    </div>
+                    
+                    ${client.goldKarat || client.goldDescription ? `
+                        <div style="margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 12px;">
+                            ${client.goldKarat ? `<p><strong>عيار الذهب:</strong> <span style="color: #fbbf24;">${client.goldKarat}</span></p>` : ''}
+                            ${client.goldDescription ? `<p><strong>بيان الذهب:</strong> <span style="color: #fbbf24;">${client.goldDescription}</span></p>` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <div style="color: #666; font-size: 14px;">
+                        <span>${client.transactions.length} معاملة نقدية</span> • 
+                        <span>${client.goldTransactions.length} معاملة ذهب</span>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+            document.body.appendChild(container);
+
+            const canvas = await html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false
+            });
+
+            const link = document.createElement('a');
+            link.download = `${client.name.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            document.body.removeChild(container);
+            
+            showToast('تم تصدير صورة العميل بنجاح', 'success');
+        } catch (error) {
+            console.error('Image Error:', error);
+            showToast('حدث خطأ في تصدير الصورة', 'error');
+        } finally {
+            hideLoading();
+        }
     }
 
     // ==================== دوال المستخدمين ====================
