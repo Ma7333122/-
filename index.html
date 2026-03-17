@@ -27,8 +27,6 @@
             --warning: #fbbf24;
             --danger: #f87171;
             --info: #60a5fa;
-            --gold: #ffd700;
-            --gold-dark: #b8860b;
         }
 
         * {
@@ -54,28 +52,38 @@
             --border: #e2e8f0;
         }
 
+        /* Background Pattern */
         body::before {
             content: '';
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: 
                 radial-gradient(ellipse at 20% 20%, rgba(34, 211, 238, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(34, 211, 238, 0.03) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
         }
 
+        /* Grid Pattern */
         .grid-pattern {
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-image: 
-                linear-gradient(rgba(34, 211, 238, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(34, 211, 238, 0.02) 1px, transparent 1px);
+                linear-gradient(rgba(34, 211, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(34, 211, 238, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
             pointer-events: none;
             z-index: 0;
         }
 
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -93,6 +101,11 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .animate-fade { animation: fadeIn 0.4s ease-out; }
@@ -117,13 +130,18 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
             box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
+            animation: slideIn 0.3s ease forwards;
         }
 
+        .toast.show { transform: translateX(0); }
         .toast.success { border-left: 3px solid var(--success); }
         .toast.error { border-left: 3px solid var(--danger); }
         .toast.info { border-left: 3px solid var(--info); }
+        .toast.warning { border-left: 3px solid var(--warning); }
 
         /* Loading */
         .loading-overlay {
@@ -174,6 +192,7 @@
             max-width: 420px;
             width: 90%;
             text-align: center;
+            animation: fadeIn 0.4s ease;
         }
 
         /* Login */
@@ -194,6 +213,7 @@
             padding: 40px;
             width: 100%;
             max-width: 420px;
+            animation: fadeIn 0.5s ease;
             position: relative;
             overflow: hidden;
         }
@@ -219,6 +239,7 @@
             margin: 0 auto 20px;
             font-size: 32px;
             color: white;
+            animation: float 3s ease-in-out infinite;
         }
 
         .input-group { margin-bottom: 16px; }
@@ -248,16 +269,6 @@
             box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
-        .input-field::placeholder {
-            color: var(--fg-muted);
-            opacity: 0.6;
-        }
-
-        textarea.input-field {
-            resize: vertical;
-            min-height: 60px;
-        }
-
         .btn {
             display: inline-flex;
             align-items: center;
@@ -273,6 +284,7 @@
         }
 
         .btn-primary {
+            width: 100%;
             background: linear-gradient(135deg, var(--accent), #06b6d4);
             color: #0a0f1a;
         }
@@ -304,15 +316,6 @@
             background: var(--accent);
             color: var(--bg);
             border-color: var(--accent);
-        }
-
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            color: #1a1a1a;
-        }
-
-        .btn-gold:hover {
-            box-shadow: 0 8px 25px -5px rgba(255, 215, 0, 0.4);
         }
 
         /* Navigation */
@@ -367,6 +370,16 @@
             background: rgba(34, 211, 238, 0.1);
         }
 
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            width: 3px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 3px 0 0 3px;
+        }
+
         /* User Menu */
         .user-badge {
             position: fixed;
@@ -399,6 +412,8 @@
             font-size: 14px;
         }
 
+        .user-name { font-size: 13px; font-weight: 500; }
+
         /* Main Content */
         .main-wrapper {
             margin-right: 72px;
@@ -418,6 +433,7 @@
         }
 
         .card:hover {
+            transform: translateY(-3px);
             box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.4);
         }
 
@@ -428,6 +444,18 @@
             padding: 20px;
             position: relative;
             overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: var(--accent);
+            opacity: 0.05;
+            border-radius: 0 16px 0 100%;
         }
 
         /* Client Card */
@@ -460,7 +488,6 @@
         .badge-warning { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
         .badge-danger { background: rgba(248, 113, 113, 0.15); color: var(--danger); }
         .badge-info { background: rgba(96, 165, 250, 0.15); color: var(--info); }
-        .badge-gold { background: rgba(255, 215, 0, 0.15); color: var(--gold); }
 
         /* Filter */
         .filter-btn {
@@ -506,9 +533,9 @@
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 28px;
-            max-width: 500px;
+            max-width: 480px;
             width: 90%;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
             transform: scale(0.95);
             transition: transform 0.2s ease;
@@ -580,7 +607,7 @@
         /* Grid */
         .clients-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
         }
 
@@ -603,6 +630,7 @@
 
         .dev-badge:hover {
             background: var(--bg-secondary);
+            transform: scale(1.02);
         }
 
         .dev-avatar {
@@ -639,6 +667,7 @@
 
         .wa-btn:hover {
             transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
         }
 
         /* Export Buttons */
@@ -651,87 +680,7 @@
             z-index: 99;
         }
 
-        /* Last Added Client */
-        .last-client-card {
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(168, 85, 247, 0.1));
-            border: 1px solid var(--accent);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-
-        /* Section Header */
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-header i {
-            color: var(--accent);
-        }
-
-        /* Gold Icon */
-        .gold-icon {
-            color: var(--gold);
-        }
-
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 12px;
-        }
-
-        .tab-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            background: transparent;
-            border: none;
-            color: var(--fg-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-
-        .tab-btn:hover {
-            color: var(--fg);
-        }
-
-        .tab-btn.active {
-            background: var(--accent);
-            color: var(--bg);
-        }
-
-        /* Info Row */
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            color: var(--fg-muted);
-            font-size: 13px;
-        }
-
-        .info-value {
-            font-weight: 500;
-            font-size: 13px;
-        }
-
-        /* Backup Indicator */
+        /* Auto Backup Indicator */
         .backup-indicator {
             position: fixed;
             top: 20px;
@@ -778,26 +727,6 @@
 
             .dev-badge { display: none; }
             .export-btns { right: 80px; }
-            
-            .clients-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            .nav-sidebar, .user-badge, .dev-badge, .wa-btn, .export-btns, .backup-indicator {
-                display: none !important;
-            }
-            
-            .main-wrapper {
-                margin-right: 0;
-            }
-            
-            body {
-                background: white;
-                color: black;
-            }
         }
     </style>
 </head>
@@ -1013,35 +942,16 @@
         <div id="page-dashboard" class="page">
             <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">لوحة التحكم</h1>
             
-            <!-- Last Added Client -->
-            <div id="last-client-section" style="display: none;">
-                <div class="last-client-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-user-check" style="color: var(--accent);"></i>
-                            آخر عميل تمت إضافته
-                        </h3>
-                        <button onclick="showPage('add')" class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">
-                            <i class="fas fa-plus"></i>
-                            إضافة عميل جديد
-                        </button>
-                    </div>
-                    <div id="last-client-info"></div>
-                </div>
-            </div>
-            
-            <div id="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
+            <div id="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
 
             <div style="margin-bottom: 16px;">
-                <input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل (اسم، هاتف، عنوان)..." oninput="searchClients()">
+                <input type="text" id="search-input" class="input-field" placeholder="ابحث عن عميل..." oninput="searchClients()">
             </div>
 
             <div style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
                 <button class="filter-btn active" onclick="filter('all')">الكل</button>
-                <button class="filter-btn" onclick="filter('له')">له مال</button>
-                <button class="filter-btn" onclick="filter('عليه')">عليه مال</button>
-                <button class="filter-btn" onclick="filter('ذهب له')">له ذهب</button>
-                <button class="filter-btn" onclick="filter('ذهب عليه')">عليه ذهب</button>
+                <button class="filter-btn" onclick="filter('له')">له</button>
+                <button class="filter-btn" onclick="filter('عليه')">عليه</button>
                 <button class="filter-btn" onclick="filter('صفر')">متوازن</button>
             </div>
 
@@ -1056,115 +966,23 @@
 
         <!-- Add Client -->
         <div id="page-add" class="page" style="display: none;">
-            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">إضافة عميل جديد</h1>
+            <h1 style="font-size: 26px; font-weight: 700; margin-bottom: 24px;">إضافة عميل</h1>
             
-            <div class="card" style="max-width: 600px;">
-                <!-- Basic Info -->
-                <div class="section-header">
-                    <i class="fas fa-user"></i>
-                    <span style="font-weight: 600;">البيانات الأساسية</span>
+            <div class="card" style="max-width: 400px;">
+                <div class="input-group">
+                    <label class="input-label">اسم العميل</label>
+                    <input type="text" id="client-name" class="input-field" placeholder="أدخل الاسم">
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="input-group">
-                        <label class="input-label">اسم العميل *</label>
-                        <input type="text" id="client-name" class="input-field" placeholder="أدخل الاسم">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">رقم الجوال</label>
-                        <input type="tel" id="client-phone" class="input-field" placeholder="أدخل الرقم">
-                    </div>
-                </div>
-
                 <div class="input-group">
-                    <label class="input-label">العنوان</label>
-                    <input type="text" id="client-address" class="input-field" placeholder="أدخل العنوان">
+                    <label class="input-label">رقم الجوال</label>
+                    <input type="tel" id="client-phone" class="input-field" placeholder="أدخل الرقم">
                 </div>
-
-                <div class="input-group">
-                    <label class="input-label">ملاحظات</label>
-                    <textarea id="client-notes" class="input-field" rows="2" placeholder="ملاحظات إضافية"></textarea>
-                </div>
-
-                <!-- Money Section -->
-                <div class="section-header" style="margin-top: 24px;">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span style="font-weight: 600;">المبالغ المالية</span>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="input-group">
-                        <label class="input-label">له مال (جنيه)</label>
-                        <input type="number" id="client-money-for" class="input-field" placeholder="0" min="0">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">عليه مال (جنيه)</label>
-                        <input type="number" id="client-money-on" class="input-field" placeholder="0" min="0">
-                    </div>
-                </div>
-
-                <!-- Gold Section -->
-                <div class="section-header" style="margin-top: 24px;">
-                    <i class="fas fa-coins gold-icon"></i>
-                    <span style="font-weight: 600;">جرامات الذهب</span>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="input-group">
-                        <label class="input-label">له ذهب (جرام)</label>
-                        <input type="number" id="client-gold-for" class="input-field" placeholder="0" min="0" step="0.01">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">عليه ذهب (جرام)</label>
-                        <input type="number" id="client-gold-on" class="input-field" placeholder="0" min="0" step="0.01">
-                    </div>
-                </div>
-
-                <!-- Initial Transaction -->
-                <div class="section-header" style="margin-top: 24px;">
-                    <i class="fas fa-receipt"></i>
-                    <span style="font-weight: 600;">معاملة أولية (اختياري)</span>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="input-group">
-                        <label class="input-label">نوع المعاملة</label>
-                        <select id="client-tx-type" class="input-field">
-                            <option value="">بدون معاملة</option>
-                            <option value="out">تسليم (له)</option>
-                            <option value="in">استلام (عليه)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label class="input-label">المبلغ</label>
-                        <input type="number" id="client-tx-amount" class="input-field" placeholder="0" min="0">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label class="input-label">المسؤول عن المعاملة</label>
-                    <input type="text" id="client-tx-resp" class="input-field" placeholder="الاسم">
-                </div>
-
-                <div class="input-group">
-                    <label class="input-label">ملاحظات المعاملة</label>
-                    <input type="text" id="client-tx-note" class="input-field" placeholder="ملاحظات">
-                </div>
-
-                <div style="display: flex; gap: 12px; margin-top: 24px;">
-                    <button onclick="addClient()" class="btn btn-primary" style="flex: 1;">
-                        <i class="fas fa-plus"></i>
-                        إضافة العميل
-                    </button>
-                    <button onclick="addClientAndNew()" class="btn btn-secondary" style="flex: 1;">
-                        <i class="fas fa-user-plus"></i>
-                        إضافة وعميل جديد
-                    </button>
-                </div>
+                
+                <button onclick="addClient()" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    إضافة
+                </button>
             </div>
         </div>
 
@@ -1326,7 +1144,7 @@
         </div>
 
         <div class="input-group">
-            <label class="input-label">المبلغ (جنيه)</label>
+            <label class="input-label">المبلغ</label>
             <input type="number" id="tx-amount" class="input-field" placeholder="المبلغ">
         </div>
 
@@ -1343,44 +1161,6 @@
         <div style="display: flex; gap: 12px; justify-content: flex-end;">
             <button onclick="closeTxModal()" class="btn btn-secondary">إلغاء</button>
             <button onclick="saveTx()" class="btn btn-primary">حفظ</button>
-        </div>
-    </div>
-</div>
-
-<!-- Gold Transaction Modal -->
-<div id="gold-modal" class="modal-overlay">
-    <div class="modal-content">
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">
-            <i class="fas fa-coins gold-icon" style="margin-left: 8px;"></i>
-            معاملة ذهب
-        </h3>
-        
-        <div style="margin-bottom: 16px;">
-            <label class="input-label">النوع</label>
-            <div style="display: flex; gap: 12px;">
-                <button onclick="setGoldType('out')" id="gold-out" class="btn btn-gold" style="flex: 1;">له ذهب</button>
-                <button onclick="setGoldType('in')" id="gold-in" class="btn btn-secondary" style="flex: 1;">عليه ذهب</button>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">الكمية (جرام)</label>
-            <input type="number" id="gold-amount" class="input-field" placeholder="الكمية" step="0.01">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">المسؤول</label>
-            <input type="text" id="gold-resp" class="input-field" placeholder="الاسم">
-        </div>
-
-        <div class="input-group">
-            <label class="input-label">ملاحظات</label>
-            <textarea id="gold-note" class="input-field" rows="2" placeholder="ملاحظات"></textarea>
-        </div>
-
-        <div style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button onclick="closeGoldModal()" class="btn btn-secondary">إلغاء</button>
-            <button onclick="saveGold()" class="btn btn-gold">حفظ</button>
         </div>
     </div>
 </div>
@@ -1420,10 +1200,10 @@ const KEYS = {
     status: p => 'fs_status_' + p,
     backup: 'fs_backup',
     history: 'fs_backup_history',
-    settings: 'fs_settings',
-    lastClient: 'fs_last_client'
+    settings: 'fs_settings'
 };
 
+// البيانات الافتراضية
 const defaultData = {
     users: [{
         id: 'admin_1',
@@ -1434,7 +1214,14 @@ const defaultData = {
         role: 'admin',
         createdAt: new Date().toISOString()
     }],
-    clients: []
+    clients: [{
+        id: 'c1',
+        name: 'أحمد محمد',
+        phone: '0123456789',
+        userId: 'admin_1',
+        createdAt: new Date().toISOString(),
+        transactions: []
+    }]
 };
 
 // ==================== متغيرات عامة ====================
@@ -1442,7 +1229,6 @@ let user = null;
 let clientsCache = null;
 let currentClientId = null;
 let txType = 'out';
-let goldType = 'out';
 let deleteCallback = null;
 let filterType = 'all';
 let backupTimer = null;
@@ -1455,11 +1241,7 @@ let settings = {
 
 // ==================== دوال مساعدة ====================
 function load(key) {
-    try {
-        return JSON.parse(localStorage.getItem(key) || 'null');
-    } catch (e) {
-        return null;
-    }
+    return JSON.parse(localStorage.getItem(key) || 'null');
 }
 
 function save(key, data) {
@@ -1485,25 +1267,11 @@ function toast(msg, type = 'info') {
 }
 
 function formatMoney(n) {
-    return (n || 0).toLocaleString() + ' ج';
-}
-
-function formatGold(n) {
-    return (n || 0).toFixed(2) + ' جم';
+    return n.toLocaleString() + ' ج';
 }
 
 function formatDate(d) {
     return new Date(d).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
-function formatDateTime(d) {
-    return new Date(d).toLocaleString('ar-EG', { 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
 }
 
 // ==================== المصادقة ====================
@@ -1518,7 +1286,7 @@ function showRegister() {
 }
 
 function login() {
-    const email = document.getElementById('login-email').value.trim();
+    const email = document.getElementById('login-email').value;
     const pass = document.getElementById('login-pass').value;
     const err = document.getElementById('login-error');
 
@@ -1615,8 +1383,8 @@ function socialLogin(provider) {
 }
 
 function register() {
-    const name = document.getElementById('reg-name').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
     const pass = document.getElementById('reg-pass').value;
     const confirm = document.getElementById('reg-confirm').value;
     const err = document.getElementById('register-error');
@@ -1698,8 +1466,7 @@ function getClients() {
         const users = load(KEYS.users) || [];
         users.forEach(u => {
             if (load(KEYS.status(u.id)) !== 'inactive') {
-                const uc = load(KEYS.clients(u.id)) || [];
-                all.push(...uc);
+                all.push(...(load(KEYS.clients(u.id)) || []));
             }
         });
         return all;
@@ -1707,176 +1474,59 @@ function getClients() {
     return load(KEYS.clients(user.id)) || [];
 }
 
-function saveClients(clients) {
-    if (user.role === 'admin') {
-        // Group by userId
-        const grouped = {};
-        clients.forEach(c => {
-            if (!grouped[c.userId]) grouped[c.userId] = [];
-            grouped[c.userId].push(c);
-        });
-        
-        Object.keys(grouped).forEach(uid => {
-            save(KEYS.clients(uid), grouped[uid]);
-        });
-    } else {
-        save(KEYS.clients(user.id), clients);
-    }
-    
-    clientsCache = clients;
-}
-
 function loadData() {
     clientsCache = getClients();
     renderStats(clientsCache);
     renderClients(clientsCache);
-    renderLastClient();
 }
 
 function getSummary(c) {
-    let totalFor = c.moneyFor || 0;
-    let totalOn = c.moneyOn || 0;
-    let goldFor = c.goldFor || 0;
-    let goldOn = c.goldOn || 0;
-    
-    // Add transactions
-    if (c.transactions) {
-        c.transactions.forEach(t => {
-            if (t.type === 'out') totalFor += t.amount || 0;
-            else totalOn += t.amount || 0;
-        });
-    }
-    
-    // Add gold transactions
-    if (c.goldTransactions) {
-        c.goldTransactions.forEach(t => {
-            if (t.type === 'out') goldFor += t.amount || 0;
-            else goldOn += t.amount || 0;
-        });
-    }
-    
-    const netMoney = totalFor - totalOn;
-    const netGold = goldFor - goldOn;
-    
-    let status = 'صفر';
-    if (netMoney > 0 || netGold > 0) status = 'له';
-    else if (netMoney < 0 || netGold < 0) status = 'عليه';
-    
+    let totalFor = 0, totalOn = 0;
+    c.transactions.forEach(t => {
+        if (t.type === 'out') totalFor += t.amount;
+        else totalOn += t.amount;
+    });
+    const net = totalFor - totalOn;
     return {
         totalFor,
         totalOn,
-        netMoney,
-        goldFor,
-        goldOn,
-        netGold,
-        status,
-        goldStatus: netGold > 0 ? 'ذهب له' : netGold < 0 ? 'ذهب عليه' : 'صفر'
+        net,
+        status: net > 0 ? 'له' : net < 0 ? 'عليه' : 'صفر'
     };
 }
 
 // ==================== العرض ====================
-function renderLastClient() {
-    const lastClient = load(KEYS.lastClient);
-    const section = document.getElementById('last-client-section');
-    
-    if (lastClient) {
-        const s = getSummary(lastClient);
-        section.style.display = 'block';
-        document.getElementById('last-client-info').innerHTML = `
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
-                <div>
-                    <div style="font-size: 12px; color: var(--fg-muted);">الاسم</div>
-                    <div style="font-weight: 600;">${lastClient.name}</div>
-                </div>
-                <div>
-                    <div style="font-size: 12px; color: var(--fg-muted);">الهاتف</div>
-                    <div>${lastClient.phone || '-'}</div>
-                </div>
-                <div>
-                    <div style="font-size: 12px; color: var(--fg-muted);">المال</div>
-                    <div style="color: ${s.netMoney > 0 ? 'var(--warning)' : s.netMoney < 0 ? 'var(--success)' : 'var(--fg)'}">
-                        ${formatMoney(Math.abs(s.netMoney))} ${s.netMoney > 0 ? 'له' : s.netMoney < 0 ? 'عليه' : ''}
-                    </div>
-                </div>
-                <div>
-                    <div style="font-size: 12px; color: var(--fg-muted);">الذهب</div>
-                    <div style="color: var(--gold);">
-                        ${formatGold(Math.abs(s.netGold))} ${s.netGold > 0 ? 'له' : s.netGold < 0 ? 'عليه' : ''}
-                    </div>
-                </div>
-            </div>
-            <div style="margin-top: 12px;">
-                <button onclick="viewClient('${lastClient.id}')" class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">
-                    <i class="fas fa-eye"></i>
-                    عرض التفاصيل
-                </button>
-            </div>
-        `;
-    } else {
-        section.style.display = 'none';
-    }
-}
-
 function renderStats(clients) {
     const totalFor = clients.reduce((s, c) => s + getSummary(c).totalFor, 0);
     const totalOn = clients.reduce((s, c) => s + getSummary(c).totalOn, 0);
-    const netMoney = totalFor - totalOn;
-    const totalGoldFor = clients.reduce((s, c) => s + getSummary(c).goldFor, 0);
-    const totalGoldOn = clients.reduce((s, c) => s + getSummary(c).goldOn, 0);
-    const netGold = totalGoldFor - totalGoldOn;
+    const net = totalFor - totalOn;
 
     document.getElementById('stats-grid').innerHTML = `
         <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">لنا على العملاء</div>
-            <div style="font-size: 22px; font-weight: 700; color: var(--success);">${formatMoney(totalOn)}</div>
+            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">لنا على العملاء</div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--success);">${formatMoney(totalOn)}</div>
         </div>
         <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">لهم علينا</div>
-            <div style="font-size: 22px; font-weight: 700; color: var(--warning);">${formatMoney(totalFor)}</div>
+            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">لهم علينا</div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--warning);">${formatMoney(totalFor)}</div>
         </div>
         <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">صافي المال</div>
-            <div style="font-size: 22px; font-weight: 700; color: ${netMoney >= 0 ? 'var(--success)' : 'var(--danger)'};">${formatMoney(Math.abs(netMoney))}</div>
-            <div style="font-size: 10px; color: ${netMoney >= 0 ? 'var(--success)' : 'var(--danger)'};">${netMoney >= 0 ? 'لنا' : 'علينا'}</div>
+            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">الفرق</div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--danger);">${formatMoney(Math.abs(totalFor - totalOn))}</div>
         </div>
         <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">ذهب لنا</div>
-            <div style="font-size: 22px; font-weight: 700; color: var(--gold);">${formatGold(totalGoldOn)}</div>
-        </div>
-        <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">ذهب لهم</div>
-            <div style="font-size: 22px; font-weight: 700; color: var(--gold);">${formatGold(totalGoldFor)}</div>
-        </div>
-        <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">صافي الذهب</div>
-            <div style="font-size: 22px; font-weight: 700; color: var(--gold);">${formatGold(Math.abs(netGold))}</div>
-            <div style="font-size: 10px; color: var(--gold);">${netGold >= 0 ? 'لهم' : 'لنا'}</div>
-        </div>
-        <div class="stat-card">
-            <div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 8px;">عدد العملاء</div>
-            <div style="font-size: 22px; font-weight: 700;">${clients.length}</div>
+            <div style="font-size: 12px; color: var(--fg-muted); margin-bottom: 8px;">الصافي</div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--info);">${formatMoney(Math.abs(net))}</div>
+            <div style="font-size: 11px; margin-top: 4px; color: ${net >= 0 ? 'var(--success)' : 'var(--danger)'};">
+                ${net >= 0 ? 'لنا' : 'علينا'}
+            </div>
         </div>
     `;
 }
 
 function renderClients(clients) {
     const grid = document.getElementById('clients-grid');
-    
-    let filtered = clients;
-    if (filterType === 'له') {
-        filtered = clients.filter(c => getSummary(c).netMoney > 0);
-    } else if (filterType === 'عليه') {
-        filtered = clients.filter(c => getSummary(c).netMoney < 0);
-    } else if (filterType === 'ذهب له') {
-        filtered = clients.filter(c => getSummary(c).netGold > 0);
-    } else if (filterType === 'ذهب عليه') {
-        filtered = clients.filter(c => getSummary(c).netGold < 0);
-    } else if (filterType === 'صفر') {
-        filtered = clients.filter(c => {
-            const s = getSummary(c);
-            return s.netMoney === 0 && s.netGold === 0;
-        });
-    }
+    const filtered = filterType === 'all' ? clients : clients.filter(c => getSummary(c).status === filterType);
 
     if (!filtered.length) {
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--fg-muted);">لا يوجد عملاء</div>';
@@ -1888,45 +1538,15 @@ function renderClients(clients) {
         return `
             <div class="client-item animate-fade" onclick="viewClient('${c.id}')">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                    <div>
-                        <div style="font-weight: 600; font-size: 15px;">${c.name}</div>
-                        ${c.phone ? `<div style="font-size: 12px; color: var(--fg-muted);">${c.phone}</div>` : ''}
-                    </div>
-                    <div style="display: flex; gap: 4px;">
-                        ${s.netMoney !== 0 ? `<span class="badge ${s.netMoney > 0 ? 'badge-warning' : 'badge-success'}">${s.netMoney > 0 ? 'له' : 'عليه'}</span>` : ''}
-                        ${s.netGold !== 0 ? `<span class="badge badge-gold">${s.netGold > 0 ? 'ذهب له' : 'ذهب عليه'}</span>` : ''}
-                        ${s.netMoney === 0 && s.netGold === 0 ? '<span class="badge badge-info">متوازن</span>' : ''}
-                    </div>
+                    <div style="font-weight: 600;">${c.name}</div>
+                    <span class="badge ${s.status === 'له' ? 'badge-warning' : s.status === 'عليه' ? 'badge-success' : 'badge-info'}">${s.status}</span>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                    <div style="background: var(--bg-secondary); padding: 8px; border-radius: 8px;">
-                        <div style="font-size: 10px; color: var(--fg-muted);">له مال</div>
-                        <div style="font-size: 13px; color: var(--warning); font-weight: 600;">${formatMoney(s.totalFor)}</div>
-                    </div>
-                    <div style="background: var(--bg-secondary); padding: 8px; border-radius: 8px;">
-                        <div style="font-size: 10px; color: var(--fg-muted);">عليه مال</div>
-                        <div style="font-size: 13px; color: var(--success); font-weight: 600;">${formatMoney(s.totalOn)}</div>
-                    </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                    <div><span style="color: var(--fg-muted);">له:</span> <span style="color: var(--warning);">${formatMoney(s.totalFor)}</span></div>
+                    <div><span style="color: var(--fg-muted);">عليه:</span> <span style="color: var(--success);">${formatMoney(s.totalOn)}</span></div>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-                    <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 8px;">
-                        <div style="font-size: 10px; color: var(--fg-muted);">له ذهب</div>
-                        <div style="font-size: 13px; color: var(--gold); font-weight: 600;">${formatGold(s.goldFor)}</div>
-                    </div>
-                    <div style="background: rgba(255, 215, 0, 0.1); padding: 8px; border-radius: 8px;">
-                        <div style="font-size: 10px; color: var(--fg-muted);">عليه ذهب</div>
-                        <div style="font-size: 13px; color: var(--gold); font-weight: 600;">${formatGold(s.goldOn)}</div>
-                    </div>
-                </div>
-                
-                ${c.address ? `<div style="font-size: 11px; color: var(--fg-muted); margin-bottom: 4px;"><i class="fas fa-map-marker-alt" style="margin-left: 4px;"></i>${c.address}</div>` : ''}
-                
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--fg-muted); margin-top: 8px;">
-                    <span><i class="fas fa-receipt" style="margin-left: 4px;"></i>${c.transactions?.length || 0} معاملات</span>
-                    <span><i class="fas fa-coins" style="margin-left: 4px;"></i>${c.goldTransactions?.length || 0} ذهب</span>
-                    <span>${formatDate(c.createdAt)}</span>
+                <div style="margin-top: 12px; font-size: 11px; color: var(--fg-muted);">
+                    ${c.transactions.length} معاملات | ${formatDate(c.createdAt)}
                 </div>
             </div>
         `;
@@ -1948,13 +1568,12 @@ function renderAllClients(clients) {
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <div style="font-weight: 600;">${c.name}</div>
-                        <div style="font-size: 12px; color: var(--fg-muted);">${c.phone || ''} ${c.address ? '• ' + c.address : ''}</div>
+                        <div style="font-size: 12px; color: var(--fg-muted);">${c.phone || ''}</div>
                     </div>
                     <div style="text-align: left;">
-                        <div style="font-size: 13px; color: ${s.netMoney > 0 ? 'var(--warning)' : s.netMoney < 0 ? 'var(--success)' : 'var(--fg)'};">
-                            ${formatMoney(Math.abs(s.netMoney))} ${s.netMoney > 0 ? 'له' : s.netMoney < 0 ? 'عليه' : ''}
+                        <div style="font-size: 13px; color: ${s.net > 0 ? 'var(--warning)' : 'var(--success)'};">
+                            ${s.net > 0 ? '+' : ''}${formatMoney(s.net)}
                         </div>
-                        ${s.netGold !== 0 ? `<div style="font-size: 11px; color: var(--gold);">${formatGold(Math.abs(s.netGold))} ذهب</div>` : ''}
                     </div>
                 </div>
             </div>
@@ -1974,93 +1593,42 @@ function showPage(page) {
     if (page === 'clients') renderAllClients(getClients());
     if (page === 'users' && user?.role === 'admin') renderUsers();
     if (page === 'reports') renderReportStats();
-    if (page === 'add') clearAddForm();
-}
-
-function clearAddForm() {
-    document.getElementById('client-name').value = '';
-    document.getElementById('client-phone').value = '';
-    document.getElementById('client-address').value = '';
-    document.getElementById('client-notes').value = '';
-    document.getElementById('client-money-for').value = '';
-    document.getElementById('client-money-on').value = '';
-    document.getElementById('client-gold-for').value = '';
-    document.getElementById('client-gold-on').value = '';
-    document.getElementById('client-tx-type').value = '';
-    document.getElementById('client-tx-amount').value = '';
-    document.getElementById('client-tx-resp').value = '';
-    document.getElementById('client-tx-note').value = '';
 }
 
 // ==================== العملاء ====================
-function addClient(andNew = false) {
+function addClient() {
     const name = document.getElementById('client-name').value.trim();
     if (!name) {
-        toast('أدخل اسم العميل', 'error');
+        toast('أدخل الاسم', 'error');
         return;
     }
 
     const clients = getClients();
     if (clients.some(c => c.name === name)) {
-        toast('الاسم موجود مسبقاً', 'error');
+        toast('الاسم موجود', 'error');
         return;
     }
-
-    const moneyFor = parseFloat(document.getElementById('client-money-for').value) || 0;
-    const moneyOn = parseFloat(document.getElementById('client-money-on').value) || 0;
-    const goldFor = parseFloat(document.getElementById('client-gold-for').value) || 0;
-    const goldOn = parseFloat(document.getElementById('client-gold-on').value) || 0;
-    const txType = document.getElementById('client-tx-type').value;
-    const txAmount = parseFloat(document.getElementById('client-tx-amount').value) || 0;
-    const txResp = document.getElementById('client-tx-resp').value.trim();
 
     const c = {
         id: Date.now().toString(),
         name,
         phone: document.getElementById('client-phone').value.trim() || '',
-        address: document.getElementById('client-address').value.trim() || '',
-        notes: document.getElementById('client-notes').value.trim() || '',
-        moneyFor,
-        moneyOn,
-        goldFor,
-        goldOn,
         userId: user.id,
         createdAt: new Date().toISOString(),
-        transactions: [],
-        goldTransactions: []
+        transactions: []
     };
 
-    // Add initial transaction if exists
-    if (txType && txAmount > 0 && txResp) {
-        c.transactions.push({
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            type: txType,
-            amount: txAmount,
-            responsible: txResp,
-            note: document.getElementById('client-tx-note').value.trim(),
-            runningBalance: txType === 'out' ? txAmount : -txAmount
-        });
-    }
-
     clients.push(c);
-    saveClients(clients);
-    save(KEYS.lastClient, c);
     
-    toast('تمت إضافة العميل بنجاح', 'success');
+    const userClients = load(KEYS.clients(user.id)) || [];
+    userClients.push(c);
+    save(KEYS.clients(user.id), userClients);
     
-    if (andNew) {
-        clearAddForm();
-        document.getElementById('client-name').focus();
-    } else {
-        showPage('dashboard');
-    }
-    
-    renderLastClient();
-}
-
-function addClientAndNew() {
-    addClient(true);
+    clientsCache = getClients();
+    document.getElementById('client-name').value = '';
+    document.getElementById('client-phone').value = '';
+    toast('تمت الإضافة', 'success');
+    showPage('dashboard');
 }
 
 function viewClient(id) {
@@ -2073,21 +1641,10 @@ function viewClient(id) {
     document.getElementById('client-details').innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
             <div>
-                <h2 style="font-size: 24px; font-weight: 700;">${c.name}</h2>
-                ${c.phone ? `<div style="color: var(--fg-muted); margin-top: 4px;"><i class="fas fa-phone" style="margin-left: 6px;"></i>${c.phone}</div>` : ''}
-                ${c.address ? `<div style="color: var(--fg-muted); margin-top: 4px;"><i class="fas fa-map-marker-alt" style="margin-left: 6px;"></i>${c.address}</div>` : ''}
+                <h2 style="font-size: 22px; font-weight: 700;">${c.name}</h2>
+                ${c.phone ? `<div style="color: var(--fg-muted); margin-top: 4px;">${c.phone}</div>` : ''}
             </div>
-            <div style="display: flex; gap: 8px;">
-                <button onclick="deleteClient('${c.id}')" class="btn btn-icon" style="color: var(--danger);" title="حذف العميل">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Money Stats -->
-        <div class="section-header">
-            <i class="fas fa-money-bill-wave"></i>
-            <span style="font-weight: 600;">المبالغ المالية</span>
+            <span class="badge ${s.status === 'له' ? 'badge-warning' : s.status === 'عليه' ? 'badge-success' : 'badge-info'}">${s.status}</span>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
@@ -2101,113 +1658,35 @@ function viewClient(id) {
             </div>
             <div style="background: var(--bg-secondary); padding: 16px; border-radius: 12px; text-align: center;">
                 <div style="font-size: 11px; color: var(--fg-muted);">الصافي</div>
-                <div style="font-size: 20px; font-weight: 700; color: ${s.netMoney > 0 ? 'var(--warning)' : s.netMoney < 0 ? 'var(--success)' : 'var(--fg)'};">
-                    ${formatMoney(Math.abs(s.netMoney))}
-                </div>
-                <div style="font-size: 10px; color: ${s.netMoney > 0 ? 'var(--warning)' : s.netMoney < 0 ? 'var(--success)' : 'var(--fg-muted)'};">
-                    ${s.netMoney > 0 ? 'له' : s.netMoney < 0 ? 'عليه' : 'متوازن'}
+                <div style="font-size: 20px; font-weight: 700; color: ${s.net > 0 ? 'var(--warning)' : 'var(--success)'};">
+                    ${s.net > 0 ? '+' : ''}${formatMoney(s.net)}
                 </div>
             </div>
         </div>
         
-        <!-- Gold Stats -->
-        <div class="section-header">
-            <i class="fas fa-coins gold-icon"></i>
-            <span style="font-weight: 600;">جرامات الذهب</span>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
-            <div style="background: rgba(255, 215, 0, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 11px; color: var(--fg-muted);">له ذهب</div>
-                <div style="font-size: 20px; font-weight: 700; color: var(--gold);">${formatGold(s.goldFor)}</div>
-            </div>
-            <div style="background: rgba(255, 215, 0, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 11px; color: var(--fg-muted);">عليه ذهب</div>
-                <div style="font-size: 20px; font-weight: 700; color: var(--gold);">${formatGold(s.goldOn)}</div>
-            </div>
-            <div style="background: rgba(255, 215, 0, 0.1); padding: 16px; border-radius: 12px; text-align: center;">
-                <div style="font-size: 11px; color: var(--fg-muted);">الصافي</div>
-                <div style="font-size: 20px; font-weight: 700; color: var(--gold);">${formatGold(Math.abs(s.netGold))}</div>
-                <div style="font-size: 10px; color: var(--gold);">
-                    ${s.netGold > 0 ? 'له' : s.netGold < 0 ? 'عليه' : 'متوازن'}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Notes -->
-        ${c.notes ? `
-            <div class="section-header">
-                <i class="fas fa-sticky-note"></i>
-                <span style="font-weight: 600;">ملاحظات</span>
-            </div>
-            <div style="background: var(--bg-secondary); padding: 12px; border-radius: 10px; margin-bottom: 24px; font-size: 14px;">
-                ${c.notes}
-            </div>
-        ` : ''}
-        
-        <!-- Money Transactions -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <h3 style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-receipt"></i>
-                معاملات المال
-            </h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-weight: 600;">المعاملات</h3>
             <button onclick="openTxModal()" class="btn btn-primary" style="padding: 8px 16px;">
                 <i class="fas fa-plus"></i>
                 إضافة
             </button>
         </div>
         
-        ${!c.transactions?.length ? 
-            '<div style="text-align: center; padding: 24px; color: var(--fg-muted);">لا توجد معاملات</div>' : 
+        ${!c.transactions.length ? 
+            '<div style="text-align: center; padding: 32px; color: var(--fg-muted);">لا توجد معاملات</div>' : 
             c.transactions.map(t => `
                 <div style="background: var(--bg-secondary); padding: 12px; border-radius: 10px; margin-bottom: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">${t.type === 'out' ? 'تسليم (له)' : 'استلام (عليه)'}</span>
-                        <span style="font-weight: 600; font-size: 16px;">${formatMoney(t.amount)}</span>
+                        <span class="badge ${t.type === 'out' ? 'badge-warning' : 'badge-success'}">${t.type === 'out' ? 'تسليم' : 'استلام'}</span>
+                        <span style="font-weight: 600;">${formatMoney(t.amount)}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">
-                        <span><i class="fas fa-user" style="margin-left: 4px;"></i>${t.responsible}</span>
-                        <span><i class="fas fa-clock" style="margin-left: 4px;"></i>${formatDateTime(t.date)}</span>
+                        <span>${t.responsible}</span>
+                        <span>${formatDate(t.date)}</span>
                     </div>
-                    ${t.note ? `<div style="font-size: 12px; color: var(--fg-muted); margin-top: 6px;"><i class="fas fa-sticky-note" style="margin-left: 4px;"></i>${t.note}</div>` : ''}
+                    ${t.note ? `<div style="font-size: 12px; color: var(--fg-muted); margin-top: 4px;">${t.note}</div>` : ''}
                     <div style="text-align: left; margin-top: 8px;">
-                        <button onclick="deleteTx('${t.id}')" style="color: var(--danger); font-size: 11px; background: none; border: none; cursor: pointer;">
-                            <i class="fas fa-trash"></i> حذف
-                        </button>
-                    </div>
-                </div>
-            `).join('')
-        }
-        
-        <!-- Gold Transactions -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 24px 0 12px;">
-            <h3 style="font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                <i class="fas fa-coins gold-icon"></i>
-                معاملات الذهب
-            </h3>
-            <button onclick="openGoldModal()" class="btn btn-gold" style="padding: 8px 16px;">
-                <i class="fas fa-plus"></i>
-                إضافة
-            </button>
-        </div>
-        
-        ${!c.goldTransactions?.length ? 
-            '<div style="text-align: center; padding: 24px; color: var(--fg-muted);">لا توجد معاملات ذهب</div>' : 
-            c.goldTransactions.map(t => `
-                <div style="background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 10px; margin-bottom: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="badge badge-gold">${t.type === 'out' ? 'له ذهب' : 'عليه ذهب'}</span>
-                        <span style="font-weight: 600; font-size: 16px; color: var(--gold);">${formatGold(t.amount)}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--fg-muted); margin-top: 8px;">
-                        <span><i class="fas fa-user" style="margin-left: 4px;"></i>${t.responsible}</span>
-                        <span><i class="fas fa-clock" style="margin-left: 4px;"></i>${formatDateTime(t.date)}</span>
-                    </div>
-                    ${t.note ? `<div style="font-size: 12px; color: var(--fg-muted); margin-top: 6px;"><i class="fas fa-sticky-note" style="margin-left: 4px;"></i>${t.note}</div>` : ''}
-                    <div style="text-align: left; margin-top: 8px;">
-                        <button onclick="deleteGoldTx('${t.id}')" style="color: var(--danger); font-size: 11px; background: none; border: none; cursor: pointer;">
-                            <i class="fas fa-trash"></i> حذف
-                        </button>
+                        <button onclick="deleteTx('${t.id}')" style="color: var(--danger); font-size: 12px; background: none; border: none; cursor: pointer;">حذف</button>
                     </div>
                 </div>
             `).join('')
@@ -2217,27 +1696,7 @@ function viewClient(id) {
     showPage('client');
 }
 
-function deleteClient(id) {
-    document.getElementById('delete-msg').textContent = 'هل تريد حذف العميل وجميع معاملاته؟';
-    document.getElementById('delete-modal').classList.add('active');
-    
-    deleteCallback = () => {
-        let clients = getClients();
-        clients = clients.filter(c => c.id !== id);
-        saveClients(clients);
-        
-        // Remove from last client if same
-        const lastClient = load(KEYS.lastClient);
-        if (lastClient && lastClient.id === id) {
-            localStorage.removeItem(KEYS.lastClient);
-        }
-        
-        showPage('dashboard');
-        toast('تم حذف العميل', 'success');
-    };
-}
-
-// ==================== معاملات المال ====================
+// ==================== المعاملات ====================
 function openTxModal() {
     document.getElementById('transaction-modal').classList.add('active');
     document.getElementById('tx-amount').value = '';
@@ -2283,8 +1742,6 @@ function saveTx() {
     if (idx === -1) return;
 
     const c = clients[idx];
-    if (!c.transactions) c.transactions = [];
-    
     const lastBal = c.transactions.length ? c.transactions[c.transactions.length - 1].runningBalance : 0;
     const newBal = txType === 'out' ? lastBal + amount : lastBal - amount;
 
@@ -2298,9 +1755,19 @@ function saveTx() {
         runningBalance: newBal
     });
 
-    saveClients(clients);
+    // Save
+    if (user.role === 'admin') {
+        const uc = load(KEYS.clients(c.userId)) || [];
+        const uIdx = uc.findIndex(x => x.id === c.id);
+        uc[uIdx] = c;
+        save(KEYS.clients(c.userId), uc);
+    } else {
+        save(KEYS.clients(user.id), clients);
+    }
+
     closeTxModal();
     viewClient(currentClientId);
+    clientsCache = getClients();
     toast('تمت الإضافة', 'success');
 }
 
@@ -2316,114 +1783,30 @@ function deleteTx(txId) {
         const c = clients[idx];
         c.transactions = c.transactions.filter(t => t.id !== txId);
         
-        // Recalculate running balance
         let bal = 0;
         c.transactions = c.transactions.map(t => {
             bal += t.type === 'out' ? t.amount : -t.amount;
             return { ...t, runningBalance: bal };
         });
 
-        saveClients(clients);
+        if (user.role === 'admin') {
+            const uc = load(KEYS.clients(c.userId)) || [];
+            const uIdx = uc.findIndex(x => x.id === c.id);
+            uc[uIdx] = c;
+            save(KEYS.clients(c.userId), uc);
+        } else {
+            save(KEYS.clients(user.id), clients);
+        }
+
         viewClient(currentClientId);
-        toast('تم الحذف', 'success');
-    };
-}
-
-// ==================== معاملات الذهب ====================
-function openGoldModal() {
-    document.getElementById('gold-modal').classList.add('active');
-    document.getElementById('gold-amount').value = '';
-    document.getElementById('gold-resp').value = '';
-    document.getElementById('gold-note').value = '';
-    setGoldType('out');
-}
-
-function closeGoldModal() {
-    document.getElementById('gold-modal').classList.remove('active');
-}
-
-function setGoldType(type) {
-    goldType = type;
-    const outBtn = document.getElementById('gold-out');
-    const inBtn = document.getElementById('gold-in');
-    
-    if (type === 'out') {
-        outBtn.className = 'btn btn-gold';
-        inBtn.className = 'btn btn-secondary';
-    } else {
-        outBtn.className = 'btn btn-secondary';
-        inBtn.className = 'btn btn-gold';
-    }
-}
-
-function saveGold() {
-    const amount = parseFloat(document.getElementById('gold-amount').value);
-    const resp = document.getElementById('gold-resp').value.trim();
-
-    if (!amount || amount <= 0) {
-        toast('أدخل كمية صحيحة', 'error');
-        return;
-    }
-
-    if (!resp) {
-        toast('أدخل اسم المسؤول', 'error');
-        return;
-    }
-
-    const clients = getClients();
-    const idx = clients.findIndex(c => c.id === currentClientId);
-    if (idx === -1) return;
-
-    const c = clients[idx];
-    if (!c.goldTransactions) c.goldTransactions = [];
-    
-    const lastBal = c.goldTransactions.length ? c.goldTransactions[c.goldTransactions.length - 1].runningBalance : 0;
-    const newBal = goldType === 'out' ? lastBal + amount : lastBal - amount;
-
-    c.goldTransactions.push({
-        id: Date.now().toString(),
-        date: new Date().toISOString(),
-        type: goldType,
-        amount,
-        responsible: resp,
-        note: document.getElementById('gold-note').value.trim(),
-        runningBalance: newBal
-    });
-
-    saveClients(clients);
-    closeGoldModal();
-    viewClient(currentClientId);
-    toast('تمت إضافة معاملة الذهب', 'success');
-}
-
-function deleteGoldTx(txId) {
-    document.getElementById('delete-msg').textContent = 'حذف معاملة الذهب؟';
-    document.getElementById('delete-modal').classList.add('active');
-    
-    deleteCallback = () => {
-        const clients = getClients();
-        const idx = clients.findIndex(c => c.id === currentClientId);
-        if (idx === -1) return;
-
-        const c = clients[idx];
-        c.goldTransactions = c.goldTransactions.filter(t => t.id !== txId);
-        
-        // Recalculate running balance
-        let bal = 0;
-        c.goldTransactions = c.goldTransactions.map(t => {
-            bal += t.type === 'out' ? t.amount : -t.amount;
-            return { ...t, runningBalance: bal };
-        });
-
-        saveClients(clients);
-        viewClient(currentClientId);
+        clientsCache = getClients();
         toast('تم الحذف', 'success');
     };
 }
 
 // ==================== البحث والفلترة ====================
 function searchClients() {
-    const q = document.getElementById('search-input').value.toLowerCase().trim();
+    const q = document.getElementById('search-input').value.toLowerCase();
     const clients = getClients();
     
     if (!q) {
@@ -2431,14 +1814,10 @@ function searchClients() {
         return;
     }
     
-    const filtered = clients.filter(c => 
+    renderClients(clients.filter(c => 
         c.name.toLowerCase().includes(q) || 
-        (c.phone && c.phone.includes(q)) ||
-        (c.address && c.address.toLowerCase().includes(q)) ||
-        (c.notes && c.notes.toLowerCase().includes(q))
-    );
-    
-    renderClients(filtered);
+        (c.phone && c.phone.includes(q))
+    ));
 }
 
 function filter(type) {
@@ -2499,31 +1878,25 @@ function toggleUserStatus(userId) {
 // ==================== التقارير ====================
 function renderReportStats() {
     const clients = getClients();
-    const totalTx = clients.reduce((s, c) => s + (c.transactions?.length || 0), 0);
-    const totalGoldTx = clients.reduce((s, c) => s + (c.goldTransactions?.length || 0), 0);
-    const totalAmount = clients.reduce((s, c) => s + c.transactions?.reduce((ss, t) => ss + t.amount, 0), 0);
-    const totalGold = clients.reduce((s, c) => s + getSummary(c).goldFor + getSummary(c).goldOn, 0);
+    const totalTx = clients.reduce((s, c) => s + c.transactions.length, 0);
+    const totalAmount = clients.reduce((s, c) => s + c.transactions.reduce((ss, t) => ss + t.amount, 0), 0);
     
     document.getElementById('report-stats').innerHTML = `
-        <div class="info-row">
-            <span class="info-label">عدد العملاء</span>
-            <span class="info-value">${clients.length}</span>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--fg-muted);">عدد العملاء</span>
+            <span style="font-weight: 600;">${clients.length}</span>
         </div>
-        <div class="info-row">
-            <span class="info-label">معاملات المال</span>
-            <span class="info-value">${totalTx}</span>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--fg-muted);">عدد المعاملات</span>
+            <span style="font-weight: 600;">${totalTx}</span>
         </div>
-        <div class="info-row">
-            <span class="info-label">معاملات الذهب</span>
-            <span class="info-value">${totalGoldTx}</span>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border);">
+            <span style="color: var(--fg-muted);">إجمالي المبالغ</span>
+            <span style="font-weight: 600; color: var(--success);">${formatMoney(totalAmount)}</span>
         </div>
-        <div class="info-row">
-            <span class="info-label">إجمالي المبالغ</span>
-            <span class="info-value" style="color: var(--success);">${formatMoney(totalAmount)}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">إجمالي الذهب</span>
-            <span class="info-value" style="color: var(--gold);">${formatGold(totalGold)}</span>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+            <span style="color: var(--fg-muted);">متوسط المعاملات</span>
+            <span style="font-weight: 600;">${(totalTx / clients.length || 0).toFixed(1)}</span>
         </div>
     `;
 }
@@ -2536,37 +1909,26 @@ function exportExcel() {
         const s = getSummary(c);
         return {
             'الاسم': c.name,
-            'الهاتف': c.phone || '-',
-            'العنوان': c.address || '-',
-            'له مال': s.totalFor,
-            'عليه مال': s.totalOn,
-            'صافي المال': s.netMoney,
-            'له ذهب': s.goldFor,
-            'عليه ذهب': s.goldOn,
-            'صافي الذهب': s.netGold,
-            'ملاحظات': c.notes || '-'
+            'الجوال': c.phone || '-',
+            'له': s.totalFor,
+            'عليه': s.totalOn,
+            'الصافي': s.net,
+            'الحالة': s.status
         };
     });
     
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'العملاء');
     
     clients.forEach(c => {
-        if (c.transactions?.length || c.goldTransactions?.length) {
-            const txData = [];
-            
-            c.transactions?.forEach(t => {
-                txData.push({
-                    'التاريخ': formatDateTime(t.date),
-                    'النوع': t.type === 'out' ? 'تسليم (له)' : 'استلام (عليه)',
-                    'المبلغ': t.amount,
-                    'المسؤول': t.responsible,
-                    'ملاحظات': t.note || '-'
-                });
-            });
-            
-            if (txData.length) {
-                XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(txData), c.name.substring(0, 20));
-            }
+        if (c.transactions.length) {
+            const txData = c.transactions.map(t => ({
+                'التاريخ': formatDate(t.date),
+                'النوع': t.type === 'out' ? 'تسليم' : 'استلام',
+                'المبلغ': t.amount,
+                'المسؤول': t.responsible,
+                'ملاحظات': t.note || '-'
+            }));
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(txData), c.name.substring(0, 20));
         }
     });
     
@@ -2586,7 +1948,7 @@ function exportPDF() {
     
     let y = 45;
     
-    clients.forEach(c => {
+    clients.forEach((c, i) => {
         if (y > 250) {
             doc.addPage();
             y = 20;
@@ -2596,9 +1958,26 @@ function exportPDF() {
         doc.setFontSize(12);
         doc.text(c.name, 20, y);
         doc.setFontSize(9);
-        doc.text(`مال: له ${s.totalFor} | عليه ${s.totalOn} | ذهب: له ${s.goldFor.toFixed(2)} | عليه ${s.goldOn.toFixed(2)}`, 20, y + 6);
+        doc.text(`له: ${s.totalFor} | عليه: ${s.totalOn} | الصافي: ${s.net}`, 20, y + 6);
         
         y += 15;
+        
+        if (c.transactions.length) {
+            doc.autoTable({
+                startY: y,
+                head: [['التاريخ', 'النوع', 'المبلغ', 'المسؤول']],
+                body: c.transactions.map(t => [
+                    formatDate(t.date),
+                    t.type === 'out' ? 'تسليم' : 'استلام',
+                    t.amount.toString(),
+                    t.responsible
+                ]),
+                theme: 'striped',
+                headStyles: { fillColor: [34, 211, 238] },
+                styles: { fontSize: 8 }
+            });
+            y = doc.lastAutoTable.finalY + 15;
+        }
     });
     
     doc.save(`تقرير_${Date.now()}.pdf`);
@@ -2611,7 +1990,7 @@ async function exportImage() {
     try {
         const clients = getClients();
         const container = document.createElement('div');
-        container.style.cssText = 'direction: rtl; padding: 30px; background: white; color: #1a1a2e; font-family: IBM Plex Sans Arabic, sans-serif; max-width: 800px;';
+        container.style.cssText = 'direction: rtl; padding: 30px; background: white; color: #1a1a2e; font-family: IBM Plex Sans Arabic, sans-serif;';
         
         let html = `
             <div style="text-align: center; margin-bottom: 30px;">
@@ -2625,19 +2004,21 @@ async function exportImage() {
             html += `
                 <div style="border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <h3 style="color: #22d3ee; margin: 0;">${c.name}</h3>
-                        <span style="padding: 4px 12px; border-radius: 20px; background: ${s.netMoney > 0 ? '#fef3c7' : s.netMoney < 0 ? '#d1fae5' : '#f3f4f6'}; font-size: 12px;">
-                            ${s.netMoney > 0 ? 'له' : s.netMoney < 0 ? 'عليه' : 'متوازن'}
-                        </span>
+                        <h3 style="color: #22d3ee;">${c.name}</h3>
+                        <span style="padding: 4px 12px; border-radius: 20px; background: ${s.status === 'له' ? '#fef3c7' : s.status === 'عليه' ? '#d1fae5' : '#f3f4f6'}; color: ${s.status === 'له' ? '#d97706' : s.status === 'عليه' ? '#059669' : '#6b7280'}; font-size: 12px;">${s.status}</span>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
                         <div style="text-align: center; padding: 8px; background: #f9fafb; border-radius: 8px;">
-                            <div style="font-size: 11px; color: #9ca3af;">مال له / عليه</div>
-                            <div style="font-weight: 600;">${formatMoney(s.totalFor)} / ${formatMoney(s.totalOn)}</div>
+                            <div style="font-size: 11px; color: #9ca3af;">له</div>
+                            <div style="font-weight: 600; color: #f59e0b;">${formatMoney(s.totalFor)}</div>
                         </div>
-                        <div style="text-align: center; padding: 8px; background: #fef3c7; border-radius: 8px;">
-                            <div style="font-size: 11px; color: #9ca3af;">ذهب له / عليه</div>
-                            <div style="font-weight: 600; color: #b8860b;">${formatGold(s.goldFor)} / ${formatGold(s.goldOn)}</div>
+                        <div style="text-align: center; padding: 8px; background: #f9fafb; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #9ca3af;">عليه</div>
+                            <div style="font-weight: 600; color: #10b981;">${formatMoney(s.totalOn)}</div>
+                        </div>
+                        <div style="text-align: center; padding: 8px; background: #f9fafb; border-radius: 8px;">
+                            <div style="font-size: 11px; color: #9ca3af;">الصافي</div>
+                            <div style="font-weight: 600;">${formatMoney(s.net)}</div>
                         </div>
                     </div>
                 </div>
@@ -2674,6 +2055,7 @@ function createBackup() {
         data.clients[u.id] = load(KEYS.clients(u.id)) || [];
     });
     
+    // Add to history
     let history = load(KEYS.history) || [];
     history.push({
         id: Date.now().toString(),
@@ -2681,6 +2063,7 @@ function createBackup() {
         data
     });
     
+    // Keep only last N backups
     if (settings.count > 0 && history.length > settings.count) {
         history = history.slice(-settings.count);
     }
@@ -2969,6 +2352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (load(KEYS.backup)) {
         document.getElementById('restore-modal').style.display = 'flex';
     } else {
+        // Initialize if needed
         if (!load(KEYS.users)) {
             save(KEYS.users, defaultData.users);
             save(KEYS.clients('admin_1'), defaultData.clients);
