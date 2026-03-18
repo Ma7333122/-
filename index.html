@@ -26,7 +26,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        /* نفس الأنماط السابقة */
+        /* نفس الأنماط السابقة مع إضافة تحسينات للتعديل */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -357,6 +357,20 @@
         }
 
         .btn-icon:hover { background: var(--accent-primary); color: white; }
+
+        /* Edit Icons */
+        .edit-icon {
+            color: var(--info);
+            cursor: pointer;
+            margin-left: 8px;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+        }
+
+        .edit-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
 
         /* الشريط الجانبي */
         .nav-sidebar {
@@ -1123,6 +1137,40 @@
             padding: 5px 10px;
             color: var(--text-primary);
         }
+
+        /* Edit Transaction Fields */
+        .edit-field-group {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .edit-field-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .edit-field-group input,
+        .edit-field-group select,
+        .edit-field-group textarea {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .edit-field-group input:focus,
+        .edit-field-group select:focus,
+        .edit-field-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
     </style>
 </head>
 <body>
@@ -1471,7 +1519,7 @@
                 </div>
             </div>
 
-            <!-- Clients Grid -->
+            <!-- Clients Grid (للبحث فقط) -->
             <div id="clients-grid" class="grid-container"></div>
         </div>
 
@@ -2033,9 +2081,9 @@
 <!-- Edit Transaction Modal -->
 <div id="edit-transaction-modal" class="modal">
     <div class="modal-content">
-        <h3 class="text-xl font-bold mb-6" id="edit-transaction-title">تعديل معاملة</h3>
+        <h3 class="text-xl font-bold mb-6" id="edit-transaction-title">تعديل المعاملة</h3>
         <div class="space-y-4">
-            <div id="edit-transaction-fields"></div>
+            <div id="edit-transaction-fields" class="space-y-4"></div>
             <div class="flex justify-end gap-3 mt-6">
                 <button onclick="closeEditTransactionModal()" class="btn-secondary">إلغاء</button>
                 <button onclick="saveEditedTransaction()" class="btn-primary">حفظ</button>
@@ -2167,7 +2215,7 @@ if (typeof CryptoJS === 'undefined') {
 const Security = {
     hashPassword(password) {
         if (typeof password === 'object' && password.salt && password.hash) {
-            return password; // Already hashed
+            return password;
         }
         const salt = CryptoJS.lib.WordArray.random(16).toString();
         const hash = CryptoJS.PBKDF2(password, salt, {
@@ -2180,7 +2228,6 @@ const Security = {
     verifyPassword(inputPassword, storedData) {
         if (!storedData) return false;
         
-        // Handle old plain text passwords
         if (typeof storedData === 'string') {
             return inputPassword === storedData;
         }
@@ -2230,17 +2277,17 @@ const Security = {
 
 // ==================== مفاتيح التخزين ====================
 const StorageKeys = {
-    USERS: 'financial_system_users_v7',
-    CLIENTS_PREFIX: 'clients_v7_',
-    USER_STATUS_PREFIX: 'user_status_v7_',
-    BACKUP_HISTORY: 'financial_system_backup_history_v7',
-    SETTINGS: 'financial_system_settings_v7',
-    LAST_CLIENT: 'last_client_v7',
-    AUDIT_LOG: 'audit_logs_v7',
-    CURRENT_USER: 'current_user_v7',
-    INACTIVE_CLIENTS_PREFIX: 'inactive_clients_v7_',
-    NOTIFICATIONS: 'notifications_v7_',
-    INACTIVITY_SETTINGS: 'inactivity_settings_v7_'
+    USERS: 'financial_system_users_v8',
+    CLIENTS_PREFIX: 'clients_v8_',
+    USER_STATUS_PREFIX: 'user_status_v8_',
+    BACKUP_HISTORY: 'financial_system_backup_history_v8',
+    SETTINGS: 'financial_system_settings_v8',
+    LAST_CLIENT: 'last_client_v8',
+    AUDIT_LOG: 'audit_logs_v8',
+    CURRENT_USER: 'current_user_v8',
+    INACTIVE_CLIENTS_PREFIX: 'inactive_clients_v8_',
+    NOTIFICATIONS: 'notifications_v8_',
+    INACTIVITY_SETTINGS: 'inactivity_settings_v8_'
 };
 
 // ==================== إعدادات عدم النشاط ====================
@@ -2314,13 +2361,11 @@ const Storage = {
         try {
             const users = JSON.parse(localStorage.getItem(StorageKeys.USERS));
             if (!users || !Array.isArray(users)) {
-                // التحقق من وجود نسخة احتياطية قديمة
                 const oldBackup = this.checkForOldBackup();
                 if (oldBackup && oldBackup.users) {
                     return this.convertOldUsers(oldBackup.users);
                 }
                 
-                // إنشاء مستخدم افتراضي
                 const passwordData = Security.hashPassword('admin123');
                 const defaultUsers = [{
                     id: 'admin_' + Date.now(),
@@ -2353,14 +2398,14 @@ const Storage = {
     
     checkForOldBackup() {
         try {
-            // البحث في localStorage عن مفاتيح قديمة
             const oldKeys = [
                 'financial_system_users',
                 'financial_system_users_v2',
                 'financial_system_users_v3',
                 'financial_system_users_v4',
                 'financial_system_users_v5',
-                'financial_system_users_v6'
+                'financial_system_users_v6',
+                'financial_system_users_v7'
             ];
             
             for (const key of oldKeys) {
@@ -2378,10 +2423,8 @@ const Storage = {
                 }
             }
             
-            // البحث في history
             const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
             if (history.length > 0) {
-                // استخدام أحدث نسخة احتياطية
                 const latest = history[history.length - 1];
                 if (latest.data && latest.data.users) {
                     console.log('Found old backup in history');
@@ -2400,10 +2443,8 @@ const Storage = {
         if (!Array.isArray(oldUsers)) return [];
         
         return oldUsers.map(user => {
-            // تحويل كلمة المرور إذا كانت نص عادي
             let password = user.password;
             if (typeof password === 'string') {
-                // تشفير كلمة المرور النصية
                 password = Security.hashPassword(password);
             }
             
@@ -2415,7 +2456,7 @@ const Storage = {
                 provider: user.provider || 'email',
                 role: user.role || 'user',
                 createdAt: user.createdAt || new Date().toISOString(),
-                forcePasswordChange: true // فرض تغيير كلمة المرور
+                forcePasswordChange: true
             };
         });
     },
@@ -2425,7 +2466,6 @@ const Storage = {
             const key = StorageKeys.CLIENTS_PREFIX + userId;
             let clients = JSON.parse(localStorage.getItem(key)) || [];
             
-            // إذا كانت القائمة فارغة، حاول استيراد من النسخ القديمة
             if (clients.length === 0) {
                 clients = this.importOldClients(userId);
             }
@@ -2439,7 +2479,6 @@ const Storage = {
     
     importOldClients(userId) {
         try {
-            // البحث في history
             const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
             let allOldClients = [];
             
@@ -2452,10 +2491,8 @@ const Storage = {
                 }
             }
             
-            // تحويل العملاء القدامى
             const converted = allOldClients.map(c => this.convertOldClient(c, userId));
             
-            // حفظ العملاء المحولين
             if (converted.length > 0) {
                 this.saveUserClients(userId, converted);
                 showToast(`تم استيراد ${converted.length} عميل من النسخ القديمة`, 'success');
@@ -2469,10 +2506,8 @@ const Storage = {
     },
     
     convertOldClient(oldClient, userId) {
-        // تحويل الذهب من التنسيق القديم إلى الجديد
         const goldByKarat = {};
         
-        // معالجة goldFor/goldOn القديمة
         if (oldClient.goldKarat || oldClient.goldFor || oldClient.goldOn) {
             const karat = oldClient.goldKarat || 'other';
             if (!goldByKarat[karat]) {
@@ -2482,15 +2517,17 @@ const Storage = {
             if (oldClient.goldOn) goldByKarat[karat].on += oldClient.goldOn;
         }
         
-        // معالجة معاملات الذهب
         const goldTransactions = (oldClient.goldTransactions || []).map(t => ({
             ...t,
             date: this.normalizeDate(t.date),
             amount: this.parseNumber(t.amount, 0),
+            karat: t.karat || 'other',
+            description: t.description || '',
+            responsible: t.responsible || 'المدير',
+            note: t.note || '',
             runningBalance: this.parseNumber(t.runningBalance, 0)
         }));
         
-        // إضافة الذهب من المعاملات إلى goldByKarat
         goldTransactions.forEach(t => {
             const karat = t.karat || 'other';
             if (!goldByKarat[karat]) {
@@ -2503,20 +2540,15 @@ const Storage = {
             }
         });
         
-        // معالجة المعاملات النقدية
         const transactions = (oldClient.transactions || []).map(t => ({
             ...t,
             date: this.normalizeDate(t.date),
             amount: this.parseNumber(t.amount, 0),
+            type: t.type || 'out',
+            responsible: t.responsible || 'المدير',
+            note: t.note || '',
             runningBalance: this.parseNumber(t.runningBalance, 0)
         }));
-        
-        // حساب moneyFor/moneyOn من المعاملات
-        let moneyFor = 0, moneyOn = 0;
-        transactions.forEach(t => {
-            if (t.type === 'out') moneyFor += t.amount;
-            else moneyOn += t.amount;
-        });
         
         return {
             id: oldClient.id || Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -2535,10 +2567,8 @@ const Storage = {
     },
     
     normalizeClient(client, userId) {
-        // تحويل الذهب من التنسيق القديم
         let goldByKarat = client.goldByKarat || {};
         
-        // إذا كان هناك goldFor/goldOn بالتنسيق القديم، حولهم
         if (client.goldKarat || client.goldFor !== undefined || client.goldOn !== undefined) {
             const karat = client.goldKarat || 'other';
             if (!goldByKarat[karat]) {
@@ -2548,7 +2578,6 @@ const Storage = {
             if (client.goldOn) goldByKarat[karat].on = (goldByKarat[karat].on || 0) + client.goldOn;
         }
         
-        // إضافة الذهب من المعاملات
         (client.goldTransactions || []).forEach(t => {
             const karat = t.karat || 'other';
             if (!goldByKarat[karat]) {
@@ -2575,12 +2604,19 @@ const Storage = {
                 ...t,
                 date: this.normalizeDate(t.date),
                 amount: this.parseNumber(t.amount, 0),
+                type: t.type || 'out',
+                responsible: t.responsible || 'المدير',
+                note: t.note || '',
                 runningBalance: this.parseNumber(t.runningBalance, 0)
             })),
             goldTransactions: (client.goldTransactions || []).map(t => ({
                 ...t,
                 date: this.normalizeDate(t.date),
                 amount: this.parseNumber(t.amount, 0),
+                karat: t.karat || 'other',
+                description: t.description || '',
+                responsible: t.responsible || 'المدير',
+                note: t.note || '',
                 runningBalance: this.parseNumber(t.runningBalance, 0)
             })),
             goldByKarat: goldByKarat
@@ -2590,17 +2626,14 @@ const Storage = {
     normalizeDate(date) {
         if (!date) return new Date().toISOString();
         
-        // إذا كان التاريخ بصيغة YYYY-MM-DD
         if (typeof date === 'string' && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
             return new Date(date + 'T12:00:00.000Z').toISOString();
         }
         
-        // إذا كان التاريخ رقم (timestamp)
         if (typeof date === 'number') {
             return new Date(date).toISOString();
         }
         
-        // محاولة تحويل التاريخ
         try {
             const d = new Date(date);
             if (!isNaN(d.getTime())) {
@@ -2729,7 +2762,7 @@ const Storage = {
                 users: this.loadUsers(),
                 clients: {},
                 inactiveClients: {},
-                version: '7.0',
+                version: '8.0',
                 timestamp: new Date().toISOString()
             };
 
@@ -2795,7 +2828,6 @@ const Storage = {
                 try {
                     const data = JSON.parse(e.target.result);
                     
-                    // تحويل البيانات
                     let users = [];
                     let clients = {};
                     
@@ -2845,6 +2877,8 @@ const AppState = {
     reactivateClientId: null,
     goldKaratList: ['18', '21', '24'],
     unreadNotifications: 0,
+    editingTransaction: null,
+    editingTransactionType: null,
     developerInfo: {
         name: 'محمد احمد فؤاد',
         whatsapp: '01010421571',
@@ -2854,11 +2888,9 @@ const AppState = {
 
 // ==================== نظام إدارة حالة العملاء ====================
 const ClientStatus = {
-    // التحقق مما إذا كان العميل منتهي (رصيد صفر)
     isInactive(client) {
         if (!client) return false;
         
-        // حساب إجمالي الذهب
         let totalGoldFor = 0, totalGoldOn = 0;
         if (client.goldByKarat) {
             Object.values(client.goldByKarat).forEach(g => {
@@ -2867,18 +2899,15 @@ const ClientStatus = {
             });
         }
         
-        // حساب إجمالي المال
         let moneyFor = 0, moneyOn = 0;
         (client.transactions || []).forEach(t => {
             if (t.type === 'out') moneyFor += t.amount;
             else moneyOn += t.amount;
         });
         
-        // إذا كان الرصيد صفر، يعتبر منتهي
         return moneyFor === moneyOn && totalGoldFor === totalGoldOn;
     },
     
-    // تحديث حالة العميل (نقل بين النشط والمنتهي)
     updateClientStatus(client) {
         if (!client || !client.userId) return false;
         
@@ -3052,17 +3081,12 @@ const NotificationSystem = {
         const notification = notifications.find(n => n.id === notificationId);
         
         if (notification) {
-            // حذف الإشعار من القائمة
             notifications = notifications.filter(n => n.id !== notificationId);
             Storage.saveNotifications(AppState.currentUser.id, notifications);
             
-            // تحديث العداد
             this.updateNotificationCount();
-            
-            // إعادة عرض القائمة
             this.showNotifications();
             
-            // التنقل إلى صفحة العميل
             if (notification.clientId) {
                 const clients = getCurrentUserClients();
                 const inactiveClients = ClientStatus.getAllInactiveClients();
@@ -3095,7 +3119,6 @@ const NotificationSystem = {
         const clients = getCurrentUserClients();
         
         clients.forEach(client => {
-            // حساب إجمالي الذهب
             let totalGoldFor = 0, totalGoldOn = 0;
             if (client.goldByKarat) {
                 Object.values(client.goldByKarat).forEach(g => {
@@ -3104,14 +3127,12 @@ const NotificationSystem = {
                 });
             }
             
-            // حساب إجمالي المال
             let moneyFor = 0, moneyOn = 0;
             (client.transactions || []).forEach(t => {
                 if (t.type === 'out') moneyFor += t.amount;
                 else moneyOn += t.amount;
             });
             
-            // رصيد كبير جداً
             if (Math.abs(moneyFor - moneyOn) > 1000000) {
                 this.createNotification(
                     client.id,
@@ -3121,7 +3142,6 @@ const NotificationSystem = {
                 );
             }
             
-            // معاملات ذهب كثيرة
             if (client.goldTransactions.length > 10) {
                 this.createNotification(
                     client.id,
@@ -3131,7 +3151,6 @@ const NotificationSystem = {
                 );
             }
             
-            // عدم وجود معاملات منذ فترة (حسب إعدادات العميل)
             const allTransactions = [...client.transactions, ...client.goldTransactions];
             if (allTransactions.length > 0) {
                 const sorted = allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -3149,7 +3168,6 @@ const NotificationSystem = {
                 }
             }
             
-            // رصيد ذهب كبير
             if (Math.abs(totalGoldFor - totalGoldOn) > 1000) {
                 this.createNotification(
                     client.id,
@@ -3207,7 +3225,6 @@ function getGoldSummary(client) {
     });
     summary.other = { for: 0, on: 0 };
     
-    // إضافة الذهب من goldByKarat
     if (client.goldByKarat) {
         Object.keys(client.goldByKarat).forEach(karat => {
             const g = client.goldByKarat[karat];
@@ -3262,7 +3279,6 @@ function getClientMoneySummary(client) {
 function recalculateBalances(client) {
     if (!client) return client;
     
-    // ترتيب المعاملات النقدية حسب التاريخ
     const sortedTransactions = [...(client.transactions || [])].sort((a, b) => 
         new Date(a.date) - new Date(b.date)
     );
@@ -3277,7 +3293,6 @@ function recalculateBalances(client) {
         return { ...t, runningBalance };
     });
     
-    // ترتيب معاملات الذهب حسب التاريخ
     const goldByKarat = {};
     (client.goldTransactions || []).forEach(t => {
         const karat = t.karat || 'other';
@@ -3301,7 +3316,6 @@ function recalculateBalances(client) {
     
     client.goldTransactions = reorderedGold.sort((a, b) => new Date(a.date) - new Date(b.date));
     
-    // تحديث goldByKarat
     const goldByKaratNew = {};
     client.goldTransactions.forEach(t => {
         const karat = t.karat || 'other';
@@ -3577,7 +3591,7 @@ async function exportToCloud() {
             users: Storage.loadUsers(),
             clients: {},
             inactiveClients: {},
-            version: '7.0',
+            version: '8.0',
             timestamp: new Date().toISOString()
         };
 
@@ -4279,7 +4293,6 @@ function addNewClient(andNew = false) {
     const tagsInput = document.getElementById('client-tags')?.value || '';
     const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
     
-    // إعدادات عدم النشاط
     const inactivityDays = parseInt(document.getElementById('client-inactivity-days')?.value) || InactivitySettings.defaultDays;
 
     const newClient = {
@@ -4297,7 +4310,6 @@ function addNewClient(andNew = false) {
         goldByKarat: {}
     };
 
-    // معاملة نقدية أولى
     const cashType = document.getElementById('initial-cash-type')?.value;
     const cashAmount = parseFloat(document.getElementById('initial-cash-amount')?.value) || 0;
     const cashResponsible = document.getElementById('initial-cash-responsible')?.value.trim();
@@ -4314,7 +4326,6 @@ function addNewClient(andNew = false) {
         });
     }
 
-    // معاملة ذهب أولى
     const goldType = document.getElementById('initial-gold-type')?.value;
     const goldAmount = parseFloat(document.getElementById('initial-gold-amount')?.value) || 0;
     const goldKaratSelect = document.getElementById('initial-gold-karat-select')?.value;
@@ -4413,7 +4424,6 @@ function viewClient(clientId) {
     const clients = getCurrentUserClients();
     let client = clients.find(c => c.id === clientId);
 
-    // إذا لم يوجد في النشطين، ابحث في المنتهية
     if (!client) {
         const inactiveClients = ClientStatus.getAllInactiveClients();
         client = inactiveClients.find(c => c.id === clientId);
@@ -4720,10 +4730,7 @@ function saveEditedClient() {
     );
 }
 
-// ==================== دوال تعديل المعاملات ====================
-let editingTransaction = null;
-let editingTransactionType = null;
-
+// ==================== دوال تعديل المعاملات المحسنة ====================
 function editTransaction(transactionId, type) {
     const clients = getCurrentUserClients();
     const client = clients.find(c => c.id === AppState.currentClientId);
@@ -4738,8 +4745,8 @@ function editTransaction(transactionId, type) {
     
     if (!transaction) return;
     
-    editingTransaction = transaction;
-    editingTransactionType = type;
+    AppState.editingTransaction = transaction;
+    AppState.editingTransactionType = type;
     
     const fieldsDiv = document.getElementById('edit-transaction-fields');
     const title = document.getElementById('edit-transaction-title');
@@ -4749,28 +4756,32 @@ function editTransaction(transactionId, type) {
     if (type === 'cash') {
         title.textContent = 'تعديل معاملة نقدية';
         fieldsDiv.innerHTML = `
-            <div class="mb-4">
-                <label class="input-label">المبلغ</label>
+            <div class="edit-field-group">
+                <label>المبلغ</label>
                 <input type="number" id="edit-tx-amount" class="input-field numbers" value="${transaction.amount}" min="0.01" step="0.01">
             </div>
-            <div class="mb-4">
-                <label class="input-label">المسؤول</label>
+            <div class="edit-field-group">
+                <label>المسؤول</label>
                 <input type="text" id="edit-tx-responsible" class="input-field" value="${escapeHtml(transaction.responsible)}">
             </div>
-            <div class="mb-4">
-                <label class="input-label">ملاحظات</label>
+            <div class="edit-field-group">
+                <label>ملاحظات</label>
                 <textarea id="edit-tx-note" class="input-field" rows="2">${escapeHtml(transaction.note || '')}</textarea>
+            </div>
+            <div class="edit-field-group">
+                <label>التاريخ</label>
+                <input type="datetime-local" id="edit-tx-date" class="input-field" value="${new Date(transaction.date).toISOString().slice(0,16)}">
             </div>
         `;
     } else {
         title.textContent = 'تعديل معاملة ذهب';
         fieldsDiv.innerHTML = `
-            <div class="mb-4">
-                <label class="input-label">الكمية (جرام)</label>
+            <div class="edit-field-group">
+                <label>الكمية (جرام)</label>
                 <input type="number" step="0.01" id="edit-gold-amount" class="input-field numbers" value="${transaction.amount}" min="0.01">
             </div>
-            <div class="mb-4">
-                <label class="input-label">عيار الذهب</label>
+            <div class="edit-field-group">
+                <label>عيار الذهب</label>
                 <select id="edit-gold-karat" class="input-field" onchange="toggleEditGoldKarat()">
                     <option value="18" ${transaction.karat === '18' ? 'selected' : ''}>عيار 18</option>
                     <option value="21" ${transaction.karat === '21' ? 'selected' : ''}>عيار 21</option>
@@ -4778,21 +4789,25 @@ function editTransaction(transactionId, type) {
                     <option value="other" ${!AppState.goldKaratList.includes(transaction.karat) && transaction.karat ? 'selected' : ''}>عيار آخر</option>
                 </select>
             </div>
-            <div class="mb-4" id="edit-gold-karat-other-container" style="${!AppState.goldKaratList.includes(transaction.karat) && transaction.karat ? 'display:block' : 'display:none'}">
-                <label class="input-label">عيار آخر</label>
+            <div class="edit-field-group" id="edit-gold-karat-other-container" style="${!AppState.goldKaratList.includes(transaction.karat) && transaction.karat ? 'display:block' : 'display:none'}">
+                <label>عيار آخر</label>
                 <input type="text" id="edit-gold-karat-other" class="input-field" value="${!AppState.goldKaratList.includes(transaction.karat) ? escapeHtml(transaction.karat) : ''}">
             </div>
-            <div class="mb-4">
-                <label class="input-label">بيان الذهب</label>
+            <div class="edit-field-group">
+                <label>بيان الذهب</label>
                 <input type="text" id="edit-gold-description" class="input-field" value="${escapeHtml(transaction.description || '')}">
             </div>
-            <div class="mb-4">
-                <label class="input-label">المسؤول</label>
+            <div class="edit-field-group">
+                <label>المسؤول</label>
                 <input type="text" id="edit-gold-responsible" class="input-field" value="${escapeHtml(transaction.responsible)}">
             </div>
-            <div class="mb-4">
-                <label class="input-label">ملاحظات</label>
+            <div class="edit-field-group">
+                <label>ملاحظات</label>
                 <textarea id="edit-gold-note" class="input-field" rows="2">${escapeHtml(transaction.note || '')}</textarea>
+            </div>
+            <div class="edit-field-group">
+                <label>التاريخ</label>
+                <input type="datetime-local" id="edit-gold-date" class="input-field" value="${new Date(transaction.date).toISOString().slice(0,16)}">
             </div>
         `;
     }
@@ -4816,12 +4831,12 @@ function toggleEditGoldKarat() {
 function closeEditTransactionModal() {
     const modal = document.getElementById('edit-transaction-modal');
     if (modal) modal.classList.remove('active');
-    editingTransaction = null;
-    editingTransactionType = null;
+    AppState.editingTransaction = null;
+    AppState.editingTransactionType = null;
 }
 
 function saveEditedTransaction() {
-    if (!editingTransaction || !editingTransactionType) return;
+    if (!AppState.editingTransaction || !AppState.editingTransactionType) return;
     
     showConfirmation(
         'تأكيد التعديل',
@@ -4831,21 +4846,23 @@ function saveEditedTransaction() {
             const client = clients.find(c => c.id === AppState.currentClientId);
             if (!client) return;
             
-            if (editingTransactionType === 'cash') {
-                const txIndex = client.transactions.findIndex(t => t.id === editingTransaction.id);
+            if (AppState.editingTransactionType === 'cash') {
+                const txIndex = client.transactions.findIndex(t => t.id === AppState.editingTransaction.id);
                 if (txIndex === -1) return;
                 
                 const amountInput = document.getElementById('edit-tx-amount');
                 const responsibleInput = document.getElementById('edit-tx-responsible');
                 const noteInput = document.getElementById('edit-tx-note');
+                const dateInput = document.getElementById('edit-tx-date');
                 
                 if (amountInput) client.transactions[txIndex].amount = parseFloat(amountInput.value) || 0;
                 if (responsibleInput) client.transactions[txIndex].responsible = responsibleInput.value.trim();
                 if (noteInput) client.transactions[txIndex].note = noteInput.value.trim();
+                if (dateInput) client.transactions[txIndex].date = new Date(dateInput.value).toISOString();
                 
                 recalculateBalances(client);
             } else {
-                const txIndex = client.goldTransactions.findIndex(t => t.id === editingTransaction.id);
+                const txIndex = client.goldTransactions.findIndex(t => t.id === AppState.editingTransaction.id);
                 if (txIndex === -1) return;
                 
                 const amountInput = document.getElementById('edit-gold-amount');
@@ -4854,6 +4871,7 @@ function saveEditedTransaction() {
                 const descriptionInput = document.getElementById('edit-gold-description');
                 const responsibleInput = document.getElementById('edit-gold-responsible');
                 const noteInput = document.getElementById('edit-gold-note');
+                const dateInput = document.getElementById('edit-gold-date');
                 
                 if (amountInput) client.goldTransactions[txIndex].amount = parseFloat(amountInput.value) || 0;
                 
@@ -4868,6 +4886,7 @@ function saveEditedTransaction() {
                 if (descriptionInput) client.goldTransactions[txIndex].description = descriptionInput.value.trim();
                 if (responsibleInput) client.goldTransactions[txIndex].responsible = responsibleInput.value.trim();
                 if (noteInput) client.goldTransactions[txIndex].note = noteInput.value.trim();
+                if (dateInput) client.goldTransactions[txIndex].date = new Date(dateInput.value).toISOString();
                 
                 recalculateBalances(client);
             }
@@ -4889,7 +4908,7 @@ function saveEditedTransaction() {
                 showToast('تم تعديل المعاملة بنجاح', 'success');
             }
             
-            Storage.logAction('تعديل معاملة', { clientId: client.id, transactionId: editingTransaction.id });
+            Storage.logAction('تعديل معاملة', { clientId: client.id, transactionId: AppState.editingTransaction.id });
         },
         true
     );
@@ -5276,124 +5295,6 @@ function renderDashboard(clients) {
             </div>
         `;
     }
-
-    renderClientsList(clients);
-}
-
-function renderClientsList(clients) {
-    const grid = document.getElementById('clients-grid');
-    if (!grid) return;
-
-    let filteredClients = clients;
-    if (AppState.currentFilter !== 'all') {
-        if (AppState.currentFilter === 'له') {
-            filteredClients = clients.filter(c => getClientMoneySummary(c).netMoney > 0);
-        } else if (AppState.currentFilter === 'عليه') {
-            filteredClients = clients.filter(c => getClientMoneySummary(c).netMoney < 0);
-        } else if (AppState.currentFilter === 'ذهب له') {
-            filteredClients = clients.filter(c => getTotalGold(getGoldSummary(c)).net > 0);
-        } else if (AppState.currentFilter === 'ذهب عليه') {
-            filteredClients = clients.filter(c => getTotalGold(getGoldSummary(c)).net < 0);
-        } else if (AppState.currentFilter === 'صفر') {
-            filteredClients = clients.filter(c => {
-                const s = getClientMoneySummary(c);
-                const g = getTotalGold(getGoldSummary(c));
-                return s.netMoney === 0 && g.net === 0;
-            });
-        }
-    }
-
-    if (filteredClients.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-full text-center py-12 text-gray-500">
-                <i class="fas fa-users text-4xl mb-3"></i>
-                <p>لا يوجد عملاء</p>
-            </div>
-        `;
-        return;
-    }
-
-    grid.innerHTML = filteredClients.map(client => {
-        const moneySummary = getClientMoneySummary(client);
-        const goldSummary = getGoldSummary(client);
-        const totalGold = getTotalGold(goldSummary);
-        
-        let goldDetailsHtml = '';
-        Object.keys(goldSummary).forEach(karat => {
-            const g = goldSummary[karat];
-            if (g.for > 0 || g.on > 0) {
-                const net = g.for - g.on;
-                goldDetailsHtml += `
-                    <div class="text-xs flex justify-between mt-1">
-                        <span class="text-gray-500">عيار ${karat === 'other' ? 'آخر' : karat}:</span>
-                        <span>
-                            <span class="text-yellow-400">${formatGold(g.for)}</span> / 
-                            <span class="text-yellow-600">${formatGold(g.on)}</span>
-                            ${net !== 0 ? `<span class="${net > 0 ? 'text-amber-400' : 'text-emerald-400'} mr-1">(${net > 0 ? '+' : ''}${formatGold(net)})</span>` : ''}
-                        </span>
-                    </div>
-                `;
-            }
-        });
-        
-        return `
-            <div class="client-card" onclick="viewClient('${client.id}')">
-                <div class="flex justify-between items-start mb-3">
-                    <div>
-                        <h3 class="font-semibold">${escapeHtml(client.name)}</h3>
-                        ${client.phone ? `<p class="text-xs text-gray-500">${escapeHtml(client.phone)}</p>` : ''}
-                        ${client.tags?.length ? `
-                            <div class="flex flex-wrap gap-1 mt-1">
-                                ${client.tags.slice(0, 2).map(t => `<span class="badge badge-info">${escapeHtml(t)}</span>`).join('')}
-                                ${client.tags.length > 2 ? `<span class="badge badge-info">+${client.tags.length - 2}</span>` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="flex gap-1 flex-wrap justify-end">
-                        ${moneySummary.netMoney !== 0 ? `
-                            <span class="badge ${moneySummary.netMoney > 0 ? 'badge-warning' : 'badge-success'}">
-                                ${moneySummary.netMoney > 0 ? 'له' : 'عليه'}
-                            </span>
-                        ` : ''}
-                        ${totalGold.net !== 0 ? `
-                            <span class="badge badge-gold">
-                                ${totalGold.net > 0 ? 'ذهب له' : 'ذهب عليه'}
-                            </span>
-                        ` : ''}
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div class="bg-tertiary p-2 rounded-lg">
-                        <p class="text-xs text-gray-500">له مال</p>
-                        <p class="font-medium text-amber-400 numbers">${formatMoney(moneySummary.moneyFor)}</p>
-                    </div>
-                    <div class="bg-tertiary p-2 rounded-lg">
-                        <p class="text-xs text-gray-500">عليه مال</p>
-                        <p class="font-medium text-emerald-400 numbers">${formatMoney(moneySummary.moneyOn)}</p>
-                    </div>
-                </div>
-
-                <div class="mb-2">
-                    <p class="text-xs text-gray-500 mb-1">الذهب:</p>
-                    ${goldDetailsHtml || '<p class="text-xs text-gray-500">لا يوجد ذهب</p>'}
-                </div>
-
-                ${client.address ? `
-                    <div class="text-xs text-gray-500 mb-2">
-                        <i class="fas fa-map-marker-alt ml-1"></i>
-                        ${escapeHtml(client.address)}
-                    </div>
-                ` : ''}
-
-                <div class="flex justify-between items-center text-xs text-gray-500 mt-3 pt-2 border-t border-border">
-                    <span><i class="fas fa-receipt ml-1"></i>${client.transactions.length} نقدية</span>
-                    <span><i class="fas fa-coins ml-1"></i>${client.goldTransactions.length} ذهب</span>
-                    <span><i class="fas fa-calendar ml-1"></i>${formatDate(client.createdAt)}</span>
-                </div>
-            </div>
-        `;
-    }).join('');
 }
 
 function renderActiveClientsList() {
@@ -6638,7 +6539,7 @@ function importData() {
 }
 
 function importOldBackup() {
-    importData(); // استخدام نفس الدالة
+    importData();
 }
 
 // ==================== دوال المستخدمين ====================
