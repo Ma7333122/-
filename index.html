@@ -3,34 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النظام المالي المتكامل - الإصدار النهائي</title>
+    <title>النظام المالي المتكامل - النسخة النهائية</title>
     
-    <!-- Tailwind CSS -->
+    <!-- نفس الروابط السابقة -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <!-- CryptoJS للتشفير -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    
-    <!-- Excel & PDF Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* نفس الأنماط السابقة مع إضافة بعض التحسينات */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --bg-primary: #0a0a0f;
@@ -56,7 +43,6 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
             transition: all 0.3s ease;
-            min-height: 100vh;
             font-family: 'IBM Plex Sans Arabic', sans-serif;
         }
 
@@ -118,7 +104,6 @@
             gap: 4px;
         }
 
-        /* WhatsApp Button */
         .whatsapp-btn {
             position: fixed;
             bottom: 20px;
@@ -163,10 +148,7 @@
             max-width: 400px;
         }
 
-        .toast.show {
-            transform: translateX(0);
-        }
-
+        .toast.show { transform: translateX(0); }
         .toast.success { background: linear-gradient(135deg, var(--success), #15803d); }
         .toast.error { background: linear-gradient(135deg, var(--danger), #b91c1c); }
         .toast.info { background: linear-gradient(135deg, var(--info), #1d4ed8); }
@@ -204,9 +186,7 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Auto Backup Indicator */
         .auto-backup-indicator {
@@ -225,14 +205,9 @@
             animation: pulse 2s infinite;
         }
 
-        .auto-backup-indicator.hidden {
-            display: none;
-        }
+        .auto-backup-indicator.hidden { display: none; }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
 
         /* Login Container */
         .login-container {
@@ -278,10 +253,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .input-group {
-            margin-bottom: 20px;
-        }
-
+        .input-group { margin-bottom: 20px; }
         .input-label {
             display: block;
             margin-bottom: 8px;
@@ -328,10 +300,7 @@
             box-shadow: 0 10px 20px -5px rgba(34, 197, 94, 0.4);
         }
 
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-secondary {
             background: var(--bg-tertiary);
@@ -344,14 +313,8 @@
             font-size: 14px;
         }
 
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--border-color);
-        }
-
-        .btn-secondary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        .btn-secondary:hover:not(:disabled) { background: var(--border-color); }
+        .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-gold {
             background: linear-gradient(135deg, var(--gold-18), #b45309);
@@ -383,10 +346,7 @@
             transition: all 0.3s ease;
         }
 
-        .btn-icon:hover {
-            background: var(--accent-primary);
-            color: white;
-        }
+        .btn-icon:hover { background: var(--accent-primary); color: white; }
 
         /* الشريط الجانبي */
         .nav-sidebar {
@@ -405,10 +365,7 @@
             box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
-        .nav-sidebar:hover {
-            width: 220px;
-            box-shadow: 0 20px 40px -10px rgba(34, 197, 94, 0.3);
-        }
+        .nav-sidebar:hover { width: 220px; box-shadow: 0 20px 40px -10px rgba(34, 197, 94, 0.3); }
 
         .nav-item {
             display: flex;
@@ -439,14 +396,8 @@
             margin-right: 20px;
         }
 
-        .nav-item:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .nav-item:hover i {
-            transform: scale(1.1);
-            color: var(--accent-primary);
-        }
+        .nav-item:hover { background: var(--bg-tertiary); }
+        .nav-item:hover i { transform: scale(1.1); color: var(--accent-primary); }
 
         .nav-item.active {
             color: var(--accent-primary);
@@ -482,46 +433,25 @@
                 box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
             }
 
-            .nav-sidebar:hover {
-                width: auto;
-            }
-
-            .nav-sidebar.collapsed {
-                width: 60px;
-                overflow: hidden;
-            }
-
-            .nav-sidebar.collapsed .nav-item span {
-                display: none;
-            }
-
+            .nav-sidebar:hover { width: auto; }
+            .nav-sidebar.collapsed { width: 60px; overflow: hidden; }
+            .nav-sidebar.collapsed .nav-item span { display: none; }
             .nav-sidebar:not(.collapsed) {
                 width: auto;
                 max-width: 90vw;
                 overflow-x: auto;
             }
-
             .nav-sidebar:not(.collapsed) .nav-item {
                 padding: 12px;
             }
-
             .nav-sidebar:not(.collapsed) .nav-item span {
                 display: inline-block;
                 font-size: 12px;
                 margin-right: 8px;
             }
-
-            .nav-item {
-                padding: 12px;
-            }
-
-            .nav-item i {
-                font-size: 18px;
-            }
-
-            .nav-item span {
-                display: none;
-            }
+            .nav-item { padding: 12px; }
+            .nav-item i { font-size: 18px; }
+            .nav-item span { display: none; }
 
             .nav-toggle {
                 display: flex !important;
@@ -541,9 +471,7 @@
             }
         }
 
-        .nav-toggle {
-            display: none;
-        }
+        .nav-toggle { display: none; }
 
         .main-content {
             margin-right: 80px;
@@ -575,9 +503,7 @@
             transition: all 0.3s ease;
         }
 
-        .user-menu:hover {
-            background: var(--bg-tertiary);
-        }
+        .user-menu:hover { background: var(--bg-tertiary); }
 
         .user-avatar {
             width: 40px;
@@ -602,32 +528,72 @@
             border-radius: 12px;
             padding: 0;
             z-index: 1000;
-            max-width: 300px;
+            max-width: 350px;
+            width: 350px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .notification-center.hidden {
-            display: none;
+        .notification-center.hidden { display: none; }
+        .notification-center.active { display: block; }
+
+        .notification-header {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .notification-center.active {
-            display: block;
+        .notification-header h3 {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .notification-header button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .notification-header button:hover { color: var(--accent-primary); }
+
+        .notifications-list {
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         .notification-item {
-            padding: 12px;
+            padding: 15px;
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .notification-item:hover { background: var(--bg-tertiary); }
+        .notification-item:last-child { border-bottom: none; }
+
+        .notification-item.warning { border-right: 4px solid var(--warning); }
+        .notification-item.info { border-right: 4px solid var(--info); }
+        .notification-item.inactive { border-right: 4px solid var(--inactive); }
+
+        .notification-item .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .notification-item .notification-message {
             font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
         }
 
-        .notification-item:hover {
-            background: var(--bg-tertiary);
+        .notification-item .notification-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.7;
         }
-
-        .notification-item.warning { border-right: 3px solid var(--warning); }
-        .notification-item.info { border-right: 3px solid var(--info); }
-        .notification-item.inactive { border-right: 3px solid var(--inactive); }
 
         .notification-bell {
             position: fixed;
@@ -639,12 +605,11 @@
             padding: 8px 16px;
             cursor: pointer;
             z-index: 100;
+            transition: all 0.3s ease;
         }
 
-        .notification-bell.has-alerts {
-            color: var(--warning);
-            animation: pulse 2s infinite;
-        }
+        .notification-bell:hover { background: var(--bg-tertiary); }
+        .notification-bell.has-alerts { color: var(--warning); animation: pulse 2s infinite; }
 
         .notification-bell .notification-count {
             position: absolute;
@@ -655,15 +620,13 @@
             border-radius: 50%;
             width: 20px;
             height: 20px;
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .notification-count.hidden {
-            display: none;
-        }
+        .notification-count.hidden { display: none; }
 
         /* Cards */
         .stat-card {
@@ -758,9 +721,7 @@
             transition: transform 0.3s ease;
         }
 
-        .modal.active .modal-content {
-            transform: scale(1);
-        }
+        .modal.active .modal-content { transform: scale(1); }
 
         /* Table */
         .table-responsive {
@@ -817,10 +778,7 @@
             font-size: clamp(12px, 2vw, 14px);
         }
 
-        .filter-btn:hover {
-            background: var(--border-color);
-        }
-
+        .filter-btn:hover { background: var(--border-color); }
         .filter-btn.active {
             background: var(--accent-primary);
             color: white;
@@ -865,13 +823,8 @@
             border-radius: 50%;
         }
 
-        input:checked + .toggle-slider {
-            background-color: var(--success);
-        }
-
-        input:checked + .toggle-slider:before {
-            transform: translateX(26px);
-        }
+        input:checked + .toggle-slider { background-color: var(--success); }
+        input:checked + .toggle-slider:before { transform: translateX(26px); }
 
         /* Last Client Card */
         .last-client-card {
@@ -882,9 +835,7 @@
             margin-bottom: 24px;
         }
 
-        .last-client-card.hidden {
-            display: none;
-        }
+        .last-client-card.hidden { display: none; }
 
         /* Section Header */
         .section-header {
@@ -896,13 +847,8 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .section-header i {
-            color: var(--accent-primary);
-        }
-
-        .section-header.gold i {
-            color: var(--gold-18);
-        }
+        .section-header i { color: var(--accent-primary); }
+        .section-header.gold i { color: var(--gold-18); }
 
         /* Footer */
         .footer {
@@ -1024,9 +970,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .duplicate-results.hidden {
-            display: none;
-        }
+        .duplicate-results.hidden { display: none; }
 
         .duplicate-item {
             padding: 12px;
@@ -1035,13 +979,8 @@
             transition: all 0.2s ease;
         }
 
-        .duplicate-item:hover {
-            background: var(--bg-tertiary);
-        }
-
-        .duplicate-item:last-child {
-            border-bottom: none;
-        }
+        .duplicate-item:hover { background: var(--bg-tertiary); }
+        .duplicate-item:last-child { border-bottom: none; }
 
         .duplicate-badge {
             display: inline-block;
@@ -1051,26 +990,12 @@
             margin-right: 8px;
         }
 
-        .duplicate-badge.active {
-            background: var(--success);
-            color: white;
-        }
-
-        .duplicate-badge.inactive {
-            background: var(--inactive);
-            color: white;
-        }
+        .duplicate-badge.active { background: var(--success); color: white; }
+        .duplicate-badge.inactive { background: var(--inactive); color: white; }
 
         /* Confirmation Modal */
-        .confirmation-modal .modal-content {
-            text-align: center;
-        }
-
-        .confirmation-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        .confirmation-modal .modal-content { text-align: center; }
+        .confirmation-actions { display: flex; gap: 10px; margin-top: 20px; }
 
         /* Voice Button */
         .voice-btn {
@@ -1083,13 +1008,52 @@
             font-size: 18px;
         }
 
-        .voice-btn:hover {
-            color: var(--accent-secondary);
-        }
+        .voice-btn:hover { color: var(--accent-secondary); }
 
         /* Hidden Class */
-        .hidden {
-            display: none !important;
+        .hidden { display: none !important; }
+
+        /* Restore Modal */
+        .restore-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .restore-modal .modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-primary);
+            border-radius: 32px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .restore-modal h2 {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-primary);
+            margin-bottom: 16px;
+        }
+
+        .restore-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .restore-modal .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
         }
 
         /* Export Styles */
@@ -1137,6 +1101,25 @@
 <!-- Loading Spinner -->
 <div id="loading-spinner" class="loading-spinner">
     <div class="spinner"></div>
+</div>
+
+<!-- Restore Modal -->
+<div id="restore-modal" class="restore-modal">
+    <div class="modal-content">
+        <i class="fas fa-database text-6xl text-emerald-400 mb-6"></i>
+        <h2>استعادة النسخة الاحتياطية</h2>
+        <p>تم العثور على نسخة احتياطية سابقة. هل تريد استعادتها؟</p>
+        <div class="btn-group">
+            <button onclick="restoreBackup()" class="btn-primary" style="width: auto; padding: 12px 30px;">
+                <i class="fas fa-check ml-2"></i>
+                نعم، استعادة
+            </button>
+            <button onclick="startFresh()" class="btn-secondary" style="width: auto; padding: 12px 30px;">
+                <i class="fas fa-times ml-2"></i>
+                لا، بدء جديد
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- Developer Info -->
@@ -1273,10 +1256,14 @@
 
     <!-- Notification Center -->
     <div id="notification-center" class="notification-center hidden">
-        <div class="p-4 border-b border-border">
-            <h3 class="font-bold">الإشعارات</h3>
+        <div class="notification-header">
+            <h3>الإشعارات</h3>
+            <button onclick="markAllNotificationsRead()">
+                <i class="fas fa-check-double ml-1"></i>
+                تحديد الكل كمقروء
+            </button>
         </div>
-        <div id="notifications-list" class="max-h-96 overflow-y-auto"></div>
+        <div id="notifications-list" class="notifications-list"></div>
     </div>
 
     <!-- User Menu -->
@@ -1620,11 +1607,11 @@
 
                 <!-- Actions -->
                 <div class="flex flex-col sm:flex-row gap-4 mt-8">
-                    <button onclick="addNewClient(false)" class="btn-primary flex-1">
+                    <button onclick="addNewClient(false)" class="btn-primary flex-1" id="add-client-btn">
                         <i class="fas fa-save"></i>
                         إضافة العميل
                     </button>
-                    <button onclick="addNewClient(true)" class="btn-secondary flex-1">
+                    <button onclick="addNewClient(true)" class="btn-secondary flex-1" id="add-and-new-btn">
                         <i class="fas fa-plus"></i>
                         إضافة وعميل جديد
                     </button>
@@ -2145,7 +2132,6 @@
 
     // ==================== إعدادات التشفير المحسنة ====================
     const Security = {
-        // استخدام Salt عشوائي لكل مستخدم مع PBKDF2
         hashPassword(password) {
             const salt = CryptoJS.lib.WordArray.random(16).toString();
             const hash = CryptoJS.PBKDF2(password, salt, {
@@ -2156,10 +2142,7 @@
         },
         
         verifyPassword(inputPassword, storedData) {
-            // التحقق من صحة البيانات المدخلة
-            if (!storedData || typeof storedData !== 'object') {
-                return false;
-            }
+            if (!storedData || typeof storedData !== 'object') return false;
             
             try {
                 const hash = CryptoJS.PBKDF2(inputPassword, storedData.salt, {
@@ -2173,7 +2156,6 @@
             }
         },
         
-        // توليد مفتاح جلسة عشوائي
         generateSessionToken() {
             return CryptoJS.lib.WordArray.random(32).toString();
         },
@@ -2205,15 +2187,16 @@
 
     // ==================== مفاتيح التخزين ====================
     const StorageKeys = {
-        USERS: 'financial_system_users_v4',
-        CLIENTS_PREFIX: 'clients_v4_',
-        USER_STATUS_PREFIX: 'user_status_v4_',
-        BACKUP_HISTORY: 'financial_system_backup_history_v4',
-        SETTINGS: 'financial_system_settings_v4',
-        LAST_CLIENT: 'last_client_v4',
-        AUDIT_LOG: 'audit_logs_v4',
-        CURRENT_USER: 'current_user_v4',
-        INACTIVE_CLIENTS_PREFIX: 'inactive_clients_v4_'
+        USERS: 'financial_system_users_v5',
+        CLIENTS_PREFIX: 'clients_v5_',
+        USER_STATUS_PREFIX: 'user_status_v5_',
+        BACKUP_HISTORY: 'financial_system_backup_history_v5',
+        SETTINGS: 'financial_system_settings_v5',
+        LAST_CLIENT: 'last_client_v5',
+        AUDIT_LOG: 'audit_logs_v5',
+        CURRENT_USER: 'current_user_v5',
+        INACTIVE_CLIENTS_PREFIX: 'inactive_clients_v5_',
+        NOTIFICATIONS: 'notifications_v5_'
     };
 
     // ==================== حالة التطبيق ====================
@@ -2237,6 +2220,7 @@
         confirmationCallback: null,
         reactivateClientId: null,
         goldKaratList: ['18', '21', '24'],
+        unreadNotifications: 0,
         developerInfo: {
             name: 'محمد احمد فؤاد',
             whatsapp: '01010421571',
@@ -2246,12 +2230,10 @@
 
     // ==================== نظام التخزين المتكامل ====================
     const Storage = {
-        // دوال المستخدمين
         loadUsers() {
             try {
                 const users = JSON.parse(localStorage.getItem(StorageKeys.USERS));
                 if (!users || !Array.isArray(users)) {
-                    // إنشاء مستخدم افتراضي إذا لم يكن موجوداً
                     const passwordData = Security.hashPassword('admin123');
                     const defaultUsers = [{
                         id: 'admin_' + Date.now(),
@@ -2261,7 +2243,7 @@
                         provider: 'email',
                         role: 'admin',
                         createdAt: new Date().toISOString(),
-                        forcePasswordChange: true // فرض تغيير كلمة المرور عند أول دخول
+                        forcePasswordChange: true
                     }];
                     this.saveUsers(defaultUsers);
                     return defaultUsers;
@@ -2283,13 +2265,11 @@
             }
         },
         
-        // دوال العملاء
         getUserClients(userId) {
             try {
                 const key = StorageKeys.CLIENTS_PREFIX + userId;
                 const clients = JSON.parse(localStorage.getItem(key)) || [];
                 
-                // التأكد من بنية البيانات الصحيحة
                 return clients.map(c => ({
                     id: c.id || Date.now().toString(),
                     name: c.name || 'عميل',
@@ -2332,7 +2312,6 @@
             }
         },
         
-        // دوال العملاء المنتهية
         getInactiveClients(userId) {
             try {
                 const key = StorageKeys.INACTIVE_CLIENTS_PREFIX + userId;
@@ -2353,7 +2332,6 @@
             }
         },
         
-        // دوال الإعدادات
         loadSettings() {
             try {
                 const settings = JSON.parse(localStorage.getItem(StorageKeys.SETTINGS));
@@ -2382,7 +2360,25 @@
             }
         },
         
-        // دوال مساعدة
+        getNotifications(userId) {
+            try {
+                const key = StorageKeys.NOTIFICATIONS + userId;
+                return JSON.parse(localStorage.getItem(key)) || [];
+            } catch (e) {
+                console.error('Error loading notifications:', e);
+                return [];
+            }
+        },
+        
+        saveNotifications(userId, notifications) {
+            try {
+                const key = StorageKeys.NOTIFICATIONS + userId;
+                localStorage.setItem(key, JSON.stringify(notifications));
+            } catch (e) {
+                console.error('Error saving notifications:', e);
+            }
+        },
+        
         parseNumber(value, defaultValue = 0) {
             const num = parseFloat(value);
             return isNaN(num) ? defaultValue : num;
@@ -2416,7 +2412,7 @@
                     users: this.loadUsers(),
                     clients: {},
                     inactiveClients: {},
-                    version: '4.0',
+                    version: '5.0',
                     timestamp: new Date().toISOString()
                 };
 
@@ -2477,7 +2473,6 @@
 
     // ==================== نظام إدارة حالة العملاء ====================
     const ClientStatus = {
-        // التحقق مما إذا كان العميل منتهي (رصيد صفر)
         isInactive(client) {
             if (!client) return false;
             
@@ -2488,7 +2483,6 @@
             return moneySummary.netMoney === 0 && totalGold.net === 0;
         },
         
-        // تحديث حالة العميل (نقل بين النشط والمنتهي)
         updateClientStatus(client) {
             if (!client || !client.userId) return false;
             
@@ -2503,14 +2497,12 @@
             return isInactive;
         },
         
-        // إضافة إلى قائمة المنتهية
         addToInactiveList(client) {
             if (!client || !client.userId) return;
             
             let inactiveClients = Storage.getInactiveClients(client.userId);
             
             if (!inactiveClients.some(c => c.id === client.id)) {
-                // تخزين نسخة مصغرة من العميل
                 inactiveClients.push({
                     id: client.id,
                     name: client.name,
@@ -2525,7 +2517,6 @@
             }
         },
         
-        // إزالة من قائمة المنتهية
         removeFromInactiveList(client) {
             if (!client || !client.userId) return;
             
@@ -2534,7 +2525,6 @@
             Storage.saveInactiveClients(client.userId, inactiveClients);
         },
         
-        // الحصول على قائمة العملاء المنتهية لمستخدم
         getInactiveClients(userId) {
             if (AppState.inactiveClientsCache) return AppState.inactiveClientsCache;
             
@@ -2543,7 +2533,6 @@
             return inactive;
         },
         
-        // الحصول على جميع العملاء المنتهية (للمسؤول)
         getAllInactiveClients() {
             if (AppState.currentUser?.role === 'admin') {
                 const allInactive = [];
@@ -2559,12 +2548,223 @@
             return [];
         },
         
-        // تحديث حالة جميع العملاء
         refreshAllClientsStatus() {
             const clients = getCurrentUserClients();
             clients.forEach(client => {
                 this.updateClientStatus(client);
             });
+        }
+    };
+
+    // ==================== نظام الإشعارات المحسن ====================
+    const NotificationSystem = {
+        // إنشاء إشعار جديد
+        createNotification(clientId, type, title, message) {
+            if (!AppState.currentUser) return;
+            
+            const notifications = Storage.getNotifications(AppState.currentUser.id);
+            
+            const notification = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+                clientId: clientId,
+                type: type,
+                title: title,
+                message: message,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            notifications.unshift(notification); // أحدث إشعار في البداية
+            
+            // الاحتفاظ بآخر 50 إشعار فقط
+            if (notifications.length > 50) {
+                notifications.pop();
+            }
+            
+            Storage.saveNotifications(AppState.currentUser.id, notifications);
+            this.updateNotificationCount();
+            
+            // إظهار Toast للإشعار الجديد
+            showToast(message, type === 'warning' ? 'warning' : type === 'danger' ? 'error' : 'info');
+            
+            return notification;
+        },
+        
+        // تحديث عدد الإشعارات غير المقروءة
+        updateNotificationCount() {
+            if (!AppState.currentUser) return;
+            
+            const notifications = Storage.getNotifications(AppState.currentUser.id);
+            const unreadCount = notifications.filter(n => !n.read).length;
+            
+            AppState.unreadNotifications = unreadCount;
+            
+            const bell = document.getElementById('notification-bell');
+            const count = document.getElementById('notification-count');
+            
+            if (bell && count) {
+                if (unreadCount > 0) {
+                    bell.classList.add('has-alerts');
+                    count.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    count.classList.remove('hidden');
+                } else {
+                    bell.classList.remove('has-alerts');
+                    count.classList.add('hidden');
+                }
+            }
+        },
+        
+        // عرض الإشعارات
+        showNotifications() {
+            if (!AppState.currentUser) return;
+            
+            const notifications = Storage.getNotifications(AppState.currentUser.id);
+            const list = document.getElementById('notifications-list');
+            
+            if (!list) return;
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="text-center py-8 text-gray-500">لا توجد إشعارات</div>';
+                return;
+            }
+            
+            list.innerHTML = notifications.map(n => {
+                const timeAgo = this.getTimeAgo(new Date(n.timestamp));
+                return `
+                    <div class="notification-item ${n.type} ${n.read ? 'opacity-60' : ''}" onclick="NotificationSystem.openNotification('${n.id}')">
+                        <div class="notification-title flex items-center gap-2">
+                            <i class="fas ${n.type === 'warning' ? 'fa-exclamation-triangle text-amber-400' : 
+                                          n.type === 'danger' ? 'fa-times-circle text-rose-400' : 
+                                          n.type === 'inactive' ? 'fa-clock text-gray-400' : 
+                                          'fa-info-circle text-blue-400'}"></i>
+                            <span>${n.title}</span>
+                            ${!n.read ? '<span class="bg-emerald-500 w-2 h-2 rounded-full"></span>' : ''}
+                        </div>
+                        <div class="notification-message">${n.message}</div>
+                        <div class="notification-time">${timeAgo}</div>
+                    </div>
+                `;
+            }).join('');
+        },
+        
+        // فتح إشعار (التنقل إلى صفحة العميل)
+        openNotification(notificationId) {
+            if (!AppState.currentUser) return;
+            
+            const notifications = Storage.getNotifications(AppState.currentUser.id);
+            const notification = notifications.find(n => n.id === notificationId);
+            
+            if (notification) {
+                // تحديد الإشعار كمقروء
+                notification.read = true;
+                Storage.saveNotifications(AppState.currentUser.id, notifications);
+                
+                // تحديث العداد
+                this.updateNotificationCount();
+                
+                // إعادة عرض القائمة
+                this.showNotifications();
+                
+                // التنقل إلى صفحة العميل إذا كان هناك clientId
+                if (notification.clientId) {
+                    // البحث عن العميل في القائمة النشطة أو المنتهية
+                    const clients = getCurrentUserClients();
+                    const inactiveClients = ClientStatus.getAllInactiveClients();
+                    
+                    const client = clients.find(c => c.id === notification.clientId) || 
+                                  inactiveClients.find(c => c.id === notification.clientId);
+                    
+                    if (client) {
+                        viewClient(notification.clientId);
+                        showPage('client');
+                    }
+                }
+            }
+        },
+        
+        // تحديد كل الإشعارات كمقروءة
+        markAllAsRead() {
+            if (!AppState.currentUser) return;
+            
+            const notifications = Storage.getNotifications(AppState.currentUser.id);
+            notifications.forEach(n => n.read = true);
+            Storage.saveNotifications(AppState.currentUser.id, notifications);
+            
+            this.updateNotificationCount();
+            this.showNotifications();
+            
+            showToast('تم تحديد الكل كمقروء', 'success');
+        },
+        
+        // إنشاء إشعارات تلقائية بناءً على حالة العملاء
+        checkAndCreateAlerts() {
+            if (!AppState.currentUser) return;
+            
+            const clients = getCurrentUserClients();
+            
+            clients.forEach(client => {
+                const moneySummary = getClientMoneySummary(client);
+                const goldSummary = getGoldSummary(client);
+                const totalGold = getTotalGold(goldSummary);
+                
+                // رصيد كبير جداً
+                if (Math.abs(moneySummary.netMoney) > 1000000) {
+                    this.createNotification(
+                        client.id,
+                        'warning',
+                        'رصيد كبير',
+                        `${client.name} لديه رصيد كبير: ${formatMoney(Math.abs(moneySummary.netMoney))}`
+                    );
+                }
+                
+                // معاملات ذهب كثيرة
+                if (client.goldTransactions.length > 10) {
+                    this.createNotification(
+                        client.id,
+                        'info',
+                        'معاملات ذهب كثيرة',
+                        `${client.name} لديه ${client.goldTransactions.length} معاملة ذهب`
+                    );
+                }
+                
+                // عدم وجود معاملات منذ فترة
+                const allTransactions = [...client.transactions, ...client.goldTransactions];
+                if (allTransactions.length > 0) {
+                    const sorted = allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const lastTransaction = sorted[0];
+                    const daysSince = (new Date() - new Date(lastTransaction.date)) / (1000 * 60 * 60 * 24);
+                    
+                    if (daysSince > 90) {
+                        this.createNotification(
+                            client.id,
+                            'inactive',
+                            'عميل غير نشط',
+                            `${client.name} غير نشط منذ ${Math.floor(daysSince)} يوم`
+                        );
+                    }
+                }
+                
+                // رصيد ذهب كبير
+                if (Math.abs(totalGold.net) > 1000) {
+                    this.createNotification(
+                        client.id,
+                        'warning',
+                        'رصيد ذهب كبير',
+                        `${client.name} لديه رصيد ذهب كبير: ${formatGold(Math.abs(totalGold.net))}`
+                    );
+                }
+            });
+        },
+        
+        // حساب الوقت المنقضي
+        getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            if (seconds < 60) return 'منذ لحظات';
+            if (seconds < 3600) return `منذ ${Math.floor(seconds / 60)} دقيقة`;
+            if (seconds < 86400) return `منذ ${Math.floor(seconds / 3600)} ساعة`;
+            if (seconds < 2592000) return `منذ ${Math.floor(seconds / 86400)} يوم`;
+            return `منذ ${Math.floor(seconds / 2592000)} شهر`;
         }
     };
 
@@ -2592,19 +2792,17 @@
         }
     }
 
-    // ==================== دوال الذهب المحسنة ====================
+    // ==================== دوال الذهب ====================
     function getGoldSummary(client) {
         if (!client) return {};
         
         const summary = {};
         
-        // تهيئة العيارات الأساسية
         AppState.goldKaratList.forEach(karat => {
             summary[karat] = { for: 0, on: 0 };
         });
         summary.other = { for: 0, on: 0 };
         
-        // تجميع من المعاملات فقط
         (client.goldTransactions || []).forEach(t => {
             const karat = t.karat || 'other';
             const amount = Storage.parseNumber(t.amount, 0);
@@ -2670,7 +2868,7 @@
         };
     }
 
-    // ==================== دوال إعادة حساب الأرصدة (مرتبة زمنياً) ====================
+    // ==================== دوال إعادة حساب الأرصدة ====================
     function recalculateBalances(client) {
         if (!client) return client;
         
@@ -2689,7 +2887,7 @@
             return { ...t, runningBalance };
         });
         
-        // ترتيب معاملات الذهب حسب التاريخ (لكل عيار على حدة)
+        // ترتيب معاملات الذهب حسب التاريخ
         const goldByKarat = {};
         (client.goldTransactions || []).forEach(t => {
             const karat = t.karat || 'other';
@@ -2711,7 +2909,6 @@
             });
         });
         
-        // ترتيب جميع معاملات الذهب حسب التاريخ مرة أخرى
         client.goldTransactions = reorderedGold.sort((a, b) => new Date(a.date) - new Date(b.date));
         
         return client;
@@ -2833,7 +3030,6 @@
         if (passwordField && !passwordField.classList.contains('hidden') && passwordInput) {
             const password = passwordInput.value;
             
-            // التحقق من كلمة المرور الحالية للمستخدم
             const users = Storage.loadUsers();
             const user = users.find(u => u.id === AppState.currentUser?.id);
             
@@ -2850,101 +3046,87 @@
         closeConfirmationModal();
     }
 
-    // ==================== نظام الإشعارات ====================
-    function checkNotifications() {
-        if (!AppState.currentUser) return;
-        
-        const clients = getCurrentUserClients();
-        AppState.alerts = [];
-        
-        clients.forEach(client => {
-            const moneySummary = getClientMoneySummary(client);
-            const goldSummary = getGoldSummary(client);
-            const totalGold = getTotalGold(goldSummary);
-            
-            // رصيد كبير جداً
-            if (Math.abs(moneySummary.netMoney) > 1000000) {
-                AppState.alerts.push({
-                    type: 'warning',
-                    message: `${client.name} لديه رصيد كبير: ${formatMoney(Math.abs(moneySummary.netMoney))}`
-                });
-            }
-            
-            // معاملات ذهب كثيرة
-            if (client.goldTransactions.length > 10) {
-                AppState.alerts.push({
-                    type: 'info',
-                    message: `${client.name} لديه ${client.goldTransactions.length} معاملة ذهب`
-                });
-            }
-            
-            // عدم وجود معاملات منذ فترة
-            const allTransactions = [...client.transactions, ...client.goldTransactions];
-            if (allTransactions.length > 0) {
-                const sorted = allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-                const lastTransaction = sorted[0];
-                const daysSince = (new Date() - new Date(lastTransaction.date)) / (1000 * 60 * 60 * 24);
-                
-                if (daysSince > 90) {
-                    AppState.alerts.push({
-                        type: 'inactive',
-                        message: `${client.name} غير نشط منذ ${Math.floor(daysSince)} يوم`
-                    });
-                }
-            }
-            
-            // رصيد ذهب كبير
-            if (Math.abs(totalGold.net) > 1000) {
-                AppState.alerts.push({
-                    type: 'warning',
-                    message: `${client.name} لديه رصيد ذهب كبير: ${formatGold(Math.abs(totalGold.net))}`
-                });
-            }
-        });
-        
-        updateNotificationBell();
-    }
-
-    function updateNotificationBell() {
-        const bell = document.getElementById('notification-bell');
-        const count = document.getElementById('notification-count');
-        
-        if (!bell || !count) return;
-        
-        if (AppState.alerts.length > 0) {
-            bell.classList.add('has-alerts');
-            count.textContent = AppState.alerts.length;
-            count.classList.remove('hidden');
-        } else {
-            bell.classList.remove('has-alerts');
-            count.classList.add('hidden');
-        }
-    }
-
+    // ==================== دوال الإشعارات ====================
     function toggleNotifications() {
         const center = document.getElementById('notification-center');
-        const list = document.getElementById('notifications-list');
         
-        if (!center || !list) return;
+        if (!center) return;
         
         if (center.classList.contains('active')) {
             center.classList.remove('active');
             center.classList.add('hidden');
         } else {
-            list.innerHTML = AppState.alerts.map(alert => `
-                <div class="notification-item ${alert.type} p-3 border-b border-border hover:bg-tertiary cursor-pointer">
-                    <i class="fas ${alert.type === 'warning' ? 'fa-exclamation-triangle text-amber-400' : 
-                        alert.type === 'info' ? 'fa-info-circle text-blue-400' : 
-                        'fa-clock text-gray-400'} ml-2"></i>
-                    ${alert.message}
-                </div>
-            `).join('');
+            NotificationSystem.showNotifications();
             center.classList.remove('hidden');
             center.classList.add('active');
         }
     }
 
+    function markAllNotificationsRead() {
+        NotificationSystem.markAllAsRead();
+    }
+
     // ==================== دوال النسخ الاحتياطي ====================
+    function checkForBackup() {
+        const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+        if (history.length > 0) {
+            const modal = document.getElementById('restore-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+    }
+
+    function restoreBackup() {
+        showLoading();
+
+        setTimeout(() => {
+            try {
+                const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+                if (history.length > 0) {
+                    const latestBackup = history[history.length - 1];
+                    
+                    if (latestBackup.data.users) {
+                        localStorage.setItem(StorageKeys.USERS, JSON.stringify(latestBackup.data.users));
+                    }
+
+                    if (latestBackup.data.clients) {
+                        Object.keys(latestBackup.data.clients).forEach(userId => {
+                            const key = StorageKeys.CLIENTS_PREFIX + userId;
+                            localStorage.setItem(key, JSON.stringify(latestBackup.data.clients[userId]));
+                        });
+                    }
+                    
+                    if (latestBackup.data.inactiveClients) {
+                        Object.keys(latestBackup.data.inactiveClients).forEach(userId => {
+                            const key = StorageKeys.INACTIVE_CLIENTS_PREFIX + userId;
+                            localStorage.setItem(key, JSON.stringify(latestBackup.data.inactiveClients[userId]));
+                        });
+                    }
+
+                    const modal = document.getElementById('restore-modal');
+                    if (modal) modal.style.display = 'none';
+
+                    hideLoading();
+                    showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+                    Storage.logAction('استعادة نسخة احتياطية', { from: 'auto' });
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            } catch (error) {
+                hideLoading();
+                showToast('حدث خطأ في استعادة النسخة الاحتياطية', 'error');
+                startFresh();
+            }
+        }, 500);
+    }
+
+    function startFresh() {
+        const modal = document.getElementById('restore-modal');
+        if (modal) modal.style.display = 'none';
+        showToast('تم بدء نظام جديد', 'success');
+    }
+
     function toggleAutoBackup() {
         const toggle = document.getElementById('auto-backup-toggle');
         if (!toggle) return;
@@ -3026,7 +3208,7 @@
                 users: Storage.loadUsers(),
                 clients: {},
                 inactiveClients: {},
-                version: '4.0',
+                version: '5.0',
                 timestamp: new Date().toISOString()
             };
 
@@ -3036,7 +3218,6 @@
                 data.inactiveClients[user.id] = Storage.getInactiveClients(user.id);
             });
 
-            // محاكاة رفع للسحابة
             await new Promise(resolve => setTimeout(resolve, 2000));
             
             showToast('تم رفع النسخة الاحتياطية للسحابة بنجاح', 'success');
@@ -3140,7 +3321,7 @@
                     }, 500);
                 }
             },
-            true // طلب كلمة المرور
+            true
         );
     }
 
@@ -3186,7 +3367,6 @@
                 setTimeout(() => {
                     try {
                         if (AppState.currentUser.role === 'admin') {
-                            // حذف جميع العملاء لجميع المستخدمين
                             const users = Storage.loadUsers();
                             users.forEach(user => {
                                 const clientKey = StorageKeys.CLIENTS_PREFIX + user.id;
@@ -3196,7 +3376,6 @@
                                 localStorage.setItem(inactiveKey, JSON.stringify([]));
                             });
                         } else {
-                            // حذف عملاء المستخدم الحالي فقط
                             Storage.saveUserClients(AppState.currentUser.id, []);
                             Storage.saveInactiveClients(AppState.currentUser.id, []);
                         }
@@ -3217,7 +3396,7 @@
                     }
                 }, 500);
             },
-            true // طلب كلمة المرور
+            true
         );
     }
 
@@ -3304,6 +3483,9 @@
             }
             
             Storage.logAction('تسجيل دخول', {});
+            
+            // تحديث عداد الإشعارات
+            NotificationSystem.updateNotificationCount();
         }, 1000);
     }
 
@@ -3364,6 +3546,8 @@
             hideLoading();
             showToast(`مرحباً بك ${user.name}`, 'success');
             Storage.logAction('تسجيل دخول اجتماعي', { provider });
+            
+            NotificationSystem.updateNotificationCount();
         }, 1500);
     }
 
@@ -3513,7 +3697,6 @@
         }
 
         loadUserData();
-        checkNotifications();
     }
 
     function checkSavedSession() {
@@ -3530,6 +3713,7 @@
                 }
 
                 updateUserUI();
+                NotificationSystem.updateNotificationCount();
             } catch (e) {
                 console.error('Error loading session:', e);
             }
@@ -3541,7 +3725,6 @@
         const modal = document.getElementById('change-password-modal');
         if (!modal) return;
         
-        // تنظيف الحقول
         const currentPass = document.getElementById('change-current-password');
         const newPass = document.getElementById('change-new-password');
         const confirmPass = document.getElementById('change-confirm-password');
@@ -3594,7 +3777,6 @@
             users[userIndex].forcePasswordChange = false;
             Storage.saveUsers(users);
 
-            // تحديث الجلسة
             AppState.currentUser.forcePasswordChange = false;
             localStorage.setItem(StorageKeys.CURRENT_USER, JSON.stringify(AppState.currentUser));
 
@@ -3629,12 +3811,10 @@
         const clients = getCurrentUserClients();
         const inactiveClients = ClientStatus.getAllInactiveClients();
         
-        // البحث في العملاء النشطين
         const activeMatches = clients.filter(c => 
             c.name.toLowerCase().includes(name.toLowerCase())
         ).map(c => ({ ...c, status: 'active' }));
         
-        // البحث في العملاء المنتهية
         const inactiveMatches = inactiveClients.filter(c => 
             c.name.toLowerCase().includes(name.toLowerCase())
         ).map(c => ({ ...c, status: 'inactive' }));
@@ -3646,7 +3826,6 @@
             return;
         }
         
-        // عرض النتائج
         resultsDiv.innerHTML = allMatches.map(client => {
             const moneySummary = getClientMoneySummary(client);
             const totalGold = getTotalGold(getGoldSummary(client));
@@ -3677,17 +3856,14 @@
 
     function selectDuplicateClient(clientId, status) {
         if (status === 'active') {
-            // فتح العميل النشط
             viewClient(clientId);
             showPage('client');
         } else {
-            // فتح نافذة تفعيل العميل المنتهي
             AppState.reactivateClientId = clientId;
             const modal = document.getElementById('reactivate-modal');
             if (modal) modal.classList.add('active');
         }
         
-        // إخفاء نتائج البحث
         const resultsDiv = document.getElementById('duplicate-results');
         if (resultsDiv) resultsDiv.classList.add('hidden');
         
@@ -3705,11 +3881,9 @@
         closeReactivateModal();
         
         if (AppState.reactivateClientId) {
-            // فتح صفحة العميل لإضافة معاملة
             viewClient(AppState.reactivateClientId);
             showPage('client');
             
-            // فتح نافذة إضافة معاملة تلقائياً
             setTimeout(() => {
                 if (confirm('العميل في قائمة المنتهية. هل تريد إضافة معاملة لتفعيله؟')) {
                     openTransactionModal();
@@ -3718,7 +3892,7 @@
         }
     }
 
-    // ==================== دوال إضافة العملاء ====================
+    // ==================== دوال إضافة العملاء المحسنة ====================
     function addNewClient(andNew = false) {
         const nameInput = document.getElementById('client-name');
         if (!nameInput) return;
@@ -3798,10 +3972,8 @@
             });
         }
 
-        // إعادة حساب الأرصدة
         recalculateBalances(newClient);
         
-        // التحقق من حالة العميل
         ClientStatus.updateClientStatus(newClient);
 
         const userClients = Storage.getUserClients(AppState.currentUser.id);
@@ -3810,6 +3982,14 @@
 
         localStorage.setItem(StorageKeys.LAST_CLIENT, newClient.id);
         AppState.clientsCache = null;
+
+        // إنشاء إشعار بإضافة عميل جديد
+        NotificationSystem.createNotification(
+            newClient.id,
+            'info',
+            'عميل جديد',
+            `تم إضافة العميل ${newClient.name} بنجاح`
+        );
 
         showToast('تم إضافة العميل بنجاح', 'success');
         Storage.logAction('إضافة عميل', { clientId: newClient.id, clientName: name });
@@ -3874,7 +4054,6 @@
         const goldSummary = getGoldSummary(client);
         const totalGold = getTotalGold(goldSummary);
 
-        // عرض التصنيفات
         const tagsDisplay = document.getElementById('client-tags-display');
         if (tagsDisplay) {
             tagsDisplay.innerHTML = (client.tags || []).map(tag => 
@@ -3882,7 +4061,6 @@
             ).join('');
         }
 
-        // عرض تفاصيل الذهب
         let goldDetailsHtml = '';
         Object.keys(goldSummary).forEach(karat => {
             const g = goldSummary[karat];
@@ -4079,7 +4257,6 @@
                 const filtered = userClients.filter(c => c.id !== clientId);
                 Storage.saveUserClients(client.userId, filtered);
                 
-                // إزالة من قائمة المنتهية إذا كان موجوداً
                 ClientStatus.removeFromInactiveList(client);
 
                 const lastClientId = localStorage.getItem(StorageKeys.LAST_CLIENT);
@@ -4158,7 +4335,6 @@
                 userClients[userClientIndex] = client;
                 Storage.saveUserClients(client.userId, userClients);
                 
-                // تحديث الحالة (قد يتغير بسبب تعديل الاسم فقط)
                 ClientStatus.updateClientStatus(client);
                 
                 AppState.clientsCache = null;
@@ -4167,7 +4343,7 @@
                 showToast('تم تعديل بيانات العميل بنجاح', 'success');
                 Storage.logAction('تعديل عميل', { clientId: client.id, clientName: client.name });
             },
-            true // طلب كلمة المرور
+            true
         );
     }
 
@@ -4294,7 +4470,6 @@
                     if (responsibleInput) client.transactions[txIndex].responsible = responsibleInput.value.trim();
                     if (noteInput) client.transactions[txIndex].note = noteInput.value.trim();
                     
-                    // إعادة حساب الأرصدة
                     recalculateBalances(client);
                 } else {
                     const txIndex = client.goldTransactions.findIndex(t => t.id === editingTransaction.id);
@@ -4321,11 +4496,9 @@
                     if (responsibleInput) client.goldTransactions[txIndex].responsible = responsibleInput.value.trim();
                     if (noteInput) client.goldTransactions[txIndex].note = noteInput.value.trim();
                     
-                    // إعادة حساب الأرصدة
                     recalculateBalances(client);
                 }
                 
-                // تحديث حالة العميل
                 const wasInactive = ClientStatus.updateClientStatus(client);
                 
                 const userClients = Storage.getUserClients(client.userId);
@@ -4345,7 +4518,7 @@
                 
                 Storage.logAction('تعديل معاملة', { clientId: client.id, transactionId: editingTransaction.id });
             },
-            true // طلب كلمة المرور
+            true
         );
     }
 
@@ -4424,10 +4597,8 @@
 
         client.transactions.push(newTransaction);
         
-        // إعادة حساب الأرصدة
         recalculateBalances(client);
         
-        // التحقق من حالة العميل
         const wasInactive = ClientStatus.updateClientStatus(client);
 
         const userClients = Storage.getUserClients(client.userId);
@@ -4446,7 +4617,6 @@
         
         Storage.logAction('إضافة معاملة نقدية', { clientId: client.id, amount });
         
-        // العودة إلى صفحة العميل
         viewClient(AppState.currentClientId);
     }
 
@@ -4462,10 +4632,8 @@
 
                 client.transactions = client.transactions.filter(t => t.id !== transactionId);
 
-                // إعادة حساب الأرصدة
                 recalculateBalances(client);
                 
-                // تحديث حالة العميل
                 const wasInactive = ClientStatus.updateClientStatus(client);
 
                 const userClients = Storage.getUserClients(client.userId);
@@ -4610,10 +4778,8 @@
 
         client.goldTransactions.push(newTransaction);
         
-        // إعادة حساب الأرصدة
         recalculateBalances(client);
         
-        // التحقق من حالة العميل
         const wasInactive = ClientStatus.updateClientStatus(client);
 
         const userClients = Storage.getUserClients(client.userId);
@@ -4647,10 +4813,8 @@
 
                 client.goldTransactions = client.goldTransactions.filter(t => t.id !== transactionId);
 
-                // إعادة حساب الأرصدة
                 recalculateBalances(client);
                 
-                // تحديث حالة العميل
                 const wasInactive = ClientStatus.updateClientStatus(client);
 
                 const userClients = Storage.getUserClients(client.userId);
@@ -4679,7 +4843,6 @@
         
         const clients = getCurrentUserClients();
         
-        // تحديث حالة جميع العملاء
         ClientStatus.refreshAllClientsStatus();
         
         renderDashboard(clients);
@@ -4948,17 +5111,14 @@
     }
 
     function selectInactiveClient(clientId) {
-        // يمكن إضافة منطق للنقر على العميل المنتهي
         viewInactiveClientDetails(clientId);
     }
 
     function viewInactiveClientDetails(clientId) {
-        // البحث في العملاء النشطين أولاً
         const clients = getCurrentUserClients();
         let client = clients.find(c => c.id === clientId);
         
         if (!client) {
-            // البحث في قائمة المنتهية
             const inactiveClients = ClientStatus.getAllInactiveClients();
             client = inactiveClients.find(c => c.id === clientId);
         }
@@ -4971,7 +5131,6 @@
     function reactivateClient(clientId) {
         AppState.reactivateClientId = clientId;
         
-        // البحث عن العميل في القائمة المنتهية
         const inactiveClients = ClientStatus.getAllInactiveClients();
         const client = inactiveClients.find(c => c.id === clientId);
         
@@ -4980,12 +5139,10 @@
                 'تفعيل العميل',
                 `هل تريد تفعيل العميل "${escapeHtml(client.name)}"؟ سيتم نقله إلى قائمة النشطين.`,
                 () => {
-                    // إزالة من قائمة المنتهية
                     ClientStatus.removeFromInactiveList(client);
                     
                     showToast('تم تفعيل العميل بنجاح', 'success');
                     
-                    // تحديث القوائم
                     renderActiveClientsList();
                     renderInactiveClientsList();
                 }
@@ -5100,7 +5257,6 @@
             </div>
         `;
 
-        // أفضل 5 عملاء
         const topClientsContainer = document.getElementById('top-clients');
         if (topClientsContainer) {
             const topClients = [...clients]
@@ -5593,7 +5749,6 @@
         try {
             const wb = XLSX.utils.book_new();
 
-            // شيت البيان
             const summaryData = [];
             summaryData.push(['م', 'الاسم', 'له مال', 'عليه مال', 'صافي المال', 'ذهب له', 'ذهب عليه', 'صافي الذهب', 'الحالة']);
             
@@ -5637,7 +5792,6 @@
             ];
             XLSX.utils.book_append_sheet(wb, wsSummary, 'بيان');
 
-            // شيت لكل عميل
             clients.forEach(client => {
                 const transactions = [];
                 
@@ -5652,7 +5806,6 @@
                     'الرصيد'
                 ]);
 
-                // معاملات نقدية
                 client.transactions.forEach((t, idx) => {
                     transactions.push([
                         idx + 1,
@@ -5666,7 +5819,6 @@
                     ]);
                 });
 
-                // معاملات ذهب
                 client.goldTransactions.forEach((t, idx) => {
                     transactions.push([
                         idx + 1000,
@@ -6205,7 +6357,6 @@
                         goldTransactions: []
                     };
                     
-                    // تحويل المعاملات النقدية
                     if (oldClient.transactions && Array.isArray(oldClient.transactions)) {
                         oldClient.transactions.forEach(oldTx => {
                             if (oldTx.amount && oldTx.amount > 0) {
@@ -6221,7 +6372,6 @@
                         });
                     }
                     
-                    // محاولة استخراج الذهب من الملاحظات
                     if (newClient.notes && (
                         newClient.notes.includes('جرام') || 
                         newClient.notes.includes('ذهب') || 
@@ -6244,7 +6394,6 @@
                         }
                     }
                     
-                    // إعادة حساب الأرصدة
                     recalculateBalances(newClient);
                     
                     convertedClients.push(newClient);
@@ -6492,7 +6641,6 @@
             return;
         }
 
-        // توزيع العملاء
         const byType = {
             له: clients.filter(c => getClientMoneySummary(c).netMoney > 0).length,
             عليه: clients.filter(c => getClientMoneySummary(c).netMoney < 0).length,
@@ -6525,7 +6673,6 @@
             });
         }
 
-        // المعاملات النقدية
         const cashByMonth = {};
         clients.forEach(c => {
             c.transactions.forEach(t => {
@@ -6561,7 +6708,6 @@
             });
         }
 
-        // معاملات الذهب
         const goldByKarat = {};
         clients.forEach(c => {
             c.goldTransactions.forEach(t => {
@@ -6597,7 +6743,6 @@
             });
         }
 
-        // توزيع الذهب حسب العيار
         if (AppState.chartInstances.goldKarat) {
             AppState.chartInstances.goldKarat.destroy();
         }
@@ -6641,15 +6786,14 @@
         AppState.systemSettings = Storage.loadSettings();
         updateSettingsUI();
         
-        // بدء فحص التنبيهات
-        AppState.notificationInterval = setInterval(checkNotifications, 60000);
+        AppState.notificationInterval = setInterval(() => {
+            NotificationSystem.checkAndCreateAlerts();
+        }, 60000);
         
-        // تفعيل النسخ الاحتياطي التلقائي
         if (AppState.systemSettings.autoBackup) {
             startAutoBackup();
         }
         
-        // التحقق من حالة جميع العملاء عند بدء التشغيل
         setTimeout(() => {
             if (AppState.currentUser) {
                 const clients = getCurrentUserClients();
@@ -6672,8 +6816,8 @@
         if (backupSchedule) backupSchedule.value = AppState.systemSettings.backupSchedule;
     }
 
-    // بدء التطبيق
     document.addEventListener('DOMContentLoaded', () => {
+        checkForBackup();
         initializeSystem();
         checkSavedSession();
 
@@ -6682,7 +6826,6 @@
             if (nav) nav.classList.add('collapsed');
         }
         
-        // إضافة مستمعين للأحداث
         document.querySelectorAll('#tag-selector .tag').forEach(tag => {
             tag.addEventListener('click', function() {
                 const tagName = this.getAttribute('data-tag');
@@ -6703,7 +6846,6 @@
             });
         });
         
-        // إخفاء نتائج البحث المكرر عند النقر خارجها
         document.addEventListener('click', function(e) {
             const resultsDiv = document.getElementById('duplicate-results');
             const nameInput = document.getElementById('client-name');
@@ -6715,7 +6857,6 @@
             }
         });
         
-        // إخفاء القائمة المنسدلة للمستخدم عند النقر خارجها
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('user-menu-dropdown');
             const userMenu = document.getElementById('user-menu');
