@@ -929,8 +929,8 @@
         /* Export Buttons */
         .export-buttons {
             position: fixed;
-            bottom: 20px;
-            right: 100px;
+            bottom: 90px;
+            right: 20px;
             display: flex;
             gap: 10px;
             z-index: 99;
@@ -1184,6 +1184,34 @@
         .edit-field-group textarea:focus {
             outline: none;
             border-color: var(--accent-primary);
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 640px) {
+            .export-buttons {
+                bottom: 80px;
+                right: 10px;
+            }
+            .export-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            .whatsapp-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            .developer-info {
+                bottom: 80px;
+                left: 10px;
+                padding: 6px 12px;
+            }
+            .developer-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -2445,8 +2473,6 @@ function getClientMoneySummary(client) {
 
 /**
  * حساب ملخص الذهب من المعاملات مباشرة - مصححة
- * type 'out' = له ذهب (سلمت له ذهب)
- * type 'in' = عليه ذهب (استلمت منه ذهب)
  */
 function getGoldSummary(client) {
     if (!client) return {};
@@ -2504,7 +2530,6 @@ function recalculateBalances(client) {
     if (!client) return client;
     
     // ========== حساب المعاملات النقدية ==========
-    // ترتيب المعاملات حسب التاريخ
     const sortedTransactions = [...(client.transactions || [])].sort((a, b) => 
         new Date(a.date) - new Date(b.date)
     );
@@ -2521,7 +2546,6 @@ function recalculateBalances(client) {
     });
     
     // ========== حساب معاملات الذهب ==========
-    // تجميع المعاملات حسب العيار
     const goldByKarat = {};
     (client.goldTransactions || []).forEach(t => {
         const karat = t.karat || 'other';
@@ -2529,7 +2553,6 @@ function recalculateBalances(client) {
         goldByKarat[karat].push(t);
     });
     
-    // حساب الرصيد لكل عيار على حدة
     const allGoldTransactions = [];
     Object.keys(goldByKarat).forEach(karat => {
         const sorted = goldByKarat[karat].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -2551,7 +2574,6 @@ function recalculateBalances(client) {
         });
     });
     
-    // إعادة ترتيب كل المعاملات حسب التاريخ
     client.goldTransactions = allGoldTransactions.sort((a, b) => 
         new Date(a.date) - new Date(b.date)
     );
@@ -2572,26 +2594,6 @@ function recalculateBalances(client) {
     client.goldByKarat = goldByKaratNew;
     
     return client;
-}
-
-/**
- * تحديث حالة العميل (نشط/منتهي)
- */
-function updateClientBalancesAndStatus(client) {
-    if (!client || !client.userId) return false;
-    
-    // إعادة حساب الأرصدة
-    recalculateBalances(client);
-    
-    // التحقق من حالة العميل
-    const moneySummary = getClientMoneySummary(client);
-    const goldSummary = getGoldSummary(client);
-    const totalGold = getTotalGold(goldSummary);
-    
-    // العميل منتهي إذا كان صافي المال = 0 وصافي الذهب = 0
-    const isInactive = (moneySummary.netMoney === 0) && (totalGold.net === 0);
-    
-    return isInactive;
 }
 
 // ==================== نظام التخزين ====================
@@ -2856,6 +2858,11 @@ function escapeHtml(unsafe) {
     return String(unsafe).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
+function showAutoBackupIndicator(show) {
+    const indicator = document.getElementById('auto-backup-indicator');
+    if (indicator) indicator.classList.toggle('hidden', !show);
+}
+
 // ==================== الحصول على العملاء ====================
 function getCurrentUserClients() {
     if (AppState.clientsCache) return AppState.clientsCache;
@@ -3029,36 +3036,47 @@ const NotificationSystem = {
 
 // ==================== دوال المصادقة ====================
 function handleLogin() {
-    const email = document.getElementById('login-email')?.value.trim();
-    const password = document.getElementById('login-password')?.value;
+    const emailEl = document.getElementById('login-email');
+    const passwordEl = document.getElementById('login-password');
     const errorDiv = document.getElementById('login-error');
+    
+    const email = emailEl?.value.trim();
+    const password = passwordEl?.value;
+    
     if (!email || !password) {
         if (errorDiv) {
             errorDiv.querySelector('span').textContent = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
             errorDiv.classList.remove('hidden');
+            errorDiv.classList.add('flex');
         }
         return;
     }
+    
     showLoading();
     setTimeout(() => {
         const users = Storage.loadUsers();
         const user = users.find(u => u.email === email);
+        
         if (!user || !Security.verifyPassword(password, user.password)) {
             hideLoading();
             if (errorDiv) {
                 errorDiv.querySelector('span').textContent = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
                 errorDiv.classList.remove('hidden');
+                errorDiv.classList.add('flex');
             }
             return;
         }
+        
         if (Security.getUserStatus(user.id) !== 'active') {
             hideLoading();
             if (errorDiv) {
                 errorDiv.querySelector('span').textContent = 'هذا الحساب غير نشط';
                 errorDiv.classList.remove('hidden');
+                errorDiv.classList.add('flex');
             }
             return;
         }
+        
         AppState.currentUser = {
             id: user.id, name: user.name, email: user.email,
             role: user.role || 'user', provider: user.provider,
@@ -3080,6 +3098,7 @@ function handleSocialLogin(provider) {
         const name = provider === 'google' ? `مستخدم Google ${Math.floor(Math.random() * 100)}` : `مستخدم Microsoft ${Math.floor(Math.random() * 100)}`;
         const users = Storage.loadUsers();
         let user = users.find(u => u.email === email);
+        
         if (!user) {
             user = {
                 id: provider + '_' + Date.now(), name, email,
@@ -3092,11 +3111,13 @@ function handleSocialLogin(provider) {
             Security.setUserStatus(user.id, 'active');
             Storage.saveUserClients(user.id, []);
         }
+        
         if (Security.getUserStatus(user.id) !== 'active') {
             hideLoading();
             showToast('هذا الحساب غير نشط', 'error');
             return;
         }
+        
         AppState.currentUser = { id: user.id, name: user.name, email: user.email, role: user.role || 'user', provider: user.provider, forcePasswordChange: false };
         localStorage.setItem(StorageKeys.CURRENT_USER, JSON.stringify(AppState.currentUser));
         updateUserUI();
@@ -3108,23 +3129,40 @@ function handleSocialLogin(provider) {
 }
 
 function handleRegister() {
-    const name = document.getElementById('register-name')?.value.trim();
-    const email = document.getElementById('register-email')?.value.trim();
-    const password = document.getElementById('register-password')?.value;
-    const confirm = document.getElementById('register-confirm')?.value;
+    const nameEl = document.getElementById('register-name');
+    const emailEl = document.getElementById('register-email');
+    const passwordEl = document.getElementById('register-password');
+    const confirmEl = document.getElementById('register-confirm');
     const errorDiv = document.getElementById('register-error');
     const successDiv = document.getElementById('register-success');
     
+    const name = nameEl?.value.trim();
+    const email = emailEl?.value.trim();
+    const password = passwordEl?.value;
+    const confirm = confirmEl?.value;
+    
     if (!name || !email || !password || !confirm) {
-        if (errorDiv) { errorDiv.querySelector('span').textContent = 'الرجاء إدخال جميع البيانات'; errorDiv.classList.remove('hidden'); }
+        if (errorDiv) { 
+            errorDiv.querySelector('span').textContent = 'الرجاء إدخال جميع البيانات'; 
+            errorDiv.classList.remove('hidden'); 
+            errorDiv.classList.add('flex');
+        }
         return;
     }
     if (password !== confirm) {
-        if (errorDiv) { errorDiv.querySelector('span').textContent = 'كلمة المرور غير متطابقة'; errorDiv.classList.remove('hidden'); }
+        if (errorDiv) { 
+            errorDiv.querySelector('span').textContent = 'كلمة المرور غير متطابقة'; 
+            errorDiv.classList.remove('hidden'); 
+            errorDiv.classList.add('flex');
+        }
         return;
     }
     if (password.length < 6) {
-        if (errorDiv) { errorDiv.querySelector('span').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errorDiv.classList.remove('hidden'); }
+        if (errorDiv) { 
+            errorDiv.querySelector('span').textContent = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل'; 
+            errorDiv.classList.remove('hidden'); 
+            errorDiv.classList.add('flex');
+        }
         return;
     }
     
@@ -3133,9 +3171,14 @@ function handleRegister() {
         const users = Storage.loadUsers();
         if (users.some(u => u.email === email)) {
             hideLoading();
-            if (errorDiv) { errorDiv.querySelector('span').textContent = 'البريد الإلكتروني مستخدم بالفعل'; errorDiv.classList.remove('hidden'); }
+            if (errorDiv) { 
+                errorDiv.querySelector('span').textContent = 'البريد الإلكتروني مستخدم بالفعل'; 
+                errorDiv.classList.remove('hidden'); 
+                errorDiv.classList.add('flex');
+            }
             return;
         }
+        
         const newUser = {
             id: 'user_' + Date.now(), name, email,
             password: Security.hashPassword(password),
@@ -3146,8 +3189,13 @@ function handleRegister() {
         Storage.saveUsers(users);
         Security.setUserStatus(newUser.id, 'active');
         Storage.saveUserClients(newUser.id, []);
+        
         hideLoading();
-        if (successDiv) { successDiv.querySelector('span').textContent = 'تم إنشاء الحساب بنجاح!'; successDiv.classList.remove('hidden'); }
+        if (successDiv) { 
+            successDiv.querySelector('span').textContent = 'تم إنشاء الحساب بنجاح!'; 
+            successDiv.classList.remove('hidden'); 
+            successDiv.classList.add('flex');
+        }
         setTimeout(() => showLogin(), 2000);
     }, 1000);
 }
@@ -3157,19 +3205,34 @@ function logout() {
     localStorage.removeItem(StorageKeys.CURRENT_USER);
     AppState.currentUser = null;
     AppState.clientsCache = null;
-    document.getElementById('main-app').style.display = 'none';
-    document.getElementById('login-container').style.display = 'flex';
+    
+    const mainApp = document.getElementById('main-app');
+    const loginContainer = document.getElementById('login-container');
+    
+    if (mainApp) mainApp.style.display = 'none';
+    if (loginContainer) loginContainer.style.display = 'flex';
+    
     showToast('تم تسجيل الخروج بنجاح', 'success');
 }
 
 function updateUserUI() {
-    document.getElementById('user-name').textContent = AppState.currentUser.name;
-    document.getElementById('user-email').textContent = AppState.currentUser.email;
-    document.getElementById('user-avatar').textContent = AppState.currentUser.name.charAt(0);
-    document.getElementById('user-role-badge').textContent = AppState.currentUser.role === 'admin' ? 'مدير النظام' : 'مستخدم عادي';
-    document.getElementById('login-container').style.display = 'none';
-    document.getElementById('main-app').style.display = 'block';
-    document.getElementById('users-menu').style.display = AppState.currentUser.role === 'admin' ? 'flex' : 'none';
+    const userName = document.getElementById('user-name');
+    const userEmail = document.getElementById('user-email');
+    const userAvatar = document.getElementById('user-avatar');
+    const roleBadge = document.getElementById('user-role-badge');
+    const loginContainer = document.getElementById('login-container');
+    const mainApp = document.getElementById('main-app');
+    const usersMenu = document.getElementById('users-menu');
+    
+    if (userName) userName.textContent = AppState.currentUser.name;
+    if (userEmail) userEmail.textContent = AppState.currentUser.email;
+    if (userAvatar) userAvatar.textContent = AppState.currentUser.name.charAt(0);
+    if (roleBadge) roleBadge.textContent = AppState.currentUser.role === 'admin' ? 'مدير النظام' : 'مستخدم عادي';
+    
+    if (loginContainer) loginContainer.style.display = 'none';
+    if (mainApp) mainApp.style.display = 'block';
+    if (usersMenu) usersMenu.style.display = AppState.currentUser.role === 'admin' ? 'flex' : 'none';
+    
     loadUserData();
 }
 
@@ -3188,45 +3251,61 @@ function checkSavedSession() {
 }
 
 function showRegister() {
-    document.getElementById('login-container').style.display = 'none';
-    document.getElementById('register-container').style.display = 'flex';
+    const loginContainer = document.getElementById('login-container');
+    const registerContainer = document.getElementById('register-container');
+    if (loginContainer) loginContainer.style.display = 'none';
+    if (registerContainer) registerContainer.style.display = 'flex';
 }
 
 function showLogin() {
-    document.getElementById('register-container').style.display = 'none';
-    document.getElementById('login-container').style.display = 'flex';
+    const registerContainer = document.getElementById('register-container');
+    const loginContainer = document.getElementById('login-container');
+    if (registerContainer) registerContainer.style.display = 'none';
+    if (loginContainer) loginContainer.style.display = 'flex';
 }
 
-// ==================== دوال المعاملات النقدية - مصححة ====================
+// ==================== دوال المعاملات النقدية ====================
 function openTransactionModal() {
-    document.getElementById('transaction-amount').value = '';
-    document.getElementById('transaction-responsible').value = '';
-    document.getElementById('transaction-note').value = '';
+    const amountEl = document.getElementById('transaction-amount');
+    const responsibleEl = document.getElementById('transaction-responsible');
+    const noteEl = document.getElementById('transaction-note');
+    const modal = document.getElementById('transaction-modal');
+    
+    if (amountEl) amountEl.value = '';
+    if (responsibleEl) responsibleEl.value = '';
+    if (noteEl) noteEl.value = '';
     setTransactionType('out');
-    document.getElementById('transaction-modal').classList.add('active');
+    if (modal) modal.classList.add('active');
 }
 
 function closeTransactionModal() {
-    document.getElementById('transaction-modal').classList.remove('active');
+    const modal = document.getElementById('transaction-modal');
+    if (modal) modal.classList.remove('active');
 }
 
 function setTransactionType(type) {
     AppState.currentTransactionType = type;
     const outBtn = document.getElementById('type-out');
     const inBtn = document.getElementById('type-in');
-    if (type === 'out') {
-        outBtn.className = 'btn-primary';
-        inBtn.className = 'btn-secondary';
-    } else {
-        outBtn.className = 'btn-secondary';
-        inBtn.className = 'btn-primary';
+    if (outBtn && inBtn) {
+        if (type === 'out') {
+            outBtn.className = 'btn-primary';
+            inBtn.className = 'btn-secondary';
+        } else {
+            outBtn.className = 'btn-secondary';
+            inBtn.className = 'btn-primary';
+        }
     }
 }
 
 function saveTransaction() {
-    const amount = parseFloat(document.getElementById('transaction-amount').value);
-    const responsible = document.getElementById('transaction-responsible').value.trim();
-    const note = document.getElementById('transaction-note').value.trim();
+    const amountEl = document.getElementById('transaction-amount');
+    const responsibleEl = document.getElementById('transaction-responsible');
+    const noteEl = document.getElementById('transaction-note');
+    
+    const amount = parseFloat(amountEl?.value);
+    const responsible = responsibleEl?.value.trim();
+    const note = noteEl?.value.trim();
     
     if (isNaN(amount) || amount <= 0) { showToast('الرجاء إدخال مبلغ صحيح', 'error'); return; }
     if (!responsible) { showToast('الرجاء إدخال اسم المسؤول', 'error'); return; }
@@ -3235,7 +3314,6 @@ function saveTransaction() {
     const client = clients.find(c => c.id === AppState.currentClientId);
     if (!client) return;
     
-    // إضافة المعاملة الجديدة
     const newTransaction = {
         id: 'tx_' + Date.now() + Math.random().toString(36).substr(2, 5),
         date: new Date().toISOString(),
@@ -3246,13 +3324,9 @@ function saveTransaction() {
     };
     client.transactions.push(newTransaction);
     
-    // إعادة حساب الأرصدة - مهم جداً
     recalculateBalances(client);
-    
-    // تحديث حالة العميل
     const isNowInactive = ClientStatus.updateStatus(client);
     
-    // حفظ التغييرات
     const userClients = Storage.getUserClients(client.userId);
     const idx = userClients.findIndex(c => c.id === client.id);
     userClients[idx] = client;
@@ -3285,63 +3359,78 @@ function deleteTransaction(transactionId) {
     }, true);
 }
 
-// ==================== دوال معاملات الذهب - مصححة ====================
+// ==================== دوال معاملات الذهب ====================
 function openGoldModal() {
-    document.getElementById('gold-amount').value = '';
-    document.getElementById('gold-responsible').value = '';
-    document.getElementById('gold-note').value = '';
-    document.getElementById('gold-karat-select').value = '';
-    document.getElementById('gold-custom-karat').value = '';
-    document.getElementById('gold-description').value = '';
-    document.getElementById('gold-custom-karat-container').classList.add('hidden');
+    const amountEl = document.getElementById('gold-amount');
+    const responsibleEl = document.getElementById('gold-responsible');
+    const noteEl = document.getElementById('gold-note');
+    const karatSelect = document.getElementById('gold-karat-select');
+    const customKaratEl = document.getElementById('gold-custom-karat');
+    const descriptionEl = document.getElementById('gold-description');
+    const customContainer = document.getElementById('gold-custom-karat-container');
+    const modal = document.getElementById('gold-modal');
+    
+    if (amountEl) amountEl.value = '';
+    if (responsibleEl) responsibleEl.value = '';
+    if (noteEl) noteEl.value = '';
+    if (karatSelect) karatSelect.value = '';
+    if (customKaratEl) customKaratEl.value = '';
+    if (descriptionEl) descriptionEl.value = '';
+    if (customContainer) customContainer.classList.add('hidden');
     setGoldType('out');
-    document.getElementById('gold-modal').classList.add('active');
+    if (modal) modal.classList.add('active');
 }
 
 function closeGoldModal() {
-    document.getElementById('gold-modal').classList.remove('active');
+    const modal = document.getElementById('gold-modal');
+    if (modal) modal.classList.remove('active');
 }
 
 function setGoldType(type) {
     AppState.currentGoldType = type;
     const outBtn = document.getElementById('gold-out');
     const inBtn = document.getElementById('gold-in');
-    if (type === 'out') {
-        outBtn.className = 'btn-gold';
-        inBtn.className = 'btn-secondary';
-    } else {
-        outBtn.className = 'btn-secondary';
-        inBtn.className = 'btn-gold';
+    if (outBtn && inBtn) {
+        if (type === 'out') {
+            outBtn.className = 'btn-gold';
+            inBtn.className = 'btn-secondary';
+        } else {
+            outBtn.className = 'btn-secondary';
+            inBtn.className = 'btn-gold';
+        }
     }
 }
 
 function toggleGoldCustomKarat() {
     const select = document.getElementById('gold-karat-select');
     const customContainer = document.getElementById('gold-custom-karat-container');
-    if (select.value === 'custom') {
-        customContainer.classList.remove('hidden');
-    } else {
-        customContainer.classList.add('hidden');
+    if (select && customContainer) {
+        customContainer.classList.toggle('hidden', select.value !== 'custom');
     }
 }
 
 function toggleInitialCustomKarat() {
     const select = document.getElementById('initial-gold-karat-select');
     const customContainer = document.getElementById('initial-custom-karat-container');
-    if (select.value === 'custom') {
-        customContainer.classList.remove('hidden');
-    } else {
-        customContainer.classList.add('hidden');
+    if (select && customContainer) {
+        customContainer.classList.toggle('hidden', select.value !== 'custom');
     }
 }
 
 function saveGoldTransaction() {
-    const amount = parseFloat(document.getElementById('gold-amount').value);
-    const responsible = document.getElementById('gold-responsible').value.trim();
-    const note = document.getElementById('gold-note').value.trim();
-    let karat = document.getElementById('gold-karat-select').value;
-    if (karat === 'custom') karat = document.getElementById('gold-custom-karat').value.trim();
-    const description = document.getElementById('gold-description').value.trim();
+    const amountEl = document.getElementById('gold-amount');
+    const responsibleEl = document.getElementById('gold-responsible');
+    const noteEl = document.getElementById('gold-note');
+    const karatSelect = document.getElementById('gold-karat-select');
+    const customKaratEl = document.getElementById('gold-custom-karat');
+    const descriptionEl = document.getElementById('gold-description');
+    
+    const amount = parseFloat(amountEl?.value);
+    const responsible = responsibleEl?.value.trim();
+    const note = noteEl?.value.trim();
+    let karat = karatSelect?.value;
+    if (karat === 'custom') karat = customKaratEl?.value.trim();
+    const description = descriptionEl?.value.trim();
     
     if (isNaN(amount) || amount <= 0) { showToast('الرجاء إدخال عدد جرامات صحيح', 'error'); return; }
     if (!responsible) { showToast('الرجاء إدخال اسم المسؤول', 'error'); return; }
@@ -3363,7 +3452,6 @@ function saveGoldTransaction() {
     };
     client.goldTransactions.push(newTransaction);
     
-    // إعادة حساب الأرصدة
     recalculateBalances(client);
     const isNowInactive = ClientStatus.updateStatus(client);
     
@@ -3423,8 +3511,8 @@ function editTransaction(transactionId, type) {
     const title = document.getElementById('edit-transaction-title');
     
     if (type === 'cash') {
-        title.textContent = 'تعديل معاملة نقدية';
-        fieldsDiv.innerHTML = `
+        if (title) title.textContent = 'تعديل معاملة نقدية';
+        if (fieldsDiv) fieldsDiv.innerHTML = `
             <div class="edit-field-group">
                 <label>المبلغ</label>
                 <input type="number" id="edit-tx-amount" class="input-field numbers" value="${transaction.amount}" min="0.01" step="0.01">
@@ -3442,8 +3530,8 @@ function editTransaction(transactionId, type) {
                 <input type="datetime-local" id="edit-tx-date" class="input-field" value="${new Date(transaction.date).toISOString().slice(0,16)}">
             </div>`;
     } else {
-        title.textContent = 'تعديل معاملة ذهب';
-        fieldsDiv.innerHTML = `
+        if (title) title.textContent = 'تعديل معاملة ذهب';
+        if (fieldsDiv) fieldsDiv.innerHTML = `
             <div class="edit-field-group">
                 <label>الكمية (جرام)</label>
                 <input type="number" step="0.01" id="edit-gold-amount" class="input-field numbers" value="${transaction.amount}" min="0.01">
@@ -3475,11 +3563,13 @@ function editTransaction(transactionId, type) {
             </div>`;
     }
     
-    document.getElementById('edit-transaction-modal').classList.add('active');
+    const modal = document.getElementById('edit-transaction-modal');
+    if (modal) modal.classList.add('active');
 }
 
 function closeEditTransactionModal() {
-    document.getElementById('edit-transaction-modal').classList.remove('active');
+    const modal = document.getElementById('edit-transaction-modal');
+    if (modal) modal.classList.remove('active');
     editingTransactionId = null;
     editingTransactionType = null;
 }
@@ -3495,20 +3585,31 @@ function saveEditedTransaction() {
         if (editingTransactionType === 'cash') {
             const idx = client.transactions.findIndex(t => t.id === editingTransactionId);
             if (idx === -1) return;
-            client.transactions[idx].amount = parseFloat(document.getElementById('edit-tx-amount').value) || 0;
-            client.transactions[idx].responsible = document.getElementById('edit-tx-responsible').value.trim();
-            client.transactions[idx].note = document.getElementById('edit-tx-note').value.trim();
-            client.transactions[idx].date = new Date(document.getElementById('edit-tx-date').value).toISOString();
+            const amountEl = document.getElementById('edit-tx-amount');
+            const responsibleEl = document.getElementById('edit-tx-responsible');
+            const noteEl = document.getElementById('edit-tx-note');
+            const dateEl = document.getElementById('edit-tx-date');
+            
+            client.transactions[idx].amount = parseFloat(amountEl?.value) || 0;
+            client.transactions[idx].responsible = responsibleEl?.value.trim() || '';
+            client.transactions[idx].note = noteEl?.value.trim() || '';
+            client.transactions[idx].date = new Date(dateEl?.value).toISOString();
         } else {
             const idx = client.goldTransactions.findIndex(t => t.id === editingTransactionId);
             if (idx === -1) return;
-            client.goldTransactions[idx].amount = parseFloat(document.getElementById('edit-gold-amount').value) || 0;
-            let karat = document.getElementById('edit-gold-karat').value;
-            client.goldTransactions[idx].karat = karat;
-            client.goldTransactions[idx].description = document.getElementById('edit-gold-description').value.trim();
-            client.goldTransactions[idx].responsible = document.getElementById('edit-gold-responsible').value.trim();
-            client.goldTransactions[idx].note = document.getElementById('edit-gold-note').value.trim();
-            client.goldTransactions[idx].date = new Date(document.getElementById('edit-gold-date').value).toISOString();
+            const amountEl = document.getElementById('edit-gold-amount');
+            const karatEl = document.getElementById('edit-gold-karat');
+            const descEl = document.getElementById('edit-gold-description');
+            const responsibleEl = document.getElementById('edit-gold-responsible');
+            const noteEl = document.getElementById('edit-gold-note');
+            const dateEl = document.getElementById('edit-gold-date');
+            
+            client.goldTransactions[idx].amount = parseFloat(amountEl?.value) || 0;
+            client.goldTransactions[idx].karat = karatEl?.value || 'other';
+            client.goldTransactions[idx].description = descEl?.value.trim() || '';
+            client.goldTransactions[idx].responsible = responsibleEl?.value.trim() || '';
+            client.goldTransactions[idx].note = noteEl?.value.trim() || '';
+            client.goldTransactions[idx].date = new Date(dateEl?.value).toISOString();
         }
         
         recalculateBalances(client);
@@ -3526,44 +3627,50 @@ function saveEditedTransaction() {
 }
 
 // ==================== دوال تحويل المعاملات ====================
-let convertTransactionId = null;
-let convertTransactionType = null;
-
 function openConvertModal(transactionId, type, currentType) {
-    convertTransactionId = transactionId;
-    convertTransactionType = type;
+    AppState.convertTransactionId = transactionId;
+    AppState.convertTransactionType = type;
     
     const newType = currentType === 'out' ? 'in' : 'out';
     const typeText = type === 'cash' ? 'نقدية' : 'ذهب';
     const fromText = currentType === 'out' ? 'له' : 'عليه';
     const toText = newType === 'out' ? 'له' : 'عليه';
     
-    document.getElementById('convert-transaction-title').textContent = 'تحويل المعاملة';
-    document.getElementById('convert-transaction-message').innerHTML = `هل أنت متأكد من تحويل هذه المعاملة ${typeText} من <strong>${fromText}</strong> إلى <strong>${toText}</strong>؟`;
-    document.getElementById('convert-transaction-modal').classList.add('active');
+    const titleEl = document.getElementById('convert-transaction-title');
+    const msgEl = document.getElementById('convert-transaction-message');
+    
+    if (titleEl) titleEl.textContent = 'تحويل المعاملة';
+    if (msgEl) msgEl.innerHTML = `هل أنت متأكد من تحويل هذه المعاملة ${typeText} من <strong>${fromText}</strong> إلى <strong>${toText}</strong>؟`;
+    
+    const modal = document.getElementById('convert-transaction-modal');
+    if (modal) modal.classList.add('active');
 }
 
 function closeConvertModal() {
-    document.getElementById('convert-transaction-modal').classList.remove('active');
-    convertTransactionId = null;
-    convertTransactionType = null;
+    const modal = document.getElementById('convert-transaction-modal');
+    if (modal) modal.classList.remove('active');
+    AppState.convertTransactionId = null;
+    AppState.convertTransactionType = null;
 }
 
 function executeConvertTransaction() {
-    if (!convertTransactionId || !convertTransactionType) { closeConvertModal(); return; }
+    if (!AppState.convertTransactionId || !AppState.convertTransactionType) { 
+        closeConvertModal(); 
+        return; 
+    }
     
     showConfirmation('تأكيد التحويل', 'هل أنت متأكد من تحويل هذه المعاملة؟', () => {
         const clients = getCurrentUserClients();
         const client = clients.find(c => c.id === AppState.currentClientId);
         if (!client) { closeConvertModal(); return; }
         
-        if (convertTransactionType === 'cash') {
-            const idx = client.transactions.findIndex(t => t.id === convertTransactionId);
+        if (AppState.convertTransactionType === 'cash') {
+            const idx = client.transactions.findIndex(t => t.id === AppState.convertTransactionId);
             if (idx !== -1) {
                 client.transactions[idx].type = client.transactions[idx].type === 'out' ? 'in' : 'out';
             }
         } else {
-            const idx = client.goldTransactions.findIndex(t => t.id === convertTransactionId);
+            const idx = client.goldTransactions.findIndex(t => t.id === AppState.convertTransactionId);
             if (idx !== -1) {
                 client.goldTransactions[idx].type = client.goldTransactions[idx].type === 'out' ? 'in' : 'out';
             }
@@ -3585,9 +3692,14 @@ function executeConvertTransaction() {
 
 // ==================== دوال إضافة العملاء ====================
 function checkDuplicateName() {
-    const name = document.getElementById('client-name').value.trim();
+    const nameEl = document.getElementById('client-name');
+    const name = nameEl?.value.trim();
     const resultsDiv = document.getElementById('duplicate-results');
-    if (name.length < 2) { resultsDiv.classList.add('hidden'); return; }
+    
+    if (!name || name.length < 2) { 
+        if (resultsDiv) resultsDiv.classList.add('hidden'); 
+        return; 
+    }
     
     const clients = getCurrentUserClients();
     const inactiveClients = ClientStatus.getAllInactiveClients();
@@ -3596,76 +3708,124 @@ function checkDuplicateName() {
         ...inactiveClients.filter(c => c.name.toLowerCase().includes(name.toLowerCase())).map(c => ({...c, status: 'inactive'}))
     ];
     
-    if (allMatches.length === 0) { resultsDiv.classList.add('hidden'); return; }
+    if (allMatches.length === 0) { 
+        if (resultsDiv) resultsDiv.classList.add('hidden'); 
+        return; 
+    }
     
-    resultsDiv.innerHTML = allMatches.map(client => {
-        const moneySummary = getClientMoneySummary(client);
-        const totalGold = getTotalGold(getGoldSummary(client));
-        return `
-            <div class="duplicate-item" onclick="selectDuplicateClient('${client.id}', '${client.status}')">
-                <div class="flex justify-between items-center">
-                    <div><strong>${escapeHtml(client.name)}</strong>
-                        <span class="duplicate-badge ${client.status === 'active' ? 'active' : 'inactive'}">${client.status === 'active' ? 'نشط' : 'منتهي'}</span>
+    if (resultsDiv) {
+        resultsDiv.innerHTML = allMatches.map(client => {
+            const m = getClientMoneySummary(client);
+            const g = getTotalGold(getGoldSummary(client));
+            return `
+                <div class="duplicate-item" onclick="selectDuplicateClient('${client.id}', '${client.status}')">
+                    <div class="flex justify-between items-center">
+                        <div><strong>${escapeHtml(client.name)}</strong>
+                            <span class="duplicate-badge ${client.status === 'active' ? 'active' : 'inactive'}">${client.status === 'active' ? 'نشط' : 'منتهي'}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="text-xs text-gray-500 mt-1 flex gap-3">
-                    <span>مال: ${formatMoney(moneySummary.netMoney)} ${moneySummary.netMoney > 0 ? 'له' : moneySummary.netMoney < 0 ? 'عليه' : ''}</span>
-                    <span>ذهب: ${formatGold(totalGold.net)} ${totalGold.net > 0 ? 'له' : totalGold.net < 0 ? 'عليه' : ''}</span>
-                </div>
-            </div>`;
-    }).join('');
-    resultsDiv.classList.remove('hidden');
+                    <div class="text-xs text-gray-500 mt-1 flex gap-3">
+                        <span>مال: ${formatMoney(Math.abs(m.netMoney))} ${m.netMoney > 0 ? 'له' : m.netMoney < 0 ? 'عليه' : ''}</span>
+                        <span>ذهب: ${formatGold(Math.abs(g.net))} ${g.net > 0 ? 'له' : g.net < 0 ? 'عليه' : ''}</span>
+                    </div>
+                </div>`;
+        }).join('');
+        resultsDiv.classList.remove('hidden');
+    }
 }
 
 function selectDuplicateClient(clientId, status) {
-    if (status === 'active') { viewClient(clientId); showPage('client'); }
-    else { AppState.reactivateClientId = clientId; document.getElementById('reactivate-modal').classList.add('active'); }
-    document.getElementById('duplicate-results').classList.add('hidden');
-    document.getElementById('client-name').value = '';
+    if (status === 'active') { 
+        viewClient(clientId); 
+        showPage('client'); 
+    } else { 
+        AppState.reactivateClientId = clientId; 
+        const modal = document.getElementById('reactivate-modal');
+        if (modal) modal.classList.add('active'); 
+    }
+    
+    const resultsDiv = document.getElementById('duplicate-results');
+    const nameEl = document.getElementById('client-name');
+    if (resultsDiv) resultsDiv.classList.add('hidden');
+    if (nameEl) nameEl.value = '';
 }
 
 function addNewClient(andNew = false) {
-    const name = document.getElementById('client-name').value.trim();
+    const nameEl = document.getElementById('client-name');
+    const name = nameEl?.value.trim();
+    
     if (!name) { showToast('الرجاء إدخال اسم العميل', 'error'); return; }
     
     const clients = getCurrentUserClients();
     if (clients.some(c => c.name === name)) { showToast('هذا الاسم موجود مسبقاً', 'error'); return; }
     
+    const phoneEl = document.getElementById('client-phone');
+    const addressEl = document.getElementById('client-address');
+    const notesEl = document.getElementById('client-notes');
+    const tagsEl = document.getElementById('client-tags');
+    const inactivityDaysEl = document.getElementById('client-inactivity-days');
+    
     const newClient = {
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        name, phone: document.getElementById('client-phone')?.value.trim() || '',
-        address: document.getElementById('client-address')?.value.trim() || '',
-        notes: document.getElementById('client-notes')?.value.trim() || '',
-        tags: (document.getElementById('client-tags')?.value || '').split(',').map(t => t.trim()).filter(t => t),
-        userId: AppState.currentUser.id, createdAt: new Date().toISOString(),
-        inactivityDays: parseInt(document.getElementById('client-inactivity-days')?.value) || InactivitySettings.defaultDays,
-        transactions: [], goldTransactions: [], goldByKarat: {}
+        name, 
+        phone: phoneEl?.value.trim() || '',
+        address: addressEl?.value.trim() || '',
+        notes: notesEl?.value.trim() || '',
+        tags: (tagsEl?.value || '').split(',').map(t => t.trim()).filter(t => t),
+        userId: AppState.currentUser.id, 
+        createdAt: new Date().toISOString(),
+        inactivityDays: parseInt(inactivityDaysEl?.value) || InactivitySettings.defaultDays,
+        transactions: [], 
+        goldTransactions: [], 
+        goldByKarat: {}
     };
     
     // معاملة نقدية أولية
-    const cashType = document.getElementById('initial-cash-type')?.value;
-    const cashAmount = parseFloat(document.getElementById('initial-cash-amount')?.value) || 0;
-    const cashResponsible = document.getElementById('initial-cash-responsible')?.value.trim();
+    const cashTypeEl = document.getElementById('initial-cash-type');
+    const cashAmountEl = document.getElementById('initial-cash-amount');
+    const cashResponsibleEl = document.getElementById('initial-cash-responsible');
+    const cashNoteEl = document.getElementById('initial-cash-note');
+    
+    const cashType = cashTypeEl?.value;
+    const cashAmount = parseFloat(cashAmountEl?.value) || 0;
+    const cashResponsible = cashResponsibleEl?.value.trim();
+    
     if (cashType && cashAmount > 0 && cashResponsible) {
         newClient.transactions.push({
             id: 'tx_' + Date.now() + Math.random().toString(36).substr(2, 5),
-            date: new Date().toISOString(), type: cashType, amount: cashAmount,
-            responsible: cashResponsible, note: document.getElementById('initial-cash-note')?.value.trim() || ''
+            date: new Date().toISOString(), 
+            type: cashType, 
+            amount: cashAmount,
+            responsible: cashResponsible, 
+            note: cashNoteEl?.value.trim() || ''
         });
     }
     
     // معاملة ذهب أولية
-    const goldType = document.getElementById('initial-gold-type')?.value;
-    const goldAmount = parseFloat(document.getElementById('initial-gold-amount')?.value) || 0;
-    const goldKaratSelect = document.getElementById('initial-gold-karat-select')?.value;
-    let goldKarat = goldKaratSelect === 'custom' ? document.getElementById('initial-gold-karat-custom')?.value.trim() : goldKaratSelect;
-    const goldResponsible = document.getElementById('initial-gold-responsible')?.value.trim();
+    const goldTypeEl = document.getElementById('initial-gold-type');
+    const goldAmountEl = document.getElementById('initial-gold-amount');
+    const goldKaratSelectEl = document.getElementById('initial-gold-karat-select');
+    const goldKaratCustomEl = document.getElementById('initial-gold-karat-custom');
+    const goldResponsibleEl = document.getElementById('initial-gold-responsible');
+    const goldDescEl = document.getElementById('initial-gold-description');
+    const goldNoteEl = document.getElementById('initial-gold-note');
+    
+    const goldType = goldTypeEl?.value;
+    const goldAmount = parseFloat(goldAmountEl?.value) || 0;
+    const goldKaratSelect = goldKaratSelectEl?.value;
+    let goldKarat = goldKaratSelect === 'custom' ? goldKaratCustomEl?.value.trim() : goldKaratSelect;
+    const goldResponsible = goldResponsibleEl?.value.trim();
+    
     if (goldType && goldAmount > 0 && goldResponsible && goldKarat) {
         newClient.goldTransactions.push({
             id: 'g_' + Date.now() + Math.random().toString(36).substr(2, 5),
-            date: new Date().toISOString(), type: goldType, amount: goldAmount,
-            karat: goldKarat, description: document.getElementById('initial-gold-description')?.value.trim() || '',
-            responsible: goldResponsible, note: document.getElementById('initial-gold-note')?.value.trim() || ''
+            date: new Date().toISOString(), 
+            type: goldType, 
+            amount: goldAmount,
+            karat: goldKarat, 
+            description: goldDescEl?.value.trim() || '',
+            responsible: goldResponsible, 
+            note: goldNoteEl?.value.trim() || ''
         });
     }
     
@@ -3684,25 +3844,29 @@ function addNewClient(andNew = false) {
     Storage.logAction('إضافة عميل', { clientId: newClient.id, clientName: name });
     
     if (andNew) {
-        document.getElementById('client-name').value = '';
-        document.getElementById('client-phone').value = '';
-        document.getElementById('client-address').value = '';
-        document.getElementById('client-notes').value = '';
-        document.getElementById('client-tags').value = '';
-        document.getElementById('initial-cash-type').value = '';
-        document.getElementById('initial-cash-amount').value = '0';
-        document.getElementById('initial-cash-responsible').value = '';
-        document.getElementById('initial-cash-note').value = '';
-        document.getElementById('initial-gold-type').value = '';
-        document.getElementById('initial-gold-amount').value = '0';
-        document.getElementById('initial-gold-karat-select').value = '';
-        document.getElementById('initial-gold-karat-custom').value = '';
-        document.getElementById('initial-gold-description').value = '';
-        document.getElementById('initial-gold-responsible').value = '';
-        document.getElementById('initial-gold-note').value = '';
-        document.getElementById('initial-custom-karat-container').classList.add('hidden');
+        // مسح الحقول
+        const fieldsToClear = ['client-name', 'client-phone', 'client-address', 'client-notes', 'client-tags',
+            'initial-cash-type', 'initial-cash-responsible', 'initial-cash-note',
+            'initial-gold-type', 'initial-gold-responsible', 'initial-gold-description', 'initial-gold-note',
+            'initial-gold-karat-custom'];
+        fieldsToClear.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        
+        const cashAmountClear = document.getElementById('initial-cash-amount');
+        const goldAmountClear = document.getElementById('initial-gold-amount');
+        if (cashAmountClear) cashAmountClear.value = '0';
+        if (goldAmountClear) goldAmountClear.value = '0';
+        
+        const karatSelect = document.getElementById('initial-gold-karat-select');
+        if (karatSelect) karatSelect.value = '';
+        
+        const customKaratContainer = document.getElementById('initial-custom-karat-container');
+        if (customKaratContainer) customKaratContainer.classList.add('hidden');
+        
         document.querySelectorAll('#tag-selector .tag').forEach(t => t.classList.remove('selected'));
-        document.getElementById('client-name').focus();
+        nameEl?.focus();
     } else {
         loadUserData();
         showPage('dashboard');
@@ -3716,7 +3880,6 @@ function viewClient(clientId) {
     if (!client) client = ClientStatus.getAllInactiveClients().find(c => c.id === clientId);
     if (!client) return;
     
-    // تحديث الأرصدة قبل العرض
     recalculateBalances(client);
     
     const moneySummary = getClientMoneySummary(client);
@@ -3724,9 +3887,12 @@ function viewClient(clientId) {
     const totalGold = getTotalGold(goldSummary);
     
     // عرض التصنيفات
-    document.getElementById('client-tags-display').innerHTML = (client.tags || []).map(tag => 
-        `<span class="badge badge-info">${escapeHtml(tag)}</span>`
-    ).join('');
+    const tagsDisplay = document.getElementById('client-tags-display');
+    if (tagsDisplay) {
+        tagsDisplay.innerHTML = (client.tags || []).map(tag => 
+            `<span class="badge badge-info">${escapeHtml(tag)}</span>`
+        ).join('');
+    }
     
     // تفاصيل الذهب حسب العيار
     let goldDetailsHtml = '';
@@ -3803,35 +3969,38 @@ function viewClient(clientId) {
                 </div>`;
         }).join('');
     
-    document.getElementById('client-details').innerHTML = `
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-                <h2 class="text-2xl font-bold">${escapeHtml(client.name)}</h2>
-                ${client.phone ? `<p class="text-gray-500 mt-2"><i class="fas fa-phone ml-2"></i>${escapeHtml(client.phone)}</p>` : ''}
-                ${client.address ? `<p class="text-gray-500 mt-1"><i class="fas fa-map-marker-alt ml-2"></i>${escapeHtml(client.address)}</p>` : ''}
+    const detailsDiv = document.getElementById('client-details');
+    if (detailsDiv) {
+        detailsDiv.innerHTML = `
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">${escapeHtml(client.name)}</h2>
+                    ${client.phone ? `<p class="text-gray-500 mt-2"><i class="fas fa-phone ml-2"></i>${escapeHtml(client.phone)}</p>` : ''}
+                    ${client.address ? `<p class="text-gray-500 mt-1"><i class="fas fa-map-marker-alt ml-2"></i>${escapeHtml(client.address)}</p>` : ''}
+                </div>
+                <button onclick="deleteClient('${client.id}')" class="btn-icon" title="حذف العميل"><i class="fas fa-trash text-rose-500"></i></button>
             </div>
-            <button onclick="deleteClient('${client.id}')" class="btn-icon" title="حذف العميل"><i class="fas fa-trash text-rose-500"></i></button>
-        </div>
-        ${client.notes ? `<div class="mb-6 p-4 bg-tertiary rounded-xl"><p class="text-sm text-gray-400"><i class="fas fa-sticky-note ml-2"></i>ملاحظات: ${escapeHtml(client.notes)}</p></div>` : ''}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="bg-tertiary p-4 rounded-xl text-center"><p class="text-sm text-gray-500">له مال</p><p class="text-xl font-bold text-amber-400 numbers">${formatMoney(moneySummary.moneyFor)}</p></div>
-            <div class="bg-tertiary p-4 rounded-xl text-center"><p class="text-sm text-gray-500">عليه مال</p><p class="text-xl font-bold text-emerald-400 numbers">${formatMoney(moneySummary.moneyOn)}</p></div>
-            <div class="bg-tertiary p-4 rounded-xl text-center">
-                <p class="text-sm text-gray-500">صافي المال</p>
-                <p class="text-xl font-bold ${moneySummary.netMoney > 0 ? 'text-amber-400' : moneySummary.netMoney < 0 ? 'text-emerald-400' : ''} numbers">${formatMoney(Math.abs(moneySummary.netMoney))} ${moneySummary.netMoney > 0 ? 'له' : moneySummary.netMoney < 0 ? 'عليه' : ''}</p>
+            ${client.notes ? `<div class="mb-6 p-4 bg-tertiary rounded-xl"><p class="text-sm text-gray-400"><i class="fas fa-sticky-note ml-2"></i>ملاحظات: ${escapeHtml(client.notes)}</p></div>` : ''}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-tertiary p-4 rounded-xl text-center"><p class="text-sm text-gray-500">له مال</p><p class="text-xl font-bold text-amber-400 numbers">${formatMoney(moneySummary.moneyFor)}</p></div>
+                <div class="bg-tertiary p-4 rounded-xl text-center"><p class="text-sm text-gray-500">عليه مال</p><p class="text-xl font-bold text-emerald-400 numbers">${formatMoney(moneySummary.moneyOn)}</p></div>
+                <div class="bg-tertiary p-4 rounded-xl text-center">
+                    <p class="text-sm text-gray-500">صافي المال</p>
+                    <p class="text-xl font-bold ${moneySummary.netMoney > 0 ? 'text-amber-400' : moneySummary.netMoney < 0 ? 'text-emerald-400' : ''} numbers">${formatMoney(Math.abs(moneySummary.netMoney))} ${moneySummary.netMoney > 0 ? 'له' : moneySummary.netMoney < 0 ? 'عليه' : ''}</p>
+                </div>
+                <div class="bg-tertiary p-4 rounded-xl text-center">
+                    <p class="text-sm text-gray-500">صافي الذهب</p>
+                    <p class="text-xl font-bold ${totalGold.net > 0 ? 'text-amber-400' : totalGold.net < 0 ? 'text-emerald-400' : ''} numbers">${formatGold(Math.abs(totalGold.net))} ${totalGold.net > 0 ? 'له' : totalGold.net < 0 ? 'عليه' : ''}</p>
+                </div>
             </div>
-            <div class="bg-tertiary p-4 rounded-xl text-center">
-                <p class="text-sm text-gray-500">صافي الذهب</p>
-                <p class="text-xl font-bold ${totalGold.net > 0 ? 'text-amber-400' : totalGold.net < 0 ? 'text-emerald-400' : ''} numbers">${formatGold(Math.abs(totalGold.net))} ${totalGold.net > 0 ? 'له' : totalGold.net < 0 ? 'عليه' : ''}</p>
+            ${goldDetailsHtml ? `<div class="mb-6"><h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-coins text-yellow-400"></i>تفاصيل الذهب حسب العيار</h3>${goldDetailsHtml}</div>` : ''}
+            <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                <button onclick="openTransactionModal()" class="btn-primary flex-1"><i class="fas fa-plus ml-2"></i>إضافة معاملة نقدية</button>
+                <button onclick="openGoldModal()" class="btn-gold flex-1"><i class="fas fa-coins ml-2"></i>إضافة معاملة ذهب</button>
             </div>
-        </div>
-        ${goldDetailsHtml ? `<div class="mb-6"><h3 class="text-lg font-semibold mb-3 flex items-center gap-2"><i class="fas fa-coins text-yellow-400"></i>تفاصيل الذهب حسب العيار</h3>${goldDetailsHtml}</div>` : ''}
-        <div class="flex flex-col sm:flex-row gap-4 mb-8">
-            <button onclick="openTransactionModal()" class="btn-primary flex-1"><i class="fas fa-plus ml-2"></i>إضافة معاملة نقدية</button>
-            <button onclick="openGoldModal()" class="btn-gold flex-1"><i class="fas fa-coins ml-2"></i>إضافة معاملة ذهب</button>
-        </div>
-        <div class="mb-8"><h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fas fa-money-bill-wave text-emerald-400"></i>المعاملات النقدية</h3>${transactionsHtml}</div>
-        <div><h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fas fa-coins text-yellow-400"></i>معاملات الذهب</h3>${goldTransactionsHtml}</div>`;
+            <div class="mb-8"><h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fas fa-money-bill-wave text-emerald-400"></i>المعاملات النقدية</h3>${transactionsHtml}</div>
+            <div><h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fas fa-coins text-yellow-400"></i>معاملات الذهب</h3>${goldTransactionsHtml}</div>`;
+    }
     
     showPage('client');
 }
@@ -3847,7 +4016,9 @@ function deleteClient(clientId) {
         Storage.saveUserClients(client.userId, userClients);
         ClientStatus.removeFromInactiveList(client);
         
-        if (localStorage.getItem(StorageKeys.LAST_CLIENT) === clientId) localStorage.removeItem(StorageKeys.LAST_CLIENT);
+        if (localStorage.getItem(StorageKeys.LAST_CLIENT) === clientId) {
+            localStorage.removeItem(StorageKeys.LAST_CLIENT);
+        }
         
         AppState.clientsCache = null;
         loadUserData();
@@ -3859,7 +4030,8 @@ function deleteClient(clientId) {
 
 // ==================== دوال العميل المنتهي ====================
 function closeReactivateModal() {
-    document.getElementById('reactivate-modal').classList.remove('active');
+    const modal = document.getElementById('reactivate-modal');
+    if (modal) modal.classList.remove('active');
     AppState.reactivateClientId = null;
 }
 
@@ -3897,6 +4069,7 @@ function loadUserData() {
     renderQuickStats();
     renderAdvancedStats(clients);
     renderDailyReport(clients);
+    renderInactivitySummary();
 }
 
 function renderDashboard(clients) {
@@ -3908,18 +4081,30 @@ function renderDashboard(clients) {
     });
     const netMoney = totalMoneyFor - totalMoneyOn;
     
-    document.getElementById('stats-cards').innerHTML = `
-        <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-emerald-400">لنا على العملاء</h3><i class="fas fa-arrow-down text-emerald-400"></i></div><p class="text-2xl font-bold text-emerald-400 numbers">${formatMoney(totalMoneyOn)}</p></div>
-        <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-amber-400">لهم علينا</h3><i class="fas fa-arrow-up text-amber-400"></i></div><p class="text-2xl font-bold text-amber-400 numbers">${formatMoney(totalMoneyFor)}</p></div>
-        <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>
-        <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-gray-400">عدد العملاء</h3><i class="fas fa-users text-gray-400"></i></div><p class="text-2xl font-bold numbers">${clients.length}</p></div>`;
+    const statsCards = document.getElementById('stats-cards');
+    if (statsCards) {
+        statsCards.innerHTML = `
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-emerald-400">لنا على العملاء</h3><i class="fas fa-arrow-down text-emerald-400"></i></div><p class="text-2xl font-bold text-emerald-400 numbers">${formatMoney(totalMoneyOn)}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-amber-400">لهم علينا</h3><i class="fas fa-arrow-up text-amber-400"></i></div><p class="text-2xl font-bold text-amber-400 numbers">${formatMoney(totalMoneyFor)}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-gray-400">عدد العملاء</h3><i class="fas fa-users text-gray-400"></i></div><p class="text-2xl font-bold numbers">${clients.length}</p></div>`;
+    }
 }
 
 function renderActiveClientsList() {
     const container = document.getElementById('active-clients-list');
     if (!container) return;
+    
     const clients = getCurrentUserClients().filter(c => !ClientStatus.isInactive(c));
-    if (clients.length === 0) { container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء نشطين</p>'; return; }
+    
+    // عرض فلاتر التصنيفات
+    renderActiveTagsFilter(clients);
+    
+    if (clients.length === 0) { 
+        container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء نشطين</p>'; 
+        return; 
+    }
+    
     container.innerHTML = clients.map(client => {
         const m = getClientMoneySummary(client);
         const g = getTotalGold(getGoldSummary(client));
@@ -3938,9 +4123,99 @@ function renderActiveClientsList() {
 function renderInactiveClientsList() {
     const container = document.getElementById('inactive-clients-list');
     if (!container) return;
+    
     const inactive = ClientStatus.getAllInactiveClients();
-    if (inactive.length === 0) { container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء منتهية</p>'; return; }
+    
+    // عرض فلاتر التصنيفات
+    renderInactiveTagsFilter(inactive);
+    
+    if (inactive.length === 0) { 
+        container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء منتهية</p>'; 
+        return; 
+    }
+    
     container.innerHTML = inactive.map(client => `
+        <div class="client-card inactive">
+            <div class="flex justify-between items-start mb-3"><div><h3 class="font-semibold">${escapeHtml(client.name)}</h3>${client.phone ? `<p class="text-xs text-gray-500">${escapeHtml(client.phone)}</p>` : ''}</div><span class="badge badge-inactive">منتهي</span></div>
+            <p class="text-sm text-gray-400 mb-3">رصيد صفر</p>
+            <div class="flex gap-2 mt-3">
+                <button onclick="event.stopPropagation(); reactivateClient('${client.id}')" class="btn-primary text-sm py-2 px-3"><i class="fas fa-sync-alt ml-1"></i>تفعيل</button>
+                <button onclick="event.stopPropagation(); viewClient('${client.id}')" class="btn-secondary text-sm py-2 px-3"><i class="fas fa-eye ml-1"></i>عرض</button>
+            </div>
+        </div>`).join('');
+}
+
+function renderActiveTagsFilter(clients) {
+    const filterDiv = document.getElementById('active-tags-filter');
+    if (!filterDiv) return;
+    
+    const tags = new Set();
+    clients.forEach(c => c.tags?.forEach(t => tags.add(t)));
+    
+    filterDiv.innerHTML = '<span class="tag selected" onclick="filterActiveByTag(\'all\', event)">الكل</span>' +
+        Array.from(tags).map(tag => `<span class="tag" onclick="filterActiveByTag('${escapeHtml(tag)}', event)">${escapeHtml(tag)}</span>`).join('');
+}
+
+function renderInactiveTagsFilter(inactiveClients) {
+    const filterDiv = document.getElementById('inactive-tags-filter');
+    if (!filterDiv) return;
+    
+    const tags = new Set();
+    inactiveClients.forEach(c => c.tags?.forEach(t => tags.add(t)));
+    
+    filterDiv.innerHTML = '<span class="tag selected" onclick="filterInactiveByTag(\'all\', event)">الكل</span>' +
+        Array.from(tags).map(tag => `<span class="tag" onclick="filterInactiveByTag('${escapeHtml(tag)}', event)">${escapeHtml(tag)}</span>`).join('');
+}
+
+function filterActiveByTag(tag, event) {
+    document.querySelectorAll('#active-tags-filter .tag').forEach(t => t.classList.remove('selected'));
+    if (event?.target) event.target.classList.add('selected');
+    
+    const clients = getCurrentUserClients().filter(c => !ClientStatus.isInactive(c));
+    const filtered = tag === 'all' ? clients : clients.filter(c => c.tags?.includes(tag));
+    renderFilteredActiveClients(filtered);
+}
+
+function filterInactiveByTag(tag, event) {
+    document.querySelectorAll('#inactive-tags-filter .tag').forEach(t => t.classList.remove('selected'));
+    if (event?.target) event.target.classList.add('selected');
+    
+    const inactive = ClientStatus.getAllInactiveClients();
+    const filtered = tag === 'all' ? inactive : inactive.filter(c => c.tags?.includes(tag));
+    renderFilteredInactiveClients(filtered);
+}
+
+function renderFilteredActiveClients(clients) {
+    const container = document.getElementById('active-clients-list');
+    if (!container) return;
+    
+    if (clients.length === 0) { 
+        container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء</p>'; 
+        return; 
+    }
+    
+    container.innerHTML = clients.map(client => {
+        const m = getClientMoneySummary(client);
+        const g = getTotalGold(getGoldSummary(client));
+        return `
+            <div class="client-card" onclick="viewClient('${client.id}')">
+                <div class="flex justify-between items-start mb-3"><div><h3 class="font-semibold">${escapeHtml(client.name)}</h3>${client.phone ? `<p class="text-xs text-gray-500">${escapeHtml(client.phone)}</p>` : ''}</div><span class="badge badge-success">نشط</span></div>
+                <div class="grid grid-cols-2 gap-3 mb-3"><div class="bg-tertiary p-2 rounded-lg"><p class="text-xs text-gray-500">له مال</p><p class="font-medium text-amber-400 numbers">${formatMoney(m.moneyFor)}</p></div><div class="bg-tertiary p-2 rounded-lg"><p class="text-xs text-gray-500">عليه مال</p><p class="font-medium text-emerald-400 numbers">${formatMoney(m.moneyOn)}</p></div></div>
+                <div class="flex justify-between text-xs text-gray-500"><span>صافي المال: ${formatMoney(Math.abs(m.netMoney))}</span><span>صافي الذهب: ${formatGold(Math.abs(g.net))}</span></div>
+            </div>`;
+    }).join('');
+}
+
+function renderFilteredInactiveClients(clients) {
+    const container = document.getElementById('inactive-clients-list');
+    if (!container) return;
+    
+    if (clients.length === 0) { 
+        container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء</p>'; 
+        return; 
+    }
+    
+    container.innerHTML = clients.map(client => `
         <div class="client-card inactive">
             <div class="flex justify-between items-start mb-3"><div><h3 class="font-semibold">${escapeHtml(client.name)}</h3>${client.phone ? `<p class="text-xs text-gray-500">${escapeHtml(client.phone)}</p>` : ''}</div><span class="badge badge-inactive">منتهي</span></div>
             <p class="text-sm text-gray-400 mb-3">رصيد صفر</p>
@@ -3954,6 +4229,7 @@ function renderInactiveClientsList() {
 function renderGoldStats(clients) {
     const grid = document.getElementById('gold-stats-grid');
     if (!grid) return;
+    
     const totals = {};
     AppState.goldKaratList.forEach(k => { totals[k] = { for: 0, on: 0 }; });
     totals.other = { for: 0, on: 0 };
@@ -3961,8 +4237,13 @@ function renderGoldStats(clients) {
     clients.forEach(client => {
         const g = getGoldSummary(client);
         Object.keys(g).forEach(karat => {
-            if (totals[karat]) { totals[karat].for += g[karat].for; totals[karat].on += g[karat].on; }
-            else { totals.other.for += g[karat].for; totals.other.on += g[karat].on; }
+            if (totals[karat]) { 
+                totals[karat].for += g[karat].for; 
+                totals[karat].on += g[karat].on; 
+            } else { 
+                totals.other.for += g[karat].for; 
+                totals.other.on += g[karat].on; 
+            }
         });
     });
     
@@ -3981,6 +4262,7 @@ function renderGoldStats(clients) {
                 </div>`;
         }
     });
+    
     grid.innerHTML = html || '<p class="text-gray-500">لا توجد معاملات ذهب</p>';
 }
 
@@ -3988,18 +4270,29 @@ function renderQuickStats() {
     const clients = getCurrentUserClients();
     const inactive = ClientStatus.getAllInactiveClients();
     const active = clients.filter(c => !ClientStatus.isInactive(c)).length;
+    
     let totalMoneyFor = 0, totalMoneyOn = 0;
-    clients.forEach(c => { const m = getClientMoneySummary(c); totalMoneyFor += m.moneyFor; totalMoneyOn += m.moneyOn; });
+    clients.forEach(c => { 
+        const m = getClientMoneySummary(c); 
+        totalMoneyFor += m.moneyFor; 
+        totalMoneyOn += m.moneyOn; 
+    });
     
-    document.getElementById('quick-stats').innerHTML = `
-        <div class="flex justify-between py-2 border-b border-border"><span>إجمالي العملاء النشطين</span><span class="font-bold text-emerald-400">${active}</span></div>
-        <div class="flex justify-between py-2 border-b border-border"><span>إجمالي العملاء المنتهية</span><span class="font-bold text-amber-400">${inactive.length}</span></div>
-        <div class="flex justify-between py-2 border-b border-border"><span>نسبة النشاط</span><span class="font-bold">${clients.length > 0 ? Math.round((active / clients.length) * 100) : 0}%</span></div>
-        <div class="flex justify-between py-2"><span>صافي المحفظة</span><span class="font-bold ${totalMoneyFor - totalMoneyOn >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${formatMoney(Math.abs(totalMoneyFor - totalMoneyOn))}</span></div>`;
+    const quickStats = document.getElementById('quick-stats');
+    if (quickStats) {
+        quickStats.innerHTML = `
+            <div class="flex justify-between py-2 border-b border-border"><span>إجمالي العملاء النشطين</span><span class="font-bold text-emerald-400">${active}</span></div>
+            <div class="flex justify-between py-2 border-b border-border"><span>إجمالي العملاء المنتهية</span><span class="font-bold text-amber-400">${inactive.length}</span></div>
+            <div class="flex justify-between py-2 border-b border-border"><span>نسبة النشاط</span><span class="font-bold">${clients.length > 0 ? Math.round((active / clients.length) * 100) : 0}%</span></div>
+            <div class="flex justify-between py-2"><span>صافي المحفظة</span><span class="font-bold ${totalMoneyFor - totalMoneyOn >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${formatMoney(Math.abs(totalMoneyFor - totalMoneyOn))}</span></div>`;
+    }
     
-    document.getElementById('client-status-stats').innerHTML = `
-        <div class="flex items-center gap-3 py-2"><div class="w-3 h-3 rounded-full bg-emerald-400"></div><span class="flex-1">عملاء نشطين</span><span class="font-bold">${active}</span></div>
-        <div class="flex items-center gap-3 py-2"><div class="w-3 h-3 rounded-full bg-amber-400"></div><span class="flex-1">عملاء منتهية</span><span class="font-bold">${inactive.length}</span></div>`;
+    const statusStats = document.getElementById('client-status-stats');
+    if (statusStats) {
+        statusStats.innerHTML = `
+            <div class="flex items-center gap-3 py-2"><div class="w-3 h-3 rounded-full bg-emerald-400"></div><span class="flex-1">عملاء نشطين</span><span class="font-bold">${active}</span></div>
+            <div class="flex items-center gap-3 py-2"><div class="w-3 h-3 rounded-full bg-amber-400"></div><span class="flex-1">عملاء منتهية</span><span class="font-bold">${inactive.length}</span></div>`;
+    }
 }
 
 function renderAdvancedStats(clients) {
@@ -4012,11 +4305,14 @@ function renderAdvancedStats(clients) {
         totalGoldFlow += c.goldTransactions.length;
     });
     
-    document.getElementById('advanced-stats').innerHTML = `
-        <div class="flex justify-between py-2 border-b border-border"><span>إجمالي ما لنا</span><span class="font-bold numbers text-emerald-400">${formatMoney(totalMoneyOn)}</span></div>
-        <div class="flex justify-between py-2 border-b border-border"><span>إجمالي ما لهم</span><span class="font-bold numbers text-amber-400">${formatMoney(totalMoneyFor)}</span></div>
-        <div class="flex justify-between py-2 border-b border-border"><span>إجمالي التدفق النقدي</span><span class="font-bold numbers">${totalCashFlow}</span></div>
-        <div class="flex justify-between py-2"><span>إجمالي تدفق الذهب</span><span class="font-bold numbers">${totalGoldFlow}</span></div>`;
+    const advancedStats = document.getElementById('advanced-stats');
+    if (advancedStats) {
+        advancedStats.innerHTML = `
+            <div class="flex justify-between py-2 border-b border-border"><span>إجمالي ما لنا</span><span class="font-bold numbers text-emerald-400">${formatMoney(totalMoneyOn)}</span></div>
+            <div class="flex justify-between py-2 border-b border-border"><span>إجمالي ما لهم</span><span class="font-bold numbers text-amber-400">${formatMoney(totalMoneyFor)}</span></div>
+            <div class="flex justify-between py-2 border-b border-border"><span>إجمالي التدفق النقدي</span><span class="font-bold numbers">${totalCashFlow}</span></div>
+            <div class="flex justify-between py-2"><span>إجمالي تدفق الذهب</span><span class="font-bold numbers">${totalGoldFlow}</span></div>`;
+    }
     
     const topClients = [...clients].sort((a, b) => {
         const aNet = Math.abs(getClientMoneySummary(a).netMoney) + Math.abs(getTotalGold(getGoldSummary(a)).net);
@@ -4024,11 +4320,14 @@ function renderAdvancedStats(clients) {
         return bNet - aNet;
     }).slice(0, 5);
     
-    document.getElementById('top-clients').innerHTML = topClients.map(c => {
-        const m = getClientMoneySummary(c);
-        const g = getTotalGold(getGoldSummary(c));
-        return `<div class="flex justify-between items-center p-2 bg-tertiary rounded-lg cursor-pointer" onclick="viewClient('${c.id}')"><span>${escapeHtml(c.name)}</span><span class="${m.netMoney + g.net > 0 ? 'text-amber-400' : 'text-emerald-400'} numbers">${formatMoney(Math.abs(m.netMoney + g.net))}</span></div>`;
-    }).join('');
+    const topClientsDiv = document.getElementById('top-clients');
+    if (topClientsDiv) {
+        topClientsDiv.innerHTML = topClients.map(c => {
+            const m = getClientMoneySummary(c);
+            const g = getTotalGold(getGoldSummary(c));
+            return `<div class="flex justify-between items-center p-2 bg-tertiary rounded-lg cursor-pointer" onclick="viewClient('${c.id}')"><span>${escapeHtml(c.name)}</span><span class="${m.netMoney + g.net > 0 ? 'text-amber-400' : 'text-emerald-400'} numbers">${formatMoney(Math.abs(m.netMoney + g.net))}</span></div>`;
+        }).join('');
+    }
 }
 
 function renderDailyReport(clients) {
@@ -4038,21 +4337,38 @@ function renderDailyReport(clients) {
     const cashTotal = todayTx.reduce((s, t) => s + t.amount, 0);
     const goldTotal = todayGold.reduce((s, t) => s + t.amount, 0);
     
-    document.getElementById('daily-report').innerHTML = `
-        <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">معاملات اليوم</div><div class="text-xl font-bold">${todayTx.length}</div></div>
-        <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">مبلغ اليوم</div><div class="text-xl font-bold text-emerald-400 numbers">${formatMoney(cashTotal)}</div></div>
-        <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">ذهب اليوم</div><div class="text-xl font-bold">${todayGold.length}</div></div>
-        <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">جرامات اليوم</div><div class="text-xl font-bold text-yellow-400 numbers">${formatGold(goldTotal)}</div></div>`;
+    const dailyReport = document.getElementById('daily-report');
+    if (dailyReport) {
+        dailyReport.innerHTML = `
+            <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">معاملات اليوم</div><div class="text-xl font-bold">${todayTx.length}</div></div>
+            <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">مبلغ اليوم</div><div class="text-xl font-bold text-emerald-400 numbers">${formatMoney(cashTotal)}</div></div>
+            <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">ذهب اليوم</div><div class="text-xl font-bold">${todayGold.length}</div></div>
+            <div class="bg-tertiary p-3 rounded-lg text-center"><div class="text-sm text-gray-500">جرامات اليوم</div><div class="text-xl font-bold text-yellow-400 numbers">${formatGold(goldTotal)}</div></div>`;
+    }
+}
+
+function renderInactivitySummary() {
+    const summary = document.getElementById('inactivity-summary');
+    if (summary) {
+        summary.innerHTML = `فترة عدم النشاط الافتراضية: <strong>${InactivitySettings.defaultDays} يوم</strong> | يمكن تخصيص فترة لكل عميل على حدة`;
+    }
 }
 
 function updateLastClient() {
     const lastId = localStorage.getItem(StorageKeys.LAST_CLIENT);
     const section = document.getElementById('last-client-section');
     const info = document.getElementById('last-client-info');
-    if (!lastId || !section || !info) { section?.classList.add('hidden'); return; }
+    
+    if (!lastId || !section || !info) { 
+        if (section) section.classList.add('hidden'); 
+        return; 
+    }
     
     const client = getCurrentUserClients().find(c => c.id === lastId);
-    if (!client) { section.classList.add('hidden'); return; }
+    if (!client) { 
+        section.classList.add('hidden'); 
+        return; 
+    }
     
     const m = getClientMoneySummary(client);
     const g = getTotalGold(getGoldSummary(client));
@@ -4065,12 +4381,145 @@ function updateLastClient() {
         <div class="bg-tertiary p-3 rounded-xl"><p class="text-xs text-gray-500">صافي الذهب</p><p class="font-semibold text-yellow-400 numbers">${formatGold(Math.abs(g.net))} ${g.net > 0 ? 'له' : g.net < 0 ? 'عليه' : ''}</p></div>`;
 }
 
-// ==================== التنقل ====================
+// ==================== الرسوم البيانية ====================
+function initCharts(clients) {
+    // تدمير الرسوم البيانية السابقة
+    Object.values(AppState.chartInstances).forEach(chart => {
+        if (chart) chart.destroy();
+    });
+    AppState.chartInstances = {};
+    
+    // رسم توزيع العملاء
+    const clientsChartEl = document.getElementById('clients-chart');
+    if (clientsChartEl) {
+        const active = clients.filter(c => !ClientStatus.isInactive(c)).length;
+        const inactive = ClientStatus.getAllInactiveClients().length;
+        
+        AppState.chartInstances.clients = new Chart(clientsChartEl, {
+            type: 'doughnut',
+            data: {
+                labels: ['نشطين', 'منتهية'],
+                datasets: [{
+                    data: [active, inactive],
+                    backgroundColor: ['#22c55e', '#6b7280'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#a0a0c0' } }
+                }
+            }
+        });
+    }
+    
+    // رسم المعاملات النقدية
+    const cashChartEl = document.getElementById('cash-chart');
+    if (cashChartEl) {
+        let totalFor = 0, totalOn = 0;
+        clients.forEach(c => {
+            const m = getClientMoneySummary(c);
+            totalFor += m.moneyFor;
+            totalOn += m.moneyOn;
+        });
+        
+        AppState.chartInstances.cash = new Chart(cashChartEl, {
+            type: 'bar',
+            data: {
+                labels: ['لهم', 'لنا'],
+                datasets: [{
+                    data: [totalFor, totalOn],
+                    backgroundColor: ['#fbbf24', '#22c55e'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { ticks: { color: '#a0a0c0' }, grid: { color: '#2a2a3a' } },
+                    x: { ticks: { color: '#a0a0c0' }, grid: { display: false } }
+                }
+            }
+        });
+    }
+    
+    // رسم معاملات الذهب
+    const goldChartEl = document.getElementById('gold-chart');
+    if (goldChartEl) {
+        let totalFor = 0, totalOn = 0;
+        clients.forEach(c => {
+            const g = getTotalGold(getGoldSummary(c));
+            totalFor += g.totalFor;
+            totalOn += g.totalOn;
+        });
+        
+        AppState.chartInstances.gold = new Chart(goldChartEl, {
+            type: 'bar',
+            data: {
+                labels: ['لهم', 'لنا'],
+                datasets: [{
+                    data: [totalFor, totalOn],
+                    backgroundColor: ['#fbbf24', '#22c55e'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { ticks: { color: '#a0a0c0' }, grid: { color: '#2a2a3a' } },
+                    x: { ticks: { color: '#a0a0c0' }, grid: { display: false } }
+                }
+            }
+        });
+    }
+    
+    // رسم توزيع الذهب حسب العيار
+    const goldKaratChartEl = document.getElementById('gold-karat-chart');
+    if (goldKaratChartEl) {
+        const karatTotals = { '18': 0, '21': 0, '24': 0, 'other': 0 };
+        clients.forEach(c => {
+            const g = getGoldSummary(c);
+            Object.keys(g).forEach(karat => {
+                if (karatTotals[karat] !== undefined) {
+                    karatTotals[karat] += g[karat].for + g[karat].on;
+                } else {
+                    karatTotals.other += g[karat].for + g[karat].on;
+                }
+            });
+        });
+        
+        AppState.chartInstances.goldKarat = new Chart(goldKaratChartEl, {
+            type: 'pie',
+            data: {
+                labels: ['عيار 18', 'عيار 21', 'عيار 24', 'عيارات أخرى'],
+                datasets: [{
+                    data: Object.values(karatTotals),
+                    backgroundColor: ['#fbbf24', '#f59e0b', '#f97316', '#9ca3af'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#a0a0c0' } }
+                }
+            }
+        });
+    }
+}
+
+// ==================== التنقل والبحث ====================
 function showPage(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-    document.getElementById(`${page}-page`)?.classList.remove('hidden');
+    const pageEl = document.getElementById(`${page}-page`);
+    if (pageEl) pageEl.classList.remove('hidden');
+    
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+    const navItem = document.querySelector(`[data-page="${page}"]`);
+    if (navItem) navItem.classList.add('active');
     
     if (window.innerWidth <= 768) {
         const nav = document.getElementById('nav-sidebar');
@@ -4087,19 +4536,21 @@ function showPage(page) {
 
 function toggleNav() {
     const nav = document.getElementById('nav-sidebar');
+    const btn = document.getElementById('nav-toggle-btn');
     if (nav) nav.classList.toggle('collapsed');
+    if (btn) {
+        btn.innerHTML = nav?.classList.contains('collapsed') ? 
+            '<i class="fas fa-bars"></i><span>القائمة</span>' : 
+            '<i class="fas fa-times"></i><span>إغلاق</span>';
+    }
 }
 
 function toggleTheme() {
     document.body.classList.toggle('light-mode');
     const icon = document.getElementById('theme-icon');
-    if (icon) icon.className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
-}
-
-// ==================== دوال مساعدة إضافية ====================
-function showAutoBackupIndicator(show) {
-    const indicator = document.getElementById('auto-backup-indicator');
-    if (indicator) indicator.classList.toggle('hidden', !show);
+    if (icon) {
+        icon.className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
+    }
 }
 
 function debouncedSearch() {
@@ -4108,15 +4559,32 @@ function debouncedSearch() {
 }
 
 function advancedSearch() {
-    const query = document.getElementById('search-input').value.toLowerCase().trim();
-    const typeValue = document.getElementById('search-type').value;
-    const goldValue = document.getElementById('search-gold').value;
-    const statusValue = document.getElementById('search-status').value;
+    const searchInput = document.getElementById('search-input');
+    const searchType = document.getElementById('search-type');
+    const searchGold = document.getElementById('search-gold');
+    const searchStatus = document.getElementById('search-status');
     
-    let filtered = statusValue === 'inactive' ? ClientStatus.getAllInactiveClients() : getCurrentUserClients();
-    if (statusValue === 'active') filtered = filtered.filter(c => !ClientStatus.isInactive(c));
+    const query = searchInput?.value.toLowerCase().trim() || '';
+    const typeValue = searchType?.value || 'all';
+    const goldValue = searchGold?.value || 'all';
+    const statusValue = searchStatus?.value || 'all';
     
-    if (query) filtered = filtered.filter(c => (c.name && c.name.toLowerCase().includes(query)) || (c.phone && c.phone.toLowerCase().includes(query)) || (c.notes && c.notes.toLowerCase().includes(query)));
+    let filtered = statusValue === 'inactive' ? 
+        ClientStatus.getAllInactiveClients() : 
+        getCurrentUserClients();
+    
+    if (statusValue === 'active') {
+        filtered = filtered.filter(c => !ClientStatus.isInactive(c));
+    }
+    
+    if (query) {
+        filtered = filtered.filter(c => 
+            (c.name && c.name.toLowerCase().includes(query)) || 
+            (c.phone && c.phone.toLowerCase().includes(query)) || 
+            (c.notes && c.notes.toLowerCase().includes(query))
+        );
+    }
+    
     if (typeValue !== 'all') {
         filtered = filtered.filter(c => {
             const m = getClientMoneySummary(c);
@@ -4128,8 +4596,12 @@ function advancedSearch() {
             return true;
         });
     }
-    if (goldValue === 'has') filtered = filtered.filter(c => c.goldTransactions && c.goldTransactions.length > 0);
-    else if (goldValue === 'no') filtered = filtered.filter(c => !c.goldTransactions || c.goldTransactions.length === 0);
+    
+    if (goldValue === 'has') {
+        filtered = filtered.filter(c => c.goldTransactions && c.goldTransactions.length > 0);
+    } else if (goldValue === 'no') {
+        filtered = filtered.filter(c => !c.goldTransactions || c.goldTransactions.length === 0);
+    }
     
     renderSearchResults(filtered);
 }
@@ -4137,7 +4609,11 @@ function advancedSearch() {
 function renderSearchResults(results) {
     const grid = document.getElementById('clients-grid');
     if (!grid) return;
-    if (results.length === 0) { grid.innerHTML = '<p class="col-span-full text-center py-12 text-gray-500">لا توجد نتائج</p>'; return; }
+    
+    if (results.length === 0) { 
+        grid.innerHTML = '<p class="col-span-full text-center py-12 text-gray-500">لا توجد نتائج</p>'; 
+        return; 
+    }
     
     grid.innerHTML = results.map(client => {
         const isInactive = ClientStatus.isInactive(client);
@@ -4152,80 +4628,11 @@ function renderSearchResults(results) {
     }).join('');
 }
 
-function showConfirmation(title, message, callback, requirePassword = false) {
-    document.getElementById('confirmation-title').textContent = title;
-    document.getElementById('confirmation-message').textContent = message;
-    document.getElementById('confirmation-password-field').classList.toggle('hidden', !requirePassword);
-    document.getElementById('confirmation-password').value = '';
-    AppState.confirmationCallback = callback;
-    document.getElementById('confirmation-modal').classList.add('active');
-}
-
-function closeConfirmationModal() {
-    document.getElementById('confirmation-modal').classList.remove('active');
-    AppState.confirmationCallback = null;
-}
-
-function executeConfirmedAction() {
-    const requirePassword = !document.getElementById('confirmation-password-field').classList.contains('hidden');
-    if (requirePassword) {
-        const password = document.getElementById('confirmation-password').value;
-        if (!password) { showToast('الرجاء إدخال كلمة المرور', 'error'); return; }
-        const users = Storage.loadUsers();
-        const user = users.find(u => u.id === AppState.currentUser.id);
-        if (!Security.verifyPassword(password, user.password)) { showToast('كلمة المرور غير صحيحة', 'error'); return; }
-    }
-    if (AppState.confirmationCallback) AppState.confirmationCallback();
-    closeConfirmationModal();
-}
-
-// ==================== التهيئة ====================
-document.addEventListener('DOMContentLoaded', () => {
-    InactivitySettings.loadDefaultDays();
-    AppState.systemSettings = Storage.loadSettings();
-    
-    if (AppState.systemSettings.autoBackup) {
-        AppState.backupInterval = setInterval(() => {
-            if (AppState.currentUser && AppState.systemSettings.autoBackup) Storage.createBackup();
-        }, AppState.systemSettings.backupSchedule * 60 * 1000);
-    }
-    
-    checkSavedSession();
-    if (window.innerWidth <= 768) document.getElementById('nav-sidebar')?.classList.add('collapsed');
-    
-    document.querySelectorAll('#tag-selector .tag').forEach(tag => {
-        tag.addEventListener('click', function() {
-            const tagName = this.dataset.tag;
-            const tagsInput = document.getElementById('client-tags');
-            if (tagsInput) {
-                const currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
-                if (currentTags.includes(tagName)) {
-                    tagsInput.value = currentTags.filter(t => t !== tagName).join(', ');
-                    this.classList.remove('selected');
-                } else {
-                    currentTags.push(tagName);
-                    tagsInput.value = currentTags.join(', ');
-                    this.classList.add('selected');
-                }
-            }
-        });
-    });
-    
-    document.addEventListener('click', e => {
-        if (!document.getElementById('duplicate-results')?.contains(e.target) && !document.getElementById('client-name')?.contains(e.target)) {
-            document.getElementById('duplicate-results')?.classList.add('hidden');
-        }
-    });
-});
-</script>
-</body>
-</html>
-
-<!-- إصلاحات إضافية للدوال المفقودة -->
-<script>
-// دوال إضافية للإشعارات
+// ==================== دوال الإشعارات ====================
 function toggleNotifications() {
     const center = document.getElementById('notification-center');
+    if (!center) return;
+    
     if (center.classList.contains('active')) {
         center.classList.remove('active');
         center.classList.add('hidden');
@@ -4250,11 +4657,12 @@ function markAllNotificationsRead() {
     NotificationSystem.markAllAsRead();
 }
 
-// دوال النسخ الاحتياطي
+// ==================== دوال النسخ الاحتياطي ====================
 function checkForBackup() {
     const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
     if (history.length > 0) {
-        document.getElementById('restore-modal').style.display = 'flex';
+        const modal = document.getElementById('restore-modal');
+        if (modal) modal.style.display = 'flex';
     }
 }
 
@@ -4277,7 +4685,8 @@ function restoreBackup() {
                     });
                 }
             }
-            document.getElementById('restore-modal').style.display = 'none';
+            const modal = document.getElementById('restore-modal');
+            if (modal) modal.style.display = 'none';
             hideLoading();
             showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
             setTimeout(() => location.reload(), 1500);
@@ -4289,33 +4698,38 @@ function restoreBackup() {
 }
 
 function startFresh() {
-    document.getElementById('restore-modal').style.display = 'none';
+    const modal = document.getElementById('restore-modal');
+    if (modal) modal.style.display = 'none';
     showToast('تم بدء نظام جديد', 'success');
 }
 
 function toggleAutoBackup() {
     const toggle = document.getElementById('auto-backup-toggle');
+    if (!toggle) return;
+    
     AppState.systemSettings.autoBackup = toggle.checked;
-    document.getElementById('auto-backup-status').textContent = AppState.systemSettings.autoBackup ? 'مفعل' : 'معطل';
+    const statusEl = document.getElementById('auto-backup-status');
+    if (statusEl) statusEl.textContent = AppState.systemSettings.autoBackup ? 'مفعل' : 'معطل';
     Storage.saveSettings(AppState.systemSettings);
     showToast(AppState.systemSettings.autoBackup ? 'تم تفعيل النسخ الاحتياطي' : 'تم إلغاء النسخ الاحتياطي', 'success');
 }
 
 function updateBackupCount() {
-    AppState.systemSettings.backupCount = parseInt(document.getElementById('backup-count').value);
+    const countEl = document.getElementById('backup-count');
+    if (!countEl) return;
+    
+    AppState.systemSettings.backupCount = parseInt(countEl.value);
     Storage.saveSettings(AppState.systemSettings);
     showToast('تم تحديث إعدادات النسخ', 'success');
 }
 
 function updateBackupSchedule() {
-    AppState.systemSettings.backupSchedule = parseInt(document.getElementById('backup-schedule').value);
+    const scheduleEl = document.getElementById('backup-schedule');
+    if (!scheduleEl) return;
+    
+    AppState.systemSettings.backupSchedule = parseInt(scheduleEl.value);
     Storage.saveSettings(AppState.systemSettings);
     showToast('تم تحديث جدولة النسخ', 'success');
-}
-
-function showAutoBackupIndicator(show) {
-    const indicator = document.getElementById('auto-backup-indicator');
-    if (indicator) indicator.classList.toggle('hidden', !show);
 }
 
 function exportToCloud() {
@@ -4329,7 +4743,9 @@ function exportToCloud() {
 function viewBackupHistory() {
     const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
     const listDiv = document.getElementById('backup-history-list');
-    if (!listDiv) return;
+    const modal = document.getElementById('backup-history-modal');
+    
+    if (!listDiv || !modal) return;
     
     if (history.length === 0) {
         listDiv.innerHTML = '<p class="text-center text-gray-500 py-8">لا توجد نسخ احتياطية سابقة</p>';
@@ -4343,11 +4759,12 @@ function viewBackupHistory() {
                 </div>
             </div>`).join('');
     }
-    document.getElementById('backup-history-modal').classList.add('active');
+    modal.classList.add('active');
 }
 
 function closeBackupHistoryModal() {
-    document.getElementById('backup-history-modal').classList.remove('active');
+    const modal = document.getElementById('backup-history-modal');
+    if (modal) modal.classList.remove('active');
 }
 
 function restoreSpecificBackup(backupId) {
@@ -4395,31 +4812,34 @@ function downloadBackup(backupId) {
         a.href = url;
         a.download = `backup_${new Date(backup.timestamp).toLocaleDateString('en-CA')}.json`;
         a.click();
+        URL.revokeObjectURL(url);
         showToast('تم تحميل النسخة الاحتياطية', 'success');
     }
 }
 
-// دوال الإعدادات
+// ==================== دوال الإعدادات ====================
 function updateDefaultInactivityDays() {
-    const days = parseInt(document.getElementById('default-inactivity-days').value);
+    const daysEl = document.getElementById('default-inactivity-days');
+    if (!daysEl) return;
+    
+    const days = parseInt(daysEl.value);
     if (days > 0 && days <= 365) {
         InactivitySettings.saveDefaultDays(days);
         showToast('تم تحديث فترة عدم النشاط', 'success');
     } else {
         showToast('الرجاء إدخال قيمة صحيحة (1-365)', 'error');
-        document.getElementById('default-inactivity-days').value = InactivitySettings.defaultDays;
+        daysEl.value = InactivitySettings.defaultDays;
     }
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('light-mode');
-    document.getElementById('theme-icon').className = document.body.classList.contains('light-mode') ? 'fas fa-sun' : 'fas fa-moon';
-}
-
 function changePassword() {
-    const current = document.getElementById('current-password').value;
-    const newPass = document.getElementById('new-password').value;
-    const confirm = document.getElementById('confirm-password').value;
+    const currentEl = document.getElementById('current-password');
+    const newPassEl = document.getElementById('new-password');
+    const confirmEl = document.getElementById('confirm-password');
+    
+    const current = currentEl?.value;
+    const newPass = newPassEl?.value;
+    const confirm = confirmEl?.value;
     
     if (!current || !newPass || !confirm) { showToast('الرجاء إدخال جميع الحقول', 'error'); return; }
     if (newPass !== confirm) { showToast('كلمة المرور غير متطابقة', 'error'); return; }
@@ -4429,7 +4849,7 @@ function changePassword() {
     setTimeout(() => {
         const users = Storage.loadUsers();
         const idx = users.findIndex(u => u.id === AppState.currentUser.id);
-        if (!Security.verifyPassword(current, users[idx].password)) {
+        if (idx === -1 || !Security.verifyPassword(current, users[idx].password)) {
             hideLoading();
             showToast('كلمة المرور الحالية غير صحيحة', 'error');
             return;
@@ -4439,9 +4859,9 @@ function changePassword() {
         Storage.saveUsers(users);
         hideLoading();
         showToast('تم تغيير كلمة المرور بنجاح', 'success');
-        document.getElementById('current-password').value = '';
-        document.getElementById('new-password').value = '';
-        document.getElementById('confirm-password').value = '';
+        if (currentEl) currentEl.value = '';
+        if (newPassEl) newPassEl.value = '';
+        if (confirmEl) confirmEl.value = '';
     }, 1000);
 }
 
@@ -4457,6 +4877,7 @@ function exportData() {
     a.href = url;
     a.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
     a.click();
+    URL.revokeObjectURL(url);
     showToast('تم تصدير البيانات بنجاح', 'success');
 }
 
@@ -4527,230 +4948,7 @@ function openDeleteAllConfirmation() {
     }, true);
 }
 
-// دوال التنقل
-function toggleNav() {
-    const nav = document.getElementById('nav-sidebar');
-    const btn = document.getElementById('nav-toggle-btn');
-    nav.classList.toggle('collapsed');
-    btn.innerHTML = nav.classList.contains('collapsed') ? '<i class="fas fa-bars"></i><span>القائمة</span>' : '<i class="fas fa-times"></i><span>إغلاق</span>';
-}
-
-// دوال الملاحظات الصوتية
-function startVoiceNote() {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        showToast('المتصفح لا يدعم الإدخال الصوتي', 'error');
-        return;
-    }
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'ar-SA';
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.onstart = () => showToast('جاري الاستماع...', 'info');
-    recognition.onresult = (event) => {
-        const note = event.results[0][0].transcript;
-        const currentNotes = document.getElementById('client-notes');
-        if (currentNotes) currentNotes.value = currentNotes.value + (currentNotes.value ? '\n' : '') + '🎤 ' + note;
-        showToast('تم إضافة الملاحظة الصوتية', 'success');
-    };
-    recognition.onerror = () => showToast('حدث خطأ في التعرف على الصوت', 'error');
-    recognition.start();
-}
-
-// دوال تصدير العميل
-function exportClientImage() {
-    if (!AppState.currentClientId) { showToast('الرجاء اختيار عميل أولاً', 'error'); return; }
-    const client = getCurrentUserClients().find(c => c.id === AppState.currentClientId);
-    if (!client) return;
-    showToast('جاري تصدير صورة العميل...', 'info');
-    showToast('تم تصدير صورة العميل بنجاح', 'success');
-}
-
-// دوال عيارات الذهب
-function toggleInitialCustomKarat() {
-    const select = document.getElementById('initial-gold-karat-select');
-    const container = document.getElementById('initial-custom-karat-container');
-    if (select && container) container.classList.toggle('hidden', select.value !== 'custom');
-}
-
-function toggleGoldCustomKarat() {
-    const select = document.getElementById('gold-karat-select');
-    const container = document.getElementById('gold-custom-karat-container');
-    if (select && container) container.classList.toggle('hidden', select.value !== 'custom');
-}
-
-// دوال البحث المتقدم
-function debouncedSearch() {
-    clearTimeout(AppState.searchTimeout);
-    AppState.searchTimeout = setTimeout(advancedSearch, 300);
-}
-
-// دوال تعديل العميل
-let editingClientId = null;
-
-function editCurrentClient() {
-    if (!AppState.currentClientId) return;
-    const client = getCurrentUserClients().find(c => c.id === AppState.currentClientId);
-    if (!client) return;
-    
-    editingClientId = client.id;
-    document.getElementById('edit-client-name').value = client.name;
-    document.getElementById('edit-client-phone').value = client.phone || '';
-    document.getElementById('edit-client-address').value = client.address || '';
-    document.getElementById('edit-client-notes').value = client.notes || '';
-    document.getElementById('edit-client-tags').value = (client.tags || []).join(', ');
-    document.getElementById('edit-client-modal').classList.add('active');
-}
-
-function closeEditClientModal() {
-    document.getElementById('edit-client-modal').classList.remove('active');
-    editingClientId = null;
-}
-
-function saveEditedClient() {
-    if (!editingClientId) return;
-    showConfirmation('تأكيد التعديل', 'هل أنت متأكد من حفظ التعديلات؟', () => {
-        const clients = getCurrentUserClients();
-        const client = clients.find(c => c.id === editingClientId);
-        if (!client) return;
-        
-        client.name = document.getElementById('edit-client-name').value.trim();
-        client.phone = document.getElementById('edit-client-phone').value.trim();
-        client.address = document.getElementById('edit-client-address').value.trim();
-        client.notes = document.getElementById('edit-client-notes').value.trim();
-        client.tags = document.getElementById('edit-client-tags').value.split(',').map(t => t.trim()).filter(t => t);
-        
-        const userClients = Storage.getUserClients(client.userId);
-        const idx = userClients.findIndex(c => c.id === client.id);
-        userClients[idx] = client;
-        Storage.saveUserClients(client.userId, userClients);
-        
-        closeEditClientModal();
-        viewClient(editingClientId);
-        showToast('تم تعديل بيانات العميل بنجاح', 'success');
-    }, true);
-}
-
-// دوال المستخدمين
-function renderUsersList() {
-    if (AppState.currentUser?.role !== 'admin') return;
-    const users = Storage.loadUsers();
-    const tbody = document.getElementById('users-table-body');
-    if (!tbody) return;
-    
-    let activeCount = 0, inactiveCount = 0, totalClients = 0;
-    users.forEach(user => {
-        if (Security.getUserStatus(user.id) === 'active') activeCount++;
-        else inactiveCount++;
-        totalClients += Storage.getUserClients(user.id).length;
-    });
-    
-    document.getElementById('total-users').textContent = users.length;
-    document.getElementById('active-users').textContent = activeCount;
-    document.getElementById('inactive-users').textContent = inactiveCount;
-    document.getElementById('total-clients-all').textContent = totalClients;
-    
-    tbody.innerHTML = users.map(user => {
-        const status = Security.getUserStatus(user.id);
-        const clients = Storage.getUserClients(user.id);
-        const txCount = clients.reduce((s, c) => s + c.transactions.length + c.goldTransactions.length, 0);
-        return `
-            <tr>
-                <td><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold">${user.name.charAt(0)}</div><div><div class="font-medium">${escapeHtml(user.name)}</div><div class="text-xs text-gray-500">${user.role === 'admin' ? 'مدير' : 'مستخدم'}</div></div></div></td>
-                <td>${escapeHtml(user.email)}</td>
-                <td><span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' : user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-700 text-gray-400'}">${user.provider === 'google' ? 'Google' : user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}</span></td>
-                <td>${formatDate(user.createdAt)}</td>
-                <td><div>${clients.length} عميل</div><div class="text-xs text-gray-500">${txCount} معاملة</div></td>
-                <td><span class="badge ${status === 'active' ? 'badge-success' : 'badge-danger'}">${status === 'active' ? 'نشط' : 'موقوف'}</span></td>
-                <td><div class="flex gap-2"><button onclick="showUserDetails('${user.id}')" class="text-emerald-400 hover:text-emerald-300"><i class="fas fa-eye"></i></button>${user.role !== 'admin' ? `<button onclick="toggleUserStatusFromList('${user.id}')" class="text-amber-400 hover:text-amber-300"><i class="fas ${status === 'active' ? 'fa-pause' : 'fa-play'}"></i></button>` : ''}</div></td>
-            </tr>`;
-    }).join('');
-}
-
-function showUserDetails(userId) {
-    const user = Storage.loadUsers().find(u => u.id === userId);
-    if (!user) return;
-    AppState.selectedUserId = userId;
-    
-    const clients = Storage.getUserClients(userId);
-    const txCount = clients.reduce((s, c) => s + c.transactions.length + c.goldTransactions.length, 0);
-    const status = Security.getUserStatus(userId);
-    
-    document.getElementById('modal-user-avatar').textContent = user.name.charAt(0);
-    document.getElementById('modal-user-name').textContent = escapeHtml(user.name);
-    document.getElementById('modal-user-email').textContent = escapeHtml(user.email);
-    document.getElementById('modal-user-provider').innerHTML = `<span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' : user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-700 text-gray-400'}">${user.provider === 'google' ? 'Google' : user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}</span>`;
-    document.getElementById('modal-user-clients').textContent = clients.length;
-    document.getElementById('modal-user-transactions').textContent = txCount;
-    document.getElementById('modal-user-status').checked = status === 'active';
-    document.getElementById('modal-user-status-text').textContent = status === 'active' ? 'نشط' : 'موقوف';
-    document.getElementById('modal-user-created').textContent = formatDate(user.createdAt);
-    document.getElementById('user-modal').classList.add('active');
-}
-
-function closeUserModal() {
-    document.getElementById('user-modal').classList.remove('active');
-    AppState.selectedUserId = null;
-}
-
-function toggleUserStatus() {
-    if (!AppState.selectedUserId) return;
-    const newStatus = document.getElementById('modal-user-status').checked ? 'active' : 'inactive';
-    Security.setUserStatus(AppState.selectedUserId, newStatus);
-    document.getElementById('modal-user-status-text').textContent = newStatus === 'active' ? 'نشط' : 'موقوف';
-    showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم`, 'success');
-    renderUsersList();
-}
-
-function toggleUserStatusFromList(userId) {
-    const currentStatus = Security.getUserStatus(userId);
-    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    Security.setUserStatus(userId, newStatus);
-    showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم`, 'success');
-    renderUsersList();
-}
-
-// دوال تغيير كلمة المرور
-function showChangePasswordModal() {
-    document.getElementById('change-current-password').value = '';
-    document.getElementById('change-new-password').value = '';
-    document.getElementById('change-confirm-password').value = '';
-    document.getElementById('change-password-modal').classList.add('active');
-}
-
-function closeChangePasswordModal() {
-    document.getElementById('change-password-modal').classList.remove('active');
-}
-
-function saveNewPassword() {
-    const current = document.getElementById('change-current-password').value;
-    const newPass = document.getElementById('change-new-password').value;
-    const confirm = document.getElementById('change-confirm-password').value;
-    
-    if (!current || !newPass || !confirm) { showToast('الرجاء إدخال جميع الحقول', 'error'); return; }
-    if (newPass !== confirm) { showToast('كلمة المرور غير متطابقة', 'error'); return; }
-    if (newPass.length < 6) { showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error'); return; }
-    
-    showLoading();
-    setTimeout(() => {
-        const users = Storage.loadUsers();
-        const idx = users.findIndex(u => u.id === AppState.currentUser.id);
-        if (!Security.verifyPassword(current, users[idx].password)) {
-            hideLoading();
-            showToast('كلمة المرور الحالية غير صحيحة', 'error');
-            return;
-        }
-        users[idx].password = Security.hashPassword(newPass);
-        users[idx].forcePasswordChange = false;
-        Storage.saveUsers(users);
-        AppState.currentUser.forcePasswordChange = false;
-        localStorage.setItem(StorageKeys.CURRENT_USER, JSON.stringify(AppState.currentUser));
-        hideLoading();
-        closeChangePasswordModal();
-        showToast('تم تغيير كلمة المرور بنجاح', 'success');
-    }, 1000);
-}
-
-// دالة تصدير Excel و PDF
+// ==================== دوال التصدير ====================
 function exportToExcel() {
     const clients = getCurrentUserClients();
     if (!clients.length) { showToast('لا توجد بيانات للتصدير', 'warning'); return; }
@@ -4802,76 +5000,288 @@ async function exportToPDF() {
     }
 }
 
-// تصفية العملاء بالتصنيفات
-function filterActiveByTag(tag, event) {
-    document.querySelectorAll('#active-tags-filter .tag').forEach(t => t.classList.remove('selected'));
-    if (event?.target) event.target.classList.add('selected');
-    const clients = getCurrentUserClients().filter(c => !ClientStatus.isInactive(c));
-    const filtered = tag === 'all' ? clients : clients.filter(c => c.tags?.includes(tag));
-    renderFilteredActiveClients(filtered);
+function exportToCloud() {
+    showLoading();
+    setTimeout(() => {
+        hideLoading();
+        showToast('تم رفع النسخة الاحتياطية للسحابة', 'success');
+    }, 2000);
 }
 
-function filterInactiveByTag(tag, event) {
-    document.querySelectorAll('#inactive-tags-filter .tag').forEach(t => t.classList.remove('selected'));
-    if (event?.target) event.target.classList.add('selected');
-    const inactive = ClientStatus.getAllInactiveClients();
-    const filtered = tag === 'all' ? inactive : inactive.filter(c => c.tags?.includes(tag));
-    renderFilteredInactiveClients(filtered);
+function exportClientImage() {
+    if (!AppState.currentClientId) { showToast('الرجاء اختيار عميل أولاً', 'error'); return; }
+    showToast('جاري تصدير صورة العميل...', 'info');
+    setTimeout(() => showToast('تم تصدير صورة العميل بنجاح', 'success'), 1500);
 }
 
-function renderFilteredActiveClients(clients) {
-    const container = document.getElementById('active-clients-list');
-    if (!container) return;
-    if (clients.length === 0) { container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء</p>'; return; }
-    container.innerHTML = clients.map(client => {
-        const m = getClientMoneySummary(client);
-        const g = getTotalGold(getGoldSummary(client));
+// ==================== دوال تأكيد العمليات ====================
+function showConfirmation(title, message, callback, requirePassword = false) {
+    const titleEl = document.getElementById('confirmation-title');
+    const messageEl = document.getElementById('confirmation-message');
+    const passwordField = document.getElementById('confirmation-password-field');
+    const passwordInput = document.getElementById('confirmation-password');
+    
+    if (titleEl) titleEl.textContent = title;
+    if (messageEl) messageEl.textContent = message;
+    if (passwordField) passwordField.classList.toggle('hidden', !requirePassword);
+    if (passwordInput) passwordInput.value = '';
+    
+    AppState.confirmationCallback = callback;
+    
+    const modal = document.getElementById('confirmation-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmation-modal');
+    if (modal) modal.classList.remove('active');
+    AppState.confirmationCallback = null;
+}
+
+function executeConfirmedAction() {
+    const passwordField = document.getElementById('confirmation-password-field');
+    const requirePassword = passwordField && !passwordField.classList.contains('hidden');
+    
+    if (requirePassword) {
+        const passwordInput = document.getElementById('confirmation-password');
+        const password = passwordInput?.value;
+        if (!password) { showToast('الرجاء إدخال كلمة المرور', 'error'); return; }
+        const users = Storage.loadUsers();
+        const user = users.find(u => u.id === AppState.currentUser.id);
+        if (!user || !Security.verifyPassword(password, user.password)) { 
+            showToast('كلمة المرور غير صحيحة', 'error'); 
+            return; 
+        }
+    }
+    
+    if (AppState.confirmationCallback) AppState.confirmationCallback();
+    closeConfirmationModal();
+}
+
+// ==================== دوال المستخدمين ====================
+function renderUsersList() {
+    if (AppState.currentUser?.role !== 'admin') return;
+    const users = Storage.loadUsers();
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody) return;
+    
+    let activeCount = 0, inactiveCount = 0, totalClients = 0;
+    users.forEach(user => {
+        if (Security.getUserStatus(user.id) === 'active') activeCount++;
+        else inactiveCount++;
+        totalClients += Storage.getUserClients(user.id).length;
+    });
+    
+    const totalUsersEl = document.getElementById('total-users');
+    const activeUsersEl = document.getElementById('active-users');
+    const inactiveUsersEl = document.getElementById('inactive-users');
+    const totalClientsAllEl = document.getElementById('total-clients-all');
+    
+    if (totalUsersEl) totalUsersEl.textContent = users.length;
+    if (activeUsersEl) activeUsersEl.textContent = activeCount;
+    if (inactiveUsersEl) inactiveUsersEl.textContent = inactiveCount;
+    if (totalClientsAllEl) totalClientsAllEl.textContent = totalClients;
+    
+    tbody.innerHTML = users.map(user => {
+        const status = Security.getUserStatus(user.id);
+        const clients = Storage.getUserClients(user.id);
+        const txCount = clients.reduce((s, c) => s + c.transactions.length + c.goldTransactions.length, 0);
         return `
-            <div class="client-card" onclick="viewClient('${client.id}')">
-                <div class="flex justify-between items-start mb-3"><div><h3 class="font-semibold">${escapeHtml(client.name)}</h3>${client.phone ? `<p class="text-xs text-gray-500">${escapeHtml(client.phone)}</p>` : ''}</div><span class="badge badge-success">نشط</span></div>
-                <div class="grid grid-cols-2 gap-3 mb-3"><div class="bg-tertiary p-2 rounded-lg"><p class="text-xs text-gray-500">له مال</p><p class="font-medium text-amber-400 numbers">${formatMoney(m.moneyFor)}</p></div><div class="bg-tertiary p-2 rounded-lg"><p class="text-xs text-gray-500">عليه مال</p><p class="font-medium text-emerald-400 numbers">${formatMoney(m.moneyOn)}</p></div></div>
-                <div class="flex justify-between text-xs text-gray-500"><span>صافي المال: ${formatMoney(Math.abs(m.netMoney))}</span><span>صافي الذهب: ${formatGold(Math.abs(g.net))}</span></div>
-            </div>`;
+            <tr>
+                <td><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-bold">${user.name.charAt(0)}</div><div><div class="font-medium">${escapeHtml(user.name)}</div><div class="text-xs text-gray-500">${user.role === 'admin' ? 'مدير' : 'مستخدم'}</div></div></div></td>
+                <td>${escapeHtml(user.email)}</td>
+                <td><span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' : user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-700 text-gray-400'}">${user.provider === 'google' ? 'Google' : user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}</span></td>
+                <td>${formatDate(user.createdAt)}</td>
+                <td><div>${clients.length} عميل</div><div class="text-xs text-gray-500">${txCount} معاملة</div></td>
+                <td><span class="badge ${status === 'active' ? 'badge-success' : 'badge-danger'}">${status === 'active' ? 'نشط' : 'موقوف'}</span></td>
+                <td><div class="flex gap-2"><button onclick="showUserDetails('${user.id}')" class="text-emerald-400 hover:text-emerald-300"><i class="fas fa-eye"></i></button>${user.role !== 'admin' ? `<button onclick="toggleUserStatusFromList('${user.id}')" class="text-amber-400 hover:text-amber-300"><i class="fas ${status === 'active' ? 'fa-pause' : 'fa-play'}"></i></button>` : ''}</div></td>
+            </tr>`;
     }).join('');
 }
 
-function renderFilteredInactiveClients(clients) {
-    const container = document.getElementById('inactive-clients-list');
-    if (!container) return;
-    if (clients.length === 0) { container.innerHTML = '<p class="text-center py-12 text-gray-500">لا يوجد عملاء</p>'; return; }
-    container.innerHTML = clients.map(client => `
-        <div class="client-card inactive">
-            <div class="flex justify-between items-start mb-3"><div><h3 class="font-semibold">${escapeHtml(client.name)}</h3>${client.phone ? `<p class="text-xs text-gray-500">${escapeHtml(client.phone)}</p>` : ''}</div><span class="badge badge-inactive">منتهي</span></div>
-            <p class="text-sm text-gray-400 mb-3">رصيد صفر</p>
-            <div class="flex gap-2 mt-3">
-                <button onclick="event.stopPropagation(); reactivateClient('${client.id}')" class="btn-primary text-sm py-2 px-3"><i class="fas fa-sync-alt ml-1"></i>تفعيل</button>
-                <button onclick="event.stopPropagation(); viewClient('${client.id}')" class="btn-secondary text-sm py-2 px-3"><i class="fas fa-eye ml-1"></i>عرض</button>
-            </div>
-        </div>`).join('');
+function showUserDetails(userId) {
+    const user = Storage.loadUsers().find(u => u.id === userId);
+    if (!user) return;
+    AppState.selectedUserId = userId;
+    
+    const clients = Storage.getUserClients(userId);
+    const txCount = clients.reduce((s, c) => s + c.transactions.length + c.goldTransactions.length, 0);
+    const status = Security.getUserStatus(userId);
+    
+    const avatarEl = document.getElementById('modal-user-avatar');
+    const nameEl = document.getElementById('modal-user-name');
+    const emailEl = document.getElementById('modal-user-email');
+    const providerEl = document.getElementById('modal-user-provider');
+    const clientsEl = document.getElementById('modal-user-clients');
+    const transactionsEl = document.getElementById('modal-user-transactions');
+    const statusEl = document.getElementById('modal-user-status');
+    const statusTextEl = document.getElementById('modal-user-status-text');
+    const createdEl = document.getElementById('modal-user-created');
+    
+    if (avatarEl) avatarEl.textContent = user.name.charAt(0);
+    if (nameEl) nameEl.textContent = escapeHtml(user.name);
+    if (emailEl) emailEl.textContent = escapeHtml(user.email);
+    if (providerEl) providerEl.innerHTML = `<span class="badge ${user.provider === 'google' ? 'bg-blue-900/30 text-blue-400' : user.provider === 'microsoft' ? 'bg-purple-900/30 text-purple-400' : 'bg-gray-700 text-gray-400'}">${user.provider === 'google' ? 'Google' : user.provider === 'microsoft' ? 'Microsoft' : 'بريد إلكتروني'}</span>`;
+    if (clientsEl) clientsEl.textContent = clients.length;
+    if (transactionsEl) transactionsEl.textContent = txCount;
+    if (statusEl) statusEl.checked = status === 'active';
+    if (statusTextEl) statusTextEl.textContent = status === 'active' ? 'نشط' : 'موقوف';
+    if (createdEl) createdEl.textContent = formatDate(user.createdAt);
+    
+    const modal = document.getElementById('user-modal');
+    if (modal) modal.classList.add('active');
 }
 
-function renderActiveTagsFilter() {
-    const clients = getCurrentUserClients().filter(c => !ClientStatus.isInactive(c));
-    const tags = new Set();
-    clients.forEach(c => c.tags?.forEach(t => tags.add(t)));
-    const filterDiv = document.getElementById('active-tags-filter');
-    if (filterDiv) {
-        filterDiv.innerHTML = '<span class="tag selected" onclick="filterActiveByTag(\'all\', event)">الكل</span>' +
-            Array.from(tags).map(tag => `<span class="tag" onclick="filterActiveByTag('${escapeHtml(tag)}', event)">${escapeHtml(tag)}</span>`).join('');
+function closeUserModal() {
+    const modal = document.getElementById('user-modal');
+    if (modal) modal.classList.remove('active');
+    AppState.selectedUserId = null;
+}
+
+function toggleUserStatus() {
+    if (!AppState.selectedUserId) return;
+    const statusEl = document.getElementById('modal-user-status');
+    const newStatus = statusEl?.checked ? 'active' : 'inactive';
+    Security.setUserStatus(AppState.selectedUserId, newStatus);
+    
+    const statusTextEl = document.getElementById('modal-user-status-text');
+    if (statusTextEl) statusTextEl.textContent = newStatus === 'active' ? 'نشط' : 'موقوف';
+    
+    showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم`, 'success');
+    renderUsersList();
+}
+
+function toggleUserStatusFromList(userId) {
+    const currentStatus = Security.getUserStatus(userId);
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    Security.setUserStatus(userId, newStatus);
+    showToast(`تم ${newStatus === 'active' ? 'تفعيل' : 'إيقاف'} المستخدم`, 'success');
+    renderUsersList();
+}
+
+// ==================== دوال النسخ الاحتياطي ====================
+function viewBackupHistory() {
+    const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+    const listDiv = document.getElementById('backup-history-list');
+    const modal = document.getElementById('backup-history-modal');
+    
+    if (!listDiv || !modal) return;
+    
+    if (history.length === 0) {
+        listDiv.innerHTML = '<p class="text-center text-gray-500 py-8">لا توجد نسخ احتياطية سابقة</p>';
+    } else {
+        listDiv.innerHTML = history.map((backup, index) => `
+            <div class="bg-tertiary p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div><div class="font-medium">نسخة احتياطية ${history.length - index}</div><div class="text-sm text-gray-500">${new Date(backup.timestamp).toLocaleString('ar-EG')}</div></div>
+                <div class="flex gap-2">
+                    <button onclick="restoreSpecificBackup('${backup.id}')" class="text-emerald-400 hover:text-emerald-300" title="استعادة"><i class="fas fa-undo"></i></button>
+                    <button onclick="downloadBackup('${backup.id}')" class="text-blue-400 hover:text-blue-300" title="تحميل"><i class="fas fa-download"></i></button>
+                </div>
+            </div>`).join('');
+    }
+    modal.classList.add('active');
+}
+
+function closeBackupHistoryModal() {
+    const modal = document.getElementById('backup-history-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+function restoreSpecificBackup(backupId) {
+    showConfirmation('تأكيد استعادة النسخة الاحتياطية', 'هل أنت متأكد من استعادة هذه النسخة؟ سيتم فقدان جميع البيانات الحالية.', () => {
+        const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+        const backup = history.find(b => b.id === backupId);
+        if (backup) {
+            showLoading();
+            setTimeout(() => {
+                try {
+                    if (backup.data.users) localStorage.setItem(StorageKeys.USERS, JSON.stringify(backup.data.users));
+                    if (backup.data.clients) {
+                        Object.keys(backup.data.clients).forEach(userId => {
+                            localStorage.setItem(StorageKeys.CLIENTS_PREFIX + userId, JSON.stringify(backup.data.clients[userId]));
+                        });
+                    }
+                    if (backup.data.inactiveClients) {
+                        Object.keys(backup.data.inactiveClients).forEach(userId => {
+                            localStorage.setItem(StorageKeys.INACTIVE_CLIENTS_PREFIX + userId, JSON.stringify(backup.data.inactiveClients[userId]));
+                        });
+                    }
+                    hideLoading();
+                    showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+                    closeBackupHistoryModal();
+                    if (AppState.currentUser) {
+                        AppState.clientsCache = null;
+                        loadUserData();
+                    }
+                } catch (e) {
+                    hideLoading();
+                    showToast('حدث خطأ في الاستعادة', 'error');
+                }
+            }, 500);
+        }
+    }, true);
+}
+
+function downloadBackup(backupId) {
+    const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+    const backup = history.find(b => b.id === backupId);
+    if (backup) {
+        const blob = new Blob([JSON.stringify(backup.data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_${new Date(backup.timestamp).toLocaleDateString('en-CA')}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('تم تحميل النسخة الاحتياطية', 'success');
     }
 }
 
-function renderInactiveTagsFilter() {
-    const inactive = ClientStatus.getAllInactiveClients();
-    const tags = new Set();
-    inactive.forEach(c => c.tags?.forEach(t => tags.add(t)));
-    const filterDiv = document.getElementById('inactive-tags-filter');
-    if (filterDiv) {
-        filterDiv.innerHTML = '<span class="tag selected" onclick="filterInactiveByTag(\'all\', event)">الكل</span>' +
-            Array.from(tags).map(tag => `<span class="tag" onclick="filterInactiveByTag('${escapeHtml(tag)}', event)">${escapeHtml(tag)}</span>`).join('');
+function toggleAutoBackup() {
+    const toggle = document.getElementById('auto-backup-toggle');
+    const statusEl = document.getElementById('auto-backup-status');
+    
+    if (!toggle) return;
+    
+    AppState.systemSettings.autoBackup = toggle.checked;
+    if (statusEl) statusEl.textContent = AppState.systemSettings.autoBackup ? 'مفعل' : 'معطل';
+    Storage.saveSettings(AppState.systemSettings);
+    showToast(AppState.systemSettings.autoBackup ? 'تم تفعيل النسخ الاحتياطي' : 'تم إلغاء النسخ الاحتياطي', 'success');
+}
+
+function updateBackupCount() {
+    const countEl = document.getElementById('backup-count');
+    if (!countEl) return;
+    
+    AppState.systemSettings.backupCount = parseInt(countEl.value);
+    Storage.saveSettings(AppState.systemSettings);
+    showToast('تم تحديث إعدادات النسخ', 'success');
+}
+
+function updateBackupSchedule() {
+    const scheduleEl = document.getElementById('backup-schedule');
+    if (!scheduleEl) return;
+    
+    AppState.systemSettings.backupSchedule = parseInt(scheduleEl.value);
+    Storage.saveSettings(AppState.systemSettings);
+    showToast('تم تحديث جدولة النسخ', 'success');
+}
+
+function updateDefaultInactivityDays() {
+    const daysEl = document.getElementById('default-inactivity-days');
+    if (!daysEl) return;
+    
+    const days = parseInt(daysEl.value);
+    if (days > 0 && days <= 365) {
+        InactivitySettings.saveDefaultDays(days);
+        showToast('تم تحديث فترة عدم النشاط', 'success');
+    } else {
+        showToast('الرجاء إدخال قيمة صحيحة (1-365)', 'error');
+        daysEl.value = InactivitySettings.defaultDays;
     }
 }
 
+// ==================== دوال إضافية ====================
 function renderReportStats() {
     const clients = getCurrentUserClients();
     const inactive = ClientStatus.getAllInactiveClients();
@@ -4891,4 +5301,331 @@ function renderReportStats() {
             <div class="flex justify-between py-2"><span>إجمالي الذهب</span><span class="font-bold text-yellow-400 numbers">${formatGold(totalGold)}</span></div>`;
     }
 }
+
+function toggleNotifications() {
+    const center = document.getElementById('notification-center');
+    if (!center) return;
+    
+    if (center.classList.contains('active')) {
+        center.classList.remove('active');
+        center.classList.add('hidden');
+    } else {
+        NotificationSystem.show();
+        center.classList.remove('hidden');
+        center.classList.add('active');
+    }
+}
+
+function refreshNotifications() {
+    NotificationSystem.updateCount();
+    NotificationSystem.show();
+    showToast('تم تحديث الإشعارات', 'success');
+}
+
+function refreshPage() {
+    location.reload();
+}
+
+function markAllNotificationsRead() {
+    NotificationSystem.markAllAsRead();
+}
+
+function startVoiceNote() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        showToast('المتصفح لا يدعم الإدخال الصوتي', 'error');
+        return;
+    }
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ar-SA';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.onstart = () => showToast('جاري الاستماع...', 'info');
+    recognition.onresult = (event) => {
+        const note = event.results[0][0].transcript;
+        const currentNotes = document.getElementById('client-notes');
+        if (currentNotes) currentNotes.value = currentNotes.value + (currentNotes.value ? '\n' : '') + '🎤 ' + note;
+        showToast('تم إضافة الملاحظة الصوتية', 'success');
+    };
+    recognition.onerror = () => showToast('حدث خطأ في التعرف على الصوت', 'error');
+    recognition.start();
+}
+
+function editCurrentClient() {
+    if (!AppState.currentClientId) return;
+    const client = getCurrentUserClients().find(c => c.id === AppState.currentClientId);
+    if (!client) return;
+    
+    const nameEl = document.getElementById('edit-client-name');
+    const phoneEl = document.getElementById('edit-client-phone');
+    const addressEl = document.getElementById('edit-client-address');
+    const notesEl = document.getElementById('edit-client-notes');
+    const tagsEl = document.getElementById('edit-client-tags');
+    
+    if (nameEl) nameEl.value = client.name;
+    if (phoneEl) phoneEl.value = client.phone || '';
+    if (addressEl) addressEl.value = client.address || '';
+    if (notesEl) notesEl.value = client.notes || '';
+    if (tagsEl) tagsEl.value = (client.tags || []).join(', ');
+    
+    AppState.editingClientId = client.id;
+    
+    const modal = document.getElementById('edit-client-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeEditClientModal() {
+    const modal = document.getElementById('edit-client-modal');
+    if (modal) modal.classList.remove('active');
+    AppState.editingClientId = null;
+}
+
+function saveEditedClient() {
+    if (!AppState.editingClientId) return;
+    showConfirmation('تأكيد التعديل', 'هل أنت متأكد من حفظ التعديلات؟', () => {
+        const clients = getCurrentUserClients();
+        const client = clients.find(c => c.id === AppState.editingClientId);
+        if (!client) return;
+        
+        const nameEl = document.getElementById('edit-client-name');
+        const phoneEl = document.getElementById('edit-client-phone');
+        const addressEl = document.getElementById('edit-client-address');
+        const notesEl = document.getElementById('edit-client-notes');
+        const tagsEl = document.getElementById('edit-client-tags');
+        
+        client.name = nameEl?.value.trim() || client.name;
+        client.phone = phoneEl?.value.trim() || '';
+        client.address = addressEl?.value.trim() || '';
+        client.notes = notesEl?.value.trim() || '';
+        client.tags = (tagsEl?.value || '').split(',').map(t => t.trim()).filter(t => t);
+        
+        const userClients = Storage.getUserClients(client.userId);
+        const idx = userClients.findIndex(c => c.id === client.id);
+        userClients[idx] = client;
+        Storage.saveUserClients(client.userId, userClients);
+        
+        closeEditClientModal();
+        viewClient(AppState.editingClientId);
+        showToast('تم تعديل بيانات العميل بنجاح', 'success');
+    }, true);
+}
+
+// ==================== التهيئة ====================
+document.addEventListener('DOMContentLoaded', () => {
+    InactivitySettings.loadDefaultDays();
+    AppState.systemSettings = Storage.loadSettings();
+    
+    // تحديث إعدادات النسخ الاحتياطي
+    const autoBackupToggle = document.getElementById('auto-backup-toggle');
+    const backupCountSelect = document.getElementById('backup-count');
+    const backupScheduleSelect = document.getElementById('backup-schedule');
+    const defaultInactivityInput = document.getElementById('default-inactivity-days');
+    
+    if (autoBackupToggle) autoBackupToggle.checked = AppState.systemSettings.autoBackup;
+    if (backupCountSelect) backupCountSelect.value = AppState.systemSettings.backupCount.toString();
+    if (backupScheduleSelect) backupScheduleSelect.value = AppState.systemSettings.backupSchedule.toString();
+    if (defaultInactivityInput) defaultInactivityInput.value = InactivitySettings.defaultDays.toString();
+    
+    if (AppState.systemSettings.autoBackup) {
+        AppState.backupInterval = setInterval(() => {
+            if (AppState.currentUser && AppState.systemSettings.autoBackup) Storage.createBackup();
+        }, AppState.systemSettings.backupSchedule * 60 * 1000);
+    }
+    
+    checkSavedSession();
+    if (window.innerWidth <= 768) {
+        const nav = document.getElementById('nav-sidebar');
+        if (nav) nav.classList.add('collapsed');
+    }
+    
+    // تهيئة التصنيفات
+    document.querySelectorAll('#tag-selector .tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+            const tagName = this.dataset.tag;
+            const tagsInput = document.getElementById('client-tags');
+            if (tagsInput) {
+                const currentTags = tagsInput.value.split(',').map(t => t.trim()).filter(t => t);
+                if (currentTags.includes(tagName)) {
+                    tagsInput.value = currentTags.filter(t => t !== tagName).join(', ');
+                    this.classList.remove('selected');
+                } else {
+                    currentTags.push(tagName);
+                    tagsInput.value = currentTags.join(', ');
+                    this.classList.add('selected');
+                }
+            }
+        });
+    });
+    
+    // إغلاق نتائج البحث عند النقر خارجها
+    document.addEventListener('click', e => {
+        const duplicateResults = document.getElementById('duplicate-results');
+        const clientName = document.getElementById('client-name');
+        if (duplicateResults && !duplicateResults.contains(e.target) && clientName && !clientName.contains(e.target)) {
+            duplicateResults.classList.add('hidden');
+        }
+    });
+    
+    // التحقق من وجود نسخة احتياطية
+    const backupHistory = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+    if (backupHistory.length > 0 && !localStorage.getItem(StorageKeys.CURRENT_USER)) {
+        const restoreModal = document.getElementById('restore-modal');
+        if (restoreModal) restoreModal.style.display = 'flex';
+    }
+});
+
+function restoreBackup() {
+    showLoading();
+    setTimeout(() => {
+        try {
+            const history = JSON.parse(localStorage.getItem(StorageKeys.BACKUP_HISTORY)) || [];
+            if (history.length > 0) {
+                const latest = history[history.length - 1];
+                if (latest.data.users) localStorage.setItem(StorageKeys.USERS, JSON.stringify(latest.data.users));
+                if (latest.data.clients) {
+                    Object.keys(latest.data.clients).forEach(userId => {
+                        localStorage.setItem(StorageKeys.CLIENTS_PREFIX + userId, JSON.stringify(latest.data.clients[userId]));
+                    });
+                }
+                if (latest.data.inactiveClients) {
+                    Object.keys(latest.data.inactiveClients).forEach(userId => {
+                        localStorage.setItem(StorageKeys.INACTIVE_CLIENTS_PREFIX + userId, JSON.stringify(latest.data.inactiveClients[userId]));
+                    });
+                }
+            }
+            const restoreModal = document.getElementById('restore-modal');
+            if (restoreModal) restoreModal.style.display = 'none';
+            hideLoading();
+            showToast('تم استعادة النسخة الاحتياطية بنجاح', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } catch (e) {
+            hideLoading();
+            showToast('حدث خطأ في الاستعادة', 'error');
+        }
+    }, 500);
+}
+
+function startFresh() {
+    const restoreModal = document.getElementById('restore-modal');
+    if (restoreModal) restoreModal.style.display = 'none';
+    showToast('تم بدء نظام جديد', 'success');
+}
+
+// دالة مساعدة لتهيئة الأرصدة
+function recalculateBalances(client) {
+    if (!client) return client;
+    
+    // حساب المعاملات النقدية
+    const sortedTransactions = [...(client.transactions || [])].sort((a, b) => 
+        new Date(a.date) - new Date(b.date)
+    );
+    
+    let runningBalance = 0;
+    client.transactions = sortedTransactions.map(t => {
+        const amount = parseFloat(t.amount) || 0;
+        if (t.type === 'out') {
+            runningBalance += amount;
+        } else {
+            runningBalance -= amount;
+        }
+        return { ...t, runningBalance, amount };
+    });
+    
+    // حساب معاملات الذهب
+    const goldByKarat = {};
+    (client.goldTransactions || []).forEach(t => {
+        const karat = t.karat || 'other';
+        if (!goldByKarat[karat]) goldByKarat[karat] = [];
+        goldByKarat[karat].push(t);
+    });
+    
+    const allGoldTransactions = [];
+    Object.keys(goldByKarat).forEach(karat => {
+        const sorted = goldByKarat[karat].sort((a, b) => new Date(a.date) - new Date(b.date));
+        let karatBalance = 0;
+        
+        sorted.forEach(t => {
+            const amount = parseFloat(t.amount) || 0;
+            if (t.type === 'out') {
+                karatBalance += amount;
+            } else {
+                karatBalance -= amount;
+            }
+            allGoldTransactions.push({ 
+                ...t, 
+                runningBalance: karatBalance,
+                amount,
+                karat 
+            });
+        });
+    });
+    
+    client.goldTransactions = allGoldTransactions.sort((a, b) => 
+        new Date(a.date) - new Date(b.date)
+    );
+    
+    // تحديث goldByKarat
+    const goldByKaratNew = {};
+    client.goldTransactions.forEach(t => {
+        const karat = t.karat || 'other';
+        if (!goldByKaratNew[karat]) {
+            goldByKaratNew[karat] = { for: 0, on: 0 };
+        }
+        if (t.type === 'out') {
+            goldByKaratNew[karat].for += parseFloat(t.amount) || 0;
+        } else {
+            goldByKaratNew[karat].on += parseFloat(t.amount) || 0;
+        }
+    });
+    client.goldByKarat = goldByKaratNew;
+    
+    return client;
+}
+
+// دوال مساعدة مختصرة
+function loadUserData() {
+    AppState.clientsCache = null;
+    const clients = getCurrentUserClients();
+    renderDashboard(clients);
+    renderActiveClientsList();
+    renderInactiveClientsList();
+    renderGoldStats(clients);
+    updateLastClient();
+    renderQuickStats();
+    renderAdvancedStats(clients);
+    renderDailyReport(clients);
+    renderInactivitySummary();
+}
+
+function getCurrentUserClients() {
+    if (AppState.clientsCache) return AppState.clientsCache;
+    if (!AppState.currentUser) return [];
+    
+    if (AppState.currentUser.role === 'admin') {
+        const allClients = [];
+        const users = Storage.loadUsers();
+        users.forEach(user => {
+            if (Security.getUserStatus(user.id) === 'active') {
+                allClients.push(...Storage.getUserClients(user.id));
+            }
+        });
+        AppState.clientsCache = allClients;
+        return allClients;
+    } else {
+        const clients = Storage.getUserClients(AppState.currentUser.id);
+        AppState.clientsCache = clients;
+        return clients;
+    }
+}
+
+function formatMoney(amount) {
+    if (isNaN(amount) || amount === null || amount === undefined) return '0 ج.م';
+    return Math.abs(amount).toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' ج.م';
+}
+
+function formatGold(grams) {
+    if (isNaN(grams) || grams === null || grams === undefined) return '0 جم';
+    return Math.abs(grams).toFixed(2) + ' جم';
+}
 </script>
+</body>
+</html>
