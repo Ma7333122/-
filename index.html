@@ -22,8 +22,10 @@
     
     <!-- Excel & PDF Libraries -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas2image@1.0.5/canvas2image.min.js"></script>
     
     <style>
         /* نفس الأنماط السابقة مع تحسينات */
@@ -4158,7 +4160,7 @@ function renderDashboard(clients) {
         statsCards.innerHTML = `
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-emerald-400">لنا على العملاء</h3><i class="fas fa-arrow-down text-emerald-400"></i></div><p class="text-2xl font-bold text-emerald-400 numbers">${formatMoney(totalMoneyOn)}</p></div>
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-amber-400">لهم علينا</h3><i class="fas fa-arrow-up text-amber-400"></i></div><p class="text-2xl font-bold text-amber-400 numbers">${formatMoney(totalMoneyFor)}</p></div>
-            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '⚠️ علينا للعملاء' : '  لنا علي العملاء ✅ '}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-gray-400">عدد العملاء</h3><i class="fas fa-users text-gray-400"></i></div><p class="text-2xl font-bold numbers">${clients.length}</p></div>`;
     }
 }
@@ -5194,7 +5196,7 @@ async function exportClientImage() {
 }
 
 /**
- * تصدير Excel مفصل مع فصل الذهب حسب العيار وتصميم احترافي
+ * تصدير Excel مفصل مع ألوان وتنسيق احترافي
  */
 function exportToExcel() {
     const clients = getCurrentUserClients();
@@ -5207,26 +5209,138 @@ function exportToExcel() {
     const activeClients = clients.filter(c => !ClientStatus.isInactive(c));
     
     try {
+        // استخدام xlsx-js-style للتصميم
         const wb = XLSX.utils.book_new();
         
-        // ========== صفحة الملخص ==========
-        const summaryData = [
-            ['═══════════════════════════════════════════════════════════════'],
-            ['          النظام المالي المتكامل - تقرير العملاء          '],
-            ['═══════════════════════════════════════════════════════════════'],
-            [''],
-            ['📅 تاريخ التقرير:', new Date().toLocaleDateString('ar-EG')],
-            [''],
-            ['┌─────────────────────────────────────────┐'],
-            ['│           📊 إحصائيات عامة              │'],
-            ['└─────────────────────────────────────────┘'],
-            [''],
-            ['👥 إجمالي العملاء:', clients.length],
-            ['✅ العملاء النشطين:', activeClients.length],
-            ['⏹️ العملاء المنتهية:', inactiveClients.length],
-            [''],
-        ];
+        // ========== ألوان وأنماط احترافية ==========
+        const styles = {
+            // عنوان رئيسي
+            mainTitle: {
+                font: { name: 'Arial', sz: 18, bold: true, color: { rgb: '22C55E' } },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                fill: { fgColor: { rgb: '14141F' } }
+            },
+            // عنوان فرعي
+            subTitle: {
+                font: { name: 'Arial', sz: 14, bold: true, color: { rgb: 'FFFFFF' } },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                fill: { fgColor: { rgb: '1E1E2D' } }
+            },
+            // رأس الجدول
+            header: {
+                font: { name: 'Arial', sz: 11, bold: true, color: { rgb: 'FFFFFF' } },
+                alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+                fill: { fgColor: { rgb: '22C55E' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '16A34A' } },
+                    bottom: { style: 'thin', color: { rgb: '16A34A' } },
+                    left: { style: 'thin', color: { rgb: '16A34A' } },
+                    right: { style: 'thin', color: { rgb: '16A34A' } }
+                }
+            },
+            // رأس جدول الذهب
+            goldHeader: {
+                font: { name: 'Arial', sz: 11, bold: true, color: { rgb: '000000' } },
+                alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+                fill: { fgColor: { rgb: 'FBBF24' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: 'B45309' } },
+                    bottom: { style: 'thin', color: { rgb: 'B45309' } },
+                    left: { style: 'thin', color: { rgb: 'B45309' } },
+                    right: { style: 'thin', color: { rgb: 'B45309' } }
+                }
+            },
+            // صف بيانات زوجي
+            dataRowEven: {
+                font: { name: 'Arial', sz: 10, color: { rgb: 'F0F0FF' } },
+                alignment: { horizontal: 'right', vertical: 'center' },
+                fill: { fgColor: { rgb: '1E1E2D' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                }
+            },
+            // صف بيانات فردي
+            dataRowOdd: {
+                font: { name: 'Arial', sz: 10, color: { rgb: 'F0F0FF' } },
+                alignment: { horizontal: 'right', vertical: 'center' },
+                fill: { fgColor: { rgb: '14141F' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                }
+            },
+            // خلية مبلغ له (أخضر)
+            moneyFor: {
+                font: { name: 'Arial', sz: 10, bold: true, color: { rgb: '22C55E' } },
+                alignment: { horizontal: 'left', vertical: 'center' },
+                fill: { fgColor: { rgb: '1E1E2D' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                }
+            },
+            // خلية مبلغ عليه (أحمر)
+            moneyOn: {
+                font: { name: 'Arial', sz: 10, bold: true, color: { rgb: 'EF4444' } },
+                alignment: { horizontal: 'left', vertical: 'center' },
+                fill: { fgColor: { rgb: '1E1E2D' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
+                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                }
+            },
+            // خلية ذهب (ذهبي)
+            gold: {
+                font: { name: 'Arial', sz: 10, bold: true, color: { rgb: 'FBBF24' } },
+                alignment: { horizontal: 'left', vertical: 'center' },
+                fill: { fgColor: { rgb: '2A2520' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: 'FBBF24' } },
+                    bottom: { style: 'thin', color: { rgb: 'FBBF24' } },
+                    left: { style: 'thin', color: { rgb: 'FBBF24' } },
+                    right: { style: 'thin', color: { rgb: 'FBBF24' } }
+                }
+            },
+            // خلية إجمالي
+            total: {
+                font: { name: 'Arial', sz: 11, bold: true, color: { rgb: 'FFFFFF' } },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                fill: { fgColor: { rgb: '22C55E' } },
+                border: {
+                    top: { style: 'medium', color: { rgb: '16A34A' } },
+                    bottom: { style: 'medium', color: { rgb: '16A34A' } },
+                    left: { style: 'medium', color: { rgb: '16A34A' } },
+                    right: { style: 'medium', color: { rgb: '16A34A' } }
+                }
+            },
+            // تذييل
+            footer: {
+                font: { name: 'Arial', sz: 9, italic: true, color: { rgb: '6B7280' } },
+                alignment: { horizontal: 'center', vertical: 'center' }
+            }
+        };
         
+        // ========== دالة تطبيق التنسيق ==========
+        function applyStyle(range, style) {
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                    if (!ws[cellAddress]) continue;
+                    ws[cellAddress].s = style;
+                }
+            }
+        }
+        
+        // ========== حساب الإجماليات ==========
         let totalMoneyFor = 0, totalMoneyOn = 0;
         clients.forEach(c => {
             const m = getClientMoneySummary(c);
@@ -5234,75 +5348,72 @@ function exportToExcel() {
             totalMoneyOn += m.moneyOn;
         });
         
-        summaryData.push(['┌─────────────────────────────────────────┐']);
-        summaryData.push(['│           💰 إحصائيات المال             │']);
-        summaryData.push(['└─────────────────────────────────────────┘']);
-        summaryData.push(['']);
-        summaryData.push(['💵 إجمالي ما لهم:', totalMoneyFor.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م']);
-        summaryData.push(['💵 إجمالي ما لنا:', totalMoneyOn.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م']);
-        summaryData.push(['📊 صافي المحفظة:', (totalMoneyFor - totalMoneyOn).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م']);
-        summaryData.push(['']);
-        
-        // حساب الذهب حسب العيار
         const goldByKaratTotals = { '18': { for: 0, on: 0 }, '21': { for: 0, on: 0 }, '24': { for: 0, on: 0 }, 'other': { for: 0, on: 0 } };
-        
         clients.forEach(c => {
             const goldSummary = getGoldSummary(c);
             Object.keys(goldSummary).forEach(karat => {
-                if (!goldByKaratTotals[karat]) {
-                    goldByKaratTotals[karat] = { for: 0, on: 0 };
-                }
+                if (!goldByKaratTotals[karat]) goldByKaratTotals[karat] = { for: 0, on: 0 };
                 goldByKaratTotals[karat].for += goldSummary[karat].for || 0;
                 goldByKaratTotals[karat].on += goldSummary[karat].on || 0;
             });
         });
         
-        summaryData.push(['┌─────────────────────────────────────────┐']);
-        summaryData.push(['│         🏆 إحصائيات الذهب               │']);
-        summaryData.push(['└─────────────────────────────────────────┘']);
-        summaryData.push(['']);
+        // ========== صفحة الملخص ==========
+        const summaryData = [
+            ['النظام المالي المتكامل'],
+            ['تقرير شامل للعملاء'],
+            [''],
+            ['تاريخ التقرير', new Date().toLocaleDateString('ar-EG')],
+            [''],
+            ['إحصائيات عامة'],
+            ['إجمالي العملاء', clients.length],
+            ['العملاء النشطين', activeClients.length],
+            ['العملاء المنتهية', inactiveClients.length],
+            [''],
+            ['إحصائيات المال'],
+            ['إجمالي ما لهم', totalMoneyFor.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م'],
+            ['إجمالي ما لنا', totalMoneyOn.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م'],
+            ['صافي المحفظة', (totalMoneyFor - totalMoneyOn).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م'],
+            [''],
+            ['إحصائيات الذهب']
+        ];
         
         let totalGoldFor = 0, totalGoldOn = 0;
-        
-        // عرض تفاصيل كل عيار
         ['18', '21', '24'].forEach(karat => {
             const g = goldByKaratTotals[karat] || { for: 0, on: 0 };
             if (g.for > 0 || g.on > 0) {
                 const net = g.for - g.on;
-                summaryData.push([`🥇 عيار ${karat}:`]);
-                summaryData.push(['   له:', g.for.toFixed(6) + ' جم']);
-                summaryData.push(['   عليه:', g.on.toFixed(6) + ' جم']);
-                summaryData.push(['   الصافي:', Math.abs(net).toFixed(6) + ' جم ' + (net > 0 ? 'له' : net < 0 ? 'عليه' : '')]);
-                summaryData.push(['']);
+                summaryData.push([`عيار ${karat} - له`, g.for.toFixed(6) + ' جم']);
+                summaryData.push([`عيار ${karat} - عليه`, g.on.toFixed(6) + ' جم']);
+                summaryData.push([`عيار ${karat} - الصافي`, Math.abs(net).toFixed(6) + ' جم ' + (net > 0 ? 'له' : net < 0 ? 'عليه' : '')]);
                 totalGoldFor += g.for;
                 totalGoldOn += g.on;
             }
         });
         
-        summaryData.push(['───────────────────────────────────────────']);
-        summaryData.push(['📊 إجمالي الذهب له:', totalGoldFor.toFixed(6) + ' جم']);
-        summaryData.push(['📊 إجمالي الذهب عليه:', totalGoldOn.toFixed(6) + ' جم']);
-        summaryData.push(['📊 صافي الذهب الكلي:', (totalGoldFor - totalGoldOn).toFixed(6) + ' جم']);
+        summaryData.push(['إجمالي الذهب له', totalGoldFor.toFixed(6) + ' جم']);
+        summaryData.push(['إجمالي الذهب عليه', totalGoldOn.toFixed(6) + ' جم']);
+        summaryData.push(['صافي الذهب الكلي', (totalGoldFor - totalGoldOn).toFixed(6) + ' جم']);
         summaryData.push(['']);
-        summaryData.push(['═══════════════════════════════════════════════════════════════']);
-        summaryData.push(['         تطوير: محمد احمد فؤاد | واتساب: 01010421571         ']);
-        summaryData.push(['═══════════════════════════════════════════════════════════════']);
+        summaryData.push(['تطوير: محمد احمد فؤاد | واتساب: 01010421571']);
         
-        const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+        let ws = XLSX.utils.aoa_to_sheet(summaryData);
+        ws['!cols'] = [{ wch: 25 }, { wch: 30 }];
         
-        // تعيين عرض الأعمدة
-        summarySheet['!cols'] = [{ wch: 40 }, { wch: 25 }];
+        // تطبيق التنسيق على الملخص
+        if (ws['A1']) ws['A1'].s = styles.mainTitle;
+        if (ws['A2']) ws['A2'].s = styles.subTitle;
+        if (ws['A6']) ws['A6'].s = styles.goldHeader;
+        if (ws['A11']) ws['A11'].s = styles.goldHeader;
+        if (ws['A16']) ws['A16'].s = styles.goldHeader;
+        if (ws['A' + (summaryData.length - 1)]) ws['A' + (summaryData.length - 1)].s = styles.footer;
         
-        XLSX.utils.book_append_sheet(wb, summarySheet, 'الملخص');
+        XLSX.utils.book_append_sheet(wb, ws, 'الملخص');
         
-        // ========== صفحة العملاء النشطين مع تفاصيل الذهب ==========
-        const activeData = [
-            ['═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════'],
-            ['                                                       العملاء النشطين - النظام المالي المتكامل                                                       '],
-            ['═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════'],
-            [''],
-            ['م', 'الاسم', 'الهاتف', 'العنوان', 'له مال', 'عليه مال', 'صافي المال', 'حالة', 'ذهب 18 له', 'ذهب 18 عليه', 'ذهب 21 له', 'ذهب 21 عليه', 'ذهب 24 له', 'ذهب 24 عليه', 'ذهب آخر له', 'ذهب آخر عليه', 'إجمالي الذهب له', 'إجمالي الذهب عليه', 'صافي الذهب', 'حالة الذهب', 'التصنيفات', 'تاريخ الإضافة']
-        ];
+        // ========== صفحة العملاء النشطين ==========
+        const activeHeaders = ['م', 'الاسم', 'الهاتف', 'العنوان', 'له مال', 'عليه مال', 'صافي المال', 'الحالة', 'ذهب 18 له', 'ذهب 18 عليه', 'ذهب 21 له', 'ذهب 21 عليه', 'ذهب 24 له', 'ذهب 24 عليه', 'إجمالي الذهب له', 'إجمالي الذهب عليه', 'صافي الذهب', 'حالة الذهب', 'التصنيفات', 'تاريخ الإضافة'];
+        
+        const activeData = [activeHeaders];
         
         activeClients.forEach((c, i) => {
             const m = getClientMoneySummary(c);
@@ -5310,7 +5421,6 @@ function exportToExcel() {
             const g18 = goldSummary['18'] || { for: 0, on: 0 };
             const g21 = goldSummary['21'] || { for: 0, on: 0 };
             const g24 = goldSummary['24'] || { for: 0, on: 0 };
-            const gOther = goldSummary['other'] || { for: 0, on: 0 };
             const totalG = getTotalGold(goldSummary);
             
             activeData.push([
@@ -5328,8 +5438,6 @@ function exportToExcel() {
                 g21.on.toFixed(6),
                 g24.for.toFixed(6),
                 g24.on.toFixed(6),
-                gOther.for.toFixed(6),
-                gOther.on.toFixed(6),
                 totalG.totalFor.toFixed(6),
                 totalG.totalOn.toFixed(6),
                 Math.abs(totalG.net).toFixed(6),
@@ -5339,44 +5447,41 @@ function exportToExcel() {
             ]);
         });
         
-        const activeSheet = XLSX.utils.aoa_to_sheet(activeData);
-        
-        // تعيين عرض الأعمدة
-        activeSheet['!cols'] = [
-            { wch: 4 },   // م
-            { wch: 25 },  // الاسم
-            { wch: 15 },  // الهاتف
-            { wch: 20 },  // العنوان
-            { wch: 15 },  // له مال
-            { wch: 15 },  // عليه مال
-            { wch: 15 },  // صافي المال
-            { wch: 10 },  // حالة
-            { wch: 12 },  // ذهب 18 له
-            { wch: 12 },  // ذهب 18 عليه
-            { wch: 12 },  // ذهب 21 له
-            { wch: 12 },  // ذهب 21 عليه
-            { wch: 12 },  // ذهب 24 له
-            { wch: 12 },  // ذهب 24 عليه
-            { wch: 12 },  // ذهب آخر له
-            { wch: 12 },  // ذهب آخر عليه
-            { wch: 15 },  // إجمالي الذهب له
-            { wch: 15 },  // إجمالي الذهب عليه
-            { wch: 12 },  // صافي الذهب
-            { wch: 12 },  // حالة الذهب
-            { wch: 15 },  // التصنيفات
-            { wch: 15 },  // تاريخ الإضافة
+        ws = XLSX.utils.aoa_to_sheet(activeData);
+        ws['!cols'] = [
+            { wch: 5 }, { wch: 25 }, { wch: 15 }, { wch: 20 },
+            { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 10 },
+            { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
+            { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 15 },
+            { wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 15 }
         ];
         
-        // تعيين ارتفاع الصفوف للعناوين
-        activeSheet['!rows'] = [
-            { hpt: 20 },
-            { hpt: 25 },
-            { hpt: 20 },
-            { hpt: 15 },
-            { hpt: 20 },  // صف العناوين
-        ];
+        // تطبيق التنسيق على رأس الجدول
+        for (let C = 0; C < activeHeaders.length; C++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+            if (ws[cellAddress]) ws[cellAddress].s = styles.header;
+        }
         
-        XLSX.utils.book_append_sheet(wb, activeSheet, 'النشطين');
+        // تطبيق التنسيق على صفوف البيانات
+        for (let R = 1; R < activeData.length; R++) {
+            for (let C = 0; C < activeHeaders.length; C++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                if (!ws[cellAddress]) continue;
+                
+                // تطبيق اللون حسب العمود
+                if (C === 4) { // له مال
+                    ws[cellAddress].s = { ...styles.moneyFor, alignment: { horizontal: 'left' } };
+                } else if (C === 5) { // عليه مال
+                    ws[cellAddress].s = { ...styles.moneyOn, alignment: { horizontal: 'left' } };
+                } else if (C >= 8 && C <= 16) { // أعمدة الذهب
+                    ws[cellAddress].s = styles.gold;
+                } else {
+                    ws[cellAddress].s = R % 2 === 0 ? styles.dataRowEven : styles.dataRowOdd;
+                }
+            }
+        }
+        
+        XLSX.utils.book_append_sheet(wb, ws, 'النشطين');
         
         // ========== صفحات الذهب حسب العيار ==========
         ['18', '21', '24'].forEach(karat => {
@@ -5386,182 +5491,89 @@ function exportToExcel() {
             });
             
             if (karatClients.length > 0) {
-                const karatData = [
-                    [`═══════════════════════════════════════════════════════════════`],
-                    [`           العملاء لديهم ذهب عيار ${karat} - النظام المالي المتكامل          `],
-                    [`═══════════════════════════════════════════════════════════════`],
-                    [''],
-                    ['م', 'الاسم', 'الهاتف', 'له ذهب (جم)', 'عليه ذهب (جم)', 'الصافي (جم)', 'الحالة', 'التصنيفات']
-                ];
+                const karatHeaders = ['م', 'الاسم', 'الهاتف', 'له ذهب (جم)', 'عليه ذهب (جم)', 'الصافي (جم)', 'الحالة', 'التصنيفات'];
+                const karatData = [karatHeaders];
                 
                 karatClients.forEach((c, i) => {
                     const g = getGoldSummary(c)[karat] || { for: 0, on: 0 };
                     const net = g.for - g.on;
                     karatData.push([
-                        i + 1,
-                        c.name,
-                        c.phone || '-',
-                        g.for.toFixed(6),
-                        g.on.toFixed(6),
+                        i + 1, c.name, c.phone || '-',
+                        g.for.toFixed(6), g.on.toFixed(6),
                         Math.abs(net).toFixed(6),
                         net > 0 ? 'له' : net < 0 ? 'عليه' : 'متوازن',
                         (c.tags || []).join(', ')
                     ]);
                 });
                 
-                const karatSheet = XLSX.utils.aoa_to_sheet(karatData);
-                karatSheet['!cols'] = [
-                    { wch: 4 },
-                    { wch: 30 },
-                    { wch: 15 },
-                    { wch: 15 },
-                    { wch: 15 },
-                    { wch: 15 },
-                    { wch: 10 },
-                    { wch: 20 },
-                ];
-                XLSX.utils.book_append_sheet(wb, karatSheet, `ذهب عيار ${karat}`);
+                ws = XLSX.utils.aoa_to_sheet(karatData);
+                ws['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 10 }, { wch: 20 }];
+                
+                // تطبيق التنسيق
+                for (let C = 0; C < karatHeaders.length; C++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+                    if (ws[cellAddress]) ws[cellAddress].s = styles.goldHeader;
+                }
+                
+                for (let R = 1; R < karatData.length; R++) {
+                    for (let C = 0; C < karatHeaders.length; C++) {
+                        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[cellAddress]) continue;
+                        
+                        if (C >= 3 && C <= 5) {
+                            ws[cellAddress].s = styles.gold;
+                        } else {
+                            ws[cellAddress].s = R % 2 === 0 ? styles.dataRowEven : styles.dataRowOdd;
+                        }
+                    }
+                }
+                
+                XLSX.utils.book_append_sheet(wb, ws, `ذهب عيار ${karat}`);
             }
         });
         
         // ========== صفحة العملاء المنتهية ==========
         if (inactiveClients.length > 0) {
-            const inactiveData = [
-                ['═══════════════════════════════════════════════════════════════'],
-                ['           العملاء المنتهية (رصيد صفر) - النظام المالي المتكامل          '],
-                ['═══════════════════════════════════════════════════════════════'],
-                [''],
-                ['م', 'الاسم', 'الهاتف', 'العنوان', 'التصنيفات', 'تاريخ الانتهاء']
-            ];
+            const inactiveHeaders = ['م', 'الاسم', 'الهاتف', 'العنوان', 'التصنيفات', 'تاريخ الانتهاء'];
+            const inactiveData = [inactiveHeaders];
             
             inactiveClients.forEach((c, i) => {
                 inactiveData.push([
-                    i + 1,
-                    c.name,
-                    c.phone || '-',
-                    c.address || '-',
+                    i + 1, c.name, c.phone || '-', c.address || '-',
                     (c.tags || []).join(', '),
                     c.inactivatedAt ? new Date(c.inactivatedAt).toLocaleDateString('ar-EG') : '-'
                 ]);
             });
             
-            const inactiveSheet = XLSX.utils.aoa_to_sheet(inactiveData);
-            inactiveSheet['!cols'] = [
-                { wch: 4 },
-                { wch: 30 },
-                { wch: 15 },
-                { wch: 25 },
-                { wch: 20 },
-                { wch: 15 },
-            ];
-            XLSX.utils.book_append_sheet(wb, inactiveSheet, 'المنتهية');
-        }
-        
-        // ========== صفحة لكل عميل ==========
-        clients.slice(0, 50).forEach((client, index) => {  // تحديد 50 عميل كحد أقصى
-            let sheetName = client.name.substring(0, 20).replace(/[\\\/\?\*\[\]:]/g, '');
-            sheetName = `${(index + 1).toString().padStart(2, '0')}_${sheetName}`;
+            ws = XLSX.utils.aoa_to_sheet(inactiveData);
+            ws['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }, { wch: 25 }, { wch: 20 }, { wch: 15 }];
             
-            const m = getClientMoneySummary(client);
-            const goldSummary = getGoldSummary(client);
-            const totalG = getTotalGold(goldSummary);
+            for (let C = 0; C < inactiveHeaders.length; C++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
+                if (ws[cellAddress]) ws[cellAddress].s = { ...styles.header, fill: { fgColor: { rgb: '6B7280' } } };
+            }
             
-            const clientData = [
-                [`═══════════════════════════════════════════════════════════════`],
-                [`                    تقرير العميل: ${client.name}                    `],
-                [`═══════════════════════════════════════════════════════════════`],
-                [''],
-                ['┌─────────────────────────────────────────┐'],
-                ['│           📋 معلومات العميل             │'],
-                ['└─────────────────────────────────────────┘'],
-                ['الاسم:', client.name],
-                ['الهاتف:', client.phone || '-'],
-                ['العنوان:', client.address || '-'],
-                ['الملاحظات:', client.notes || '-'],
-                ['التصنيفات:', (client.tags || []).join(', ')],
-                ['تاريخ الإضافة:', new Date(client.createdAt).toLocaleDateString('ar-EG')],
-                [''],
-                ['┌─────────────────────────────────────────┐'],
-                ['│           💰 ملخص المال                 │'],
-                ['└─────────────────────────────────────────┘'],
-                ['له مال:', m.moneyFor.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م'],
-                ['عليه مال:', m.moneyOn.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م'],
-                ['صافي المال:', Math.abs(m.netMoney).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ج.م ' + (m.netMoney > 0 ? 'له' : m.netMoney < 0 ? 'عليه' : '')],
-                [''],
-                ['┌─────────────────────────────────────────┐'],
-                ['│           🏆 ملخص الذهب                 │'],
-                ['└─────────────────────────────────────────┘'],
-            ];
-            
-            // تفاصيل كل عيار
-            ['18', '21', '24'].forEach(karat => {
-                const g = goldSummary[karat] || { for: 0, on: 0 };
-                if (g.for > 0 || g.on > 0) {
-                    const net = g.for - g.on;
-                    clientData.push([`عيار ${karat}:`]);
-                    clientData.push(['   له:', g.for.toFixed(6) + ' جم']);
-                    clientData.push(['   عليه:', g.on.toFixed(6) + ' جم']);
-                    clientData.push(['   الصافي:', Math.abs(net).toFixed(6) + ' جم ' + (net > 0 ? 'له' : net < 0 ? 'عليه' : '')]);
+            for (let R = 1; R < inactiveData.length; R++) {
+                for (let C = 0; C < inactiveHeaders.length; C++) {
+                    const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                    if (ws[cellAddress]) {
+                        ws[cellAddress].s = {
+                            font: { name: 'Arial', sz: 10, color: { rgb: '9CA3AF' } },
+                            alignment: { horizontal: 'right', vertical: 'center' },
+                            fill: { fgColor: { rgb: R % 2 === 0 ? '1E1E2D' : '14141F' } },
+                            border: {
+                                top: { style: 'thin', color: { rgb: '2A2A3A' } },
+                                bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
+                                left: { style: 'thin', color: { rgb: '2A2A3A' } },
+                                right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                            }
+                        };
+                    }
                 }
-            });
-            
-            clientData.push(['']);
-            clientData.push(['إجمالي الذهب له:', totalG.totalFor.toFixed(6) + ' جم']);
-            clientData.push(['إجمالي الذهب عليه:', totalG.totalOn.toFixed(6) + ' جم']);
-            clientData.push(['صافي الذهب:', Math.abs(totalG.net).toFixed(6) + ' جم ' + (totalG.net > 0 ? 'له' : totalG.net < 0 ? 'عليه' : '')]);
-            clientData.push(['']);
-            
-            // المعاملات النقدية
-            if (client.transactions && client.transactions.length > 0) {
-                clientData.push(['┌─────────────────────────────────────────┐']);
-                clientData.push([`│       📝 المعاملات النقدية (${client.transactions.length})        │`]);
-                clientData.push(['└─────────────────────────────────────────┘']);
-                clientData.push(['م', 'التاريخ', 'النوع', 'المبلغ', 'المسؤول', 'ملاحظات', 'الرصيد']);
-                
-                client.transactions.forEach((t, i) => {
-                    clientData.push([
-                        i + 1,
-                        new Date(t.date).toLocaleDateString('ar-EG'),
-                        t.type === 'out' ? 'له (تسليم)' : 'عليه (استلام)',
-                        t.amount.toLocaleString('en-US', {maximumFractionDigits: 2}),
-                        t.responsible,
-                        t.note || '-',
-                        (t.runningBalance || 0).toFixed(2)
-                    ]);
-                });
-                clientData.push(['']);
             }
             
-            // معاملات الذهب
-            if (client.goldTransactions && client.goldTransactions.length > 0) {
-                clientData.push(['┌─────────────────────────────────────────┐']);
-                clientData.push([`│       🏆 معاملات الذهب (${client.goldTransactions.length})           │`]);
-                clientData.push(['└─────────────────────────────────────────┘']);
-                clientData.push(['م', 'التاريخ', 'النوع', 'الكمية', 'العيار', 'البيان', 'المسؤول', 'ملاحظات']);
-                
-                client.goldTransactions.forEach((t, i) => {
-                    clientData.push([
-                        i + 1,
-                        new Date(t.date).toLocaleDateString('ar-EG'),
-                        t.type === 'out' ? 'له ذهب' : 'عليه ذهب',
-                        t.amount.toFixed(6),
-                        t.karat || '-',
-                        t.description || '-',
-                        t.responsible,
-                        t.note || '-'
-                    ]);
-                });
-            }
-            
-            clientData.push(['']);
-            clientData.push(['═══════════════════════════════════════════════════════════════']);
-            clientData.push(['         تطوير: محمد احمد فؤاد | واتساب: 01010421571         ']);
-            clientData.push(['═══════════════════════════════════════════════════════════════']);
-            
-            const clientSheet = XLSX.utils.aoa_to_sheet(clientData);
-            clientSheet['!cols'] = [{ wch: 20 }, { wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 15 }];
-            XLSX.utils.book_append_sheet(wb, clientSheet, sheetName);
-        });
+            XLSX.utils.book_append_sheet(wb, ws, 'المنتهية');
+        }
         
         const fileName = `تقرير_العملاء_المفصل_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.xlsx`;
         XLSX.writeFile(wb, fileName);
@@ -5575,7 +5587,7 @@ function exportToExcel() {
 }
 
 /**
- * تصدير PDF محسن مع دعم العربية الكاملة باستخدام html2canvas
+ * تصدير PDF محسن مع دعم العربية الكاملة وتنسيق البيانات الصحيح
  */
 async function exportToPDF() {
     const clients = getCurrentUserClients();
@@ -5612,236 +5624,284 @@ async function exportToPDF() {
             });
         });
         
-        // إنشاء عنصر HTML للتقرير
-        const reportContainer = document.createElement('div');
-        reportContainer.style.cssText = `
-            position: fixed;
-            left: -9999px;
-            top: 0;
-            width: 800px;
-            background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%);
-            padding: 40px;
-            font-family: 'IBM Plex Sans Arabic', Arial, sans-serif;
-            direction: rtl;
-            color: #f0f0ff;
-        `;
-        
-        // بناء محتوى التقرير
-        let reportHTML = `
-            <div style="text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #22c55e;">
-                <h1 style="font-size: 32px; color: #22c55e; margin: 0;">النظام المالي المتكامل</h1>
-                <p style="color: #a0a0c0; margin-top: 15px; font-size: 16px;">تقرير شامل للعملاء</p>
-                <p style="color: #6b7280; margin-top: 10px; font-size: 12px;">تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}</p>
-            </div>
-            
-            <!-- إحصائيات عامة -->
-            <div style="margin-bottom: 30px;">
-                <h2 style="color: #22c55e; font-size: 20px; margin-bottom: 20px; padding-right: 15px; border-right: 4px solid #22c55e;">📊 إحصائيات عامة</h2>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
-                    <div style="background: linear-gradient(135deg, #1e1e2d, #14141f); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #2a2a3a;">
-                        <p style="font-size: 28px; font-weight: bold; color: #22c55e; margin: 0;">${clients.length}</p>
-                        <p style="color: #a0a0c0; font-size: 12px; margin-top: 8px;">إجمالي العملاء</p>
+        // دالة لإنشاء صفحة HTML
+        function createReportPage(content, pageNumber, totalPages) {
+            return `
+                <div style="width: 750px; min-height: 1000px; background: linear-gradient(135deg, #0a0a0f 0%, #14141f 100%); 
+                            padding: 30px; font-family: 'IBM Plex Sans Arabic', Arial, sans-serif; direction: rtl; color: #f0f0ff;
+                            box-sizing: border-box;">
+                    
+                    ${pageNumber === 1 ? `
+                    <div style="text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 3px solid #22c55e;">
+                        <h1 style="font-size: 28px; color: #22c55e; margin: 0;">النظام المالي المتكامل</h1>
+                        <p style="color: #a0a0c0; margin-top: 10px; font-size: 14px;">تقرير شامل للعملاء</p>
+                        <p style="color: #6b7280; margin-top: 5px; font-size: 11px;">تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}</p>
                     </div>
-                    <div style="background: linear-gradient(135deg, #1e1e2d, #14141f); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #2a2a3a;">
-                        <p style="font-size: 28px; font-weight: bold; color: #22c55e; margin: 0;">${activeClients.length}</p>
-                        <p style="color: #a0a0c0; font-size: 12px; margin-top: 8px;">النشطين</p>
+                    ` : `
+                    <div style="text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #22c55e;">
+                        <h2 style="font-size: 18px; color: #22c55e; margin: 0;">النظام المالي المتكامل - تقرير العملاء</h2>
                     </div>
-                    <div style="background: linear-gradient(135deg, #1e1e2d, #14141f); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #2a2a3a;">
-                        <p style="font-size: 28px; font-weight: bold; color: #6b7280; margin: 0;">${inactiveClients.length}</p>
-                        <p style="color: #a0a0c0; font-size: 12px; margin-top: 8px;">المنتهية</p>
-                    </div>
-                    <div style="background: linear-gradient(135deg, #1e1e2d, #14141f); border-radius: 15px; padding: 20px; text-align: center; border: 1px solid #2a2a3a;">
-                        <p style="font-size: 16px; font-weight: bold; color: ${totalMoneyFor - totalMoneyOn >= 0 ? '#22c55e' : '#ef4444'}; margin: 0;">${formatMoney(Math.abs(totalMoneyFor - totalMoneyOn))}</p>
-                        <p style="color: #a0a0c0; font-size: 12px; margin-top: 8px;">صافي المحفظة</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- إحصائيات الذهب -->
-            <div style="margin-bottom: 30px;">
-                <h2 style="color: #fbbf24; font-size: 20px; margin-bottom: 20px; padding-right: 15px; border-right: 4px solid #fbbf24;">🏆 إحصائيات الذهب حسب العيار</h2>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-        `;
-        
-        ['18', '21', '24'].forEach(karat => {
-            const g = goldByKaratTotals[karat] || { for: 0, on: 0 };
-            if (g.for > 0 || g.on > 0) {
-                const net = g.for - g.on;
-                reportHTML += `
-                    <div style="background: linear-gradient(135deg, #2a2520, #1a1510); border-radius: 15px; padding: 20px; border: 1px solid #fbbf24;">
-                        <h3 style="color: #fbbf24; margin: 0 0 15px 0; font-size: 18px;">عيار ${karat}</h3>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: #a0a0c0;">له:</span>
-                            <span style="color: #fbbf24; font-weight: bold;">${g.for.toFixed(4)} جم</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: #a0a0c0;">عليه:</span>
-                            <span style="color: #f59e0b; font-weight: bold;">${g.on.toFixed(4)} جم</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 1px solid #fbbf24;">
-                            <span style="color: #a0a0c0;">الصافي:</span>
-                            <span style="color: ${net > 0 ? '#fbbf24' : '#f59e0b'}; font-weight: bold;">${Math.abs(net).toFixed(4)} جم ${net > 0 ? 'له' : net < 0 ? 'عليه' : ''}</span>
-                        </div>
-                    </div>
-                `;
-            }
-        });
-        
-        reportHTML += `
-                </div>
-            </div>
-            
-            <!-- قائمة العملاء النشطين -->
-            <div style="margin-bottom: 30px;">
-                <h2 style="color: #22c55e; font-size: 20px; margin-bottom: 20px; padding-right: 15px; border-right: 4px solid #22c55e;">👥 العملاء النشطين (${activeClients.length})</h2>
-                <div style="background: #14141f; border-radius: 15px; overflow: hidden; border: 1px solid #2a2a3a;">
-        `;
-        
-        activeClients.slice(0, 30).forEach((client, idx) => {
-            const m = getClientMoneySummary(client);
-            const g = getTotalGold(getGoldSummary(client));
-            const bgColor = idx % 2 === 0 ? '#1e1e2d' : '#14141f';
-            
-            reportHTML += `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: ${bgColor}; border-bottom: 1px solid #2a2a3a;">
-                    <div style="flex: 1;">
-                        <span style="font-weight: bold; font-size: 14px;">${idx + 1}. ${escapeHtml(client.name)}</span>
-                        ${client.phone ? `<span style="color: #6b7280; font-size: 12px; margin-right: 10px;">${escapeHtml(client.phone)}</span>` : ''}
-                    </div>
-                    <div style="display: flex; gap: 20px;">
-                        <div style="text-align: center;">
-                            <p style="color: #a0a0c0; font-size: 10px; margin: 0;">صافي المال</p>
-                            <p style="color: ${m.netMoney > 0 ? '#fbbf24' : m.netMoney < 0 ? '#22c55e' : '#6b7280'}; font-weight: bold; font-size: 12px; margin: 3px 0 0 0;">${formatMoney(Math.abs(m.netMoney))}</p>
-                        </div>
-                        <div style="text-align: center;">
-                            <p style="color: #a0a0c0; font-size: 10px; margin: 0;">صافي الذهب</p>
-                            <p style="color: ${g.net > 0 ? '#fbbf24' : g.net < 0 ? '#f97316' : '#6b7280'}; font-weight: bold; font-size: 12px; margin: 3px 0 0 0;">${formatGold(Math.abs(g.net))}</p>
-                        </div>
+                    `}
+                    
+                    ${content}
+                    
+                    <div style="position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; padding-top: 15px; border-top: 1px solid #2a2a3a;">
+                        <p style="color: #6b7280; font-size: 10px; margin: 0;">تطوير: محمد احمد فؤاد | واتساب: 01010421571</p>
+                        <p style="color: #4b5563; font-size: 9px; margin-top: 5px;">صفحة ${pageNumber} من ${totalPages}</p>
                     </div>
                 </div>
             `;
-        });
-        
-        if (activeClients.length > 30) {
-            reportHTML += `<div style="text-align: center; padding: 15px; color: #6b7280;">... و ${activeClients.length - 30} عميل آخر</div>`;
         }
         
-        reportHTML += `
-                </div>
+        // صفحة الملخص
+        const summaryContent = `
+            <div style="margin-bottom: 25px;">
+                <h2 style="color: #22c55e; font-size: 18px; margin-bottom: 15px; padding-right: 12px; border-right: 4px solid #22c55e;">
+                    إحصائيات عامة
+                </h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr>
+                        <td style="background: #1e1e2d; padding: 15px; text-align: center; border: 1px solid #2a2a3a; width: 25%;">
+                            <p style="font-size: 24px; font-weight: bold; color: #22c55e; margin: 0;">${clients.length}</p>
+                            <p style="color: #a0a0c0; font-size: 11px; margin-top: 5px;">إجمالي العملاء</p>
+                        </td>
+                        <td style="background: #1e1e2d; padding: 15px; text-align: center; border: 1px solid #2a2a3a; width: 25%;">
+                            <p style="font-size: 24px; font-weight: bold; color: #22c55e; margin: 0;">${activeClients.length}</p>
+                            <p style="color: #a0a0c0; font-size: 11px; margin-top: 5px;">النشطين</p>
+                        </td>
+                        <td style="background: #1e1e2d; padding: 15px; text-align: center; border: 1px solid #2a2a3a; width: 25%;">
+                            <p style="font-size: 24px; font-weight: bold; color: #6b7280; margin: 0;">${inactiveClients.length}</p>
+                            <p style="color: #a0a0c0; font-size: 11px; margin-top: 5px;">المنتهية</p>
+                        </td>
+                        <td style="background: #1e1e2d; padding: 15px; text-align: center; border: 1px solid #2a2a3a; width: 25%;">
+                            <p style="font-size: 14px; font-weight: bold; color: ${totalMoneyFor - totalMoneyOn >= 0 ? '#22c55e' : '#ef4444'}; margin: 0;">${formatMoney(Math.abs(totalMoneyFor - totalMoneyOn))}</p>
+                            <p style="color: #a0a0c0; font-size: 11px; margin-top: 5px;">صافي المحفظة</p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h2 style="color: #fbbf24; font-size: 18px; margin-bottom: 15px; padding-right: 12px; border-right: 4px solid #fbbf24;">
+                    إحصائيات المال
+                </h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #1e1e2d;">
+                        <td style="padding: 12px; border: 1px solid #2a2a3a; color: #22c55e; font-weight: bold; text-align: center;">إجمالي ما لهم</td>
+                        <td style="padding: 12px; border: 1px solid #2a2a3a; text-align: center;">${totalMoneyFor.toLocaleString('en-US', {maximumFractionDigits: 2})} ج.م</td>
+                    </tr>
+                    <tr style="background: #14141f;">
+                        <td style="padding: 12px; border: 1px solid #2a2a3a; color: #ef4444; font-weight: bold; text-align: center;">إجمالي ما لنا</td>
+                        <td style="padding: 12px; border: 1px solid #2a2a3a; text-align: center;">${totalMoneyOn.toLocaleString('en-US', {maximumFractionDigits: 2})} ج.م</td>
+                    </tr>
+                    <tr style="background: #1e1e2d;">
+                        <td style="padding: 12px; border: 1px solid #2a2a3a; color: #22c55e; font-weight: bold; text-align: center;">الصافي</td>
+                        <td style="padding: 12px; border: 1px solid #2a2a3a; text-align: center; font-weight: bold;">${(totalMoneyFor - totalMoneyOn).toLocaleString('en-US', {maximumFractionDigits: 2})} ج.م</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <h2 style="color: #fbbf24; font-size: 18px; margin-bottom: 15px; padding-right: 12px; border-right: 4px solid #fbbf24;">
+                    إحصائيات الذهب حسب العيار
+                </h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #fbbf24; color: #000;">
+                        <th style="padding: 10px; border: 1px solid #b45309;">العيار</th>
+                        <th style="padding: 10px; border: 1px solid #b45309;">له (جم)</th>
+                        <th style="padding: 10px; border: 1px solid #b45309;">عليه (جم)</th>
+                        <th style="padding: 10px; border: 1px solid #b45309;">الصافي (جم)</th>
+                    </tr>
+                    ${['18', '21', '24'].map(karat => {
+                        const g = goldByKaratTotals[karat] || { for: 0, on: 0 };
+                        const net = g.for - g.on;
+                        return `
+                            <tr style="background: #1e1e2d;">
+                                <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center; color: #fbbf24; font-weight: bold;">عيار ${karat}</td>
+                                <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center;">${g.for.toFixed(4)}</td>
+                                <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center;">${g.on.toFixed(4)}</td>
+                                <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center; color: ${net > 0 ? '#22c55e' : net < 0 ? '#ef4444' : '#a0a0c0'}; font-weight: bold;">
+                                    ${Math.abs(net).toFixed(4)} ${net > 0 ? 'له' : net < 0 ? 'عليه' : ''}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                    <tr style="background: #14141f; font-weight: bold;">
+                        <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center; color: #fbbf24;">الإجمالي</td>
+                        <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center;">${totalGoldFor.toFixed(4)}</td>
+                        <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center;">${totalGoldOn.toFixed(4)}</td>
+                        <td style="padding: 10px; border: 1px solid #2a2a3a; text-align: center; color: ${totalGoldFor - totalGoldOn > 0 ? '#22c55e' : '#ef4444'};">
+                            ${Math.abs(totalGoldFor - totalGoldOn).toFixed(4)}
+                        </td>
+                    </tr>
+                </table>
             </div>
         `;
         
-        // قائمة العملاء المنتهية
-        if (inactiveClients.length > 0) {
-            reportHTML += `
-                <div style="margin-bottom: 30px;">
-                    <h2 style="color: #6b7280; font-size: 20px; margin-bottom: 20px; padding-right: 15px; border-right: 4px solid #6b7280;">📋 العملاء المنتهية (${inactiveClients.length})</h2>
-                    <div style="background: #14141f; border-radius: 15px; overflow: hidden; border: 1px solid #2a2a3a;">
+        // تقسيم العملاء إلى مجموعات (10 عملاء لكل صفحة)
+        const clientsPerPage = 10;
+        const clientPages = [];
+        for (let i = 0; i < activeClients.length; i += clientsPerPage) {
+            clientPages.push(activeClients.slice(i, i + clientsPerPage));
+        }
+        
+        // إنشاء صفحات العملاء
+        const allPages = [];
+        
+        // إضافة صفحة الملخص
+        allPages.push(summaryContent);
+        
+        // إضافة صفحات العملاء النشطين
+        clientPages.forEach((pageClients, pageIndex) => {
+            let clientsContent = `
+                <h2 style="color: #22c55e; font-size: 18px; margin-bottom: 15px; padding-right: 12px; border-right: 4px solid #22c55e;">
+                    العملاء النشطين (${pageIndex + 1}/${clientPages.length}) - من ${pageIndex * clientsPerPage + 1} إلى ${Math.min((pageIndex + 1) * clientsPerPage, activeClients.length)}
+                </h2>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <thead>
+                        <tr style="background: #22c55e; color: #000;">
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 5%;">م</th>
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 25%;">الاسم</th>
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 15%;">الهاتف</th>
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 15%;">له مال</th>
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 15%;">عليه مال</th>
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 15%;">صافي الذهب</th>
+                            <th style="padding: 10px; border: 1px solid #16a34a; width: 10%;">الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
             `;
             
-            inactiveClients.slice(0, 20).forEach((client, idx) => {
+            pageClients.forEach((client, idx) => {
+                const m = getClientMoneySummary(client);
+                const g = getTotalGold(getGoldSummary(client));
                 const bgColor = idx % 2 === 0 ? '#1e1e2d' : '#14141f';
-                reportHTML += `
-                    <div style="display: flex; justify-content: space-between; padding: 12px 20px; background: ${bgColor}; border-bottom: 1px solid #2a2a3a;">
-                        <span style="color: #9ca3af;">${idx + 1}. ${escapeHtml(client.name)}</span>
-                        <span style="color: #6b7280; font-size: 12px;">${client.phone || '-'}</span>
-                    </div>
+                const statusColor = m.netMoney > 0 ? '#fbbf24' : m.netMoney < 0 ? '#22c55e' : '#6b7280';
+                const statusText = m.netMoney > 0 ? 'له' : m.netMoney < 0 ? 'عليه' : 'متوازن';
+                
+                clientsContent += `
+                    <tr style="background: ${bgColor};">
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center;">${pageIndex * clientsPerPage + idx + 1}</td>
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; font-weight: bold;">${escapeHtml(client.name)}</td>
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #a0a0c0;">${client.phone || '-'}</td>
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #22c55e; font-weight: bold;">${m.moneyFor.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #ef4444; font-weight: bold;">${m.moneyOn.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #fbbf24; font-weight: bold;">${formatGold(Math.abs(g.net))}</td>
+                        <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: ${statusColor}; font-weight: bold;">${statusText}</td>
+                    </tr>
                 `;
             });
             
-            if (inactiveClients.length > 20) {
-                reportHTML += `<div style="text-align: center; padding: 15px; color: #6b7280;">... و ${inactiveClients.length - 20} عميل آخر</div>`;
+            clientsContent += `
+                    </tbody>
+                </table>
+            `;
+            
+            allPages.push(clientsContent);
+        });
+        
+        // إضافة صفحة العملاء المنتهية
+        if (inactiveClients.length > 0) {
+            const inactivePages = [];
+            for (let i = 0; i < inactiveClients.length; i += 15) {
+                inactivePages.push(inactiveClients.slice(i, i + 15));
             }
             
-            reportHTML += `
-                    </div>
-                </div>
-            `;
+            inactivePages.forEach((pageClients, pageIndex) => {
+                let inactiveContent = `
+                    <h2 style="color: #6b7280; font-size: 18px; margin-bottom: 15px; padding-right: 12px; border-right: 4px solid #6b7280;">
+                        العملاء المنتهية (${pageIndex + 1}/${inactivePages.length})
+                    </h2>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background: #6b7280; color: #fff;">
+                                <th style="padding: 10px; border: 1px solid #4b5563; width: 5%;">م</th>
+                                <th style="padding: 10px; border: 1px solid #4b5563; width: 30%;">الاسم</th>
+                                <th style="padding: 10px; border: 1px solid #4b5563; width: 20%;">الهاتف</th>
+                                <th style="padding: 10px; border: 1px solid #4b5563; width: 25%;">العنوان</th>
+                                <th style="padding: 10px; border: 1px solid #4b5563; width: 20%;">تاريخ الانتهاء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                pageClients.forEach((client, idx) => {
+                    const bgColor = idx % 2 === 0 ? '#1e1e2d' : '#14141f';
+                    inactiveContent += `
+                        <tr style="background: ${bgColor};">
+                            <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #6b7280;">${pageIndex * 15 + idx + 1}</td>
+                            <td style="padding: 8px; border: 1px solid #2a2a3a; color: #9ca3af;">${escapeHtml(client.name)}</td>
+                            <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #6b7280;">${client.phone || '-'}</td>
+                            <td style="padding: 8px; border: 1px solid #2a2a3a; color: #6b7280;">${client.address || '-'}</td>
+                            <td style="padding: 8px; border: 1px solid #2a2a3a; text-align: center; color: #6b7280;">${client.inactivatedAt ? new Date(client.inactivatedAt).toLocaleDateString('ar-EG') : '-'}</td>
+                        </tr>
+                    `;
+                });
+                
+                inactiveContent += `
+                        </tbody>
+                    </table>
+                `;
+                
+                allPages.push(inactiveContent);
+            });
         }
         
-        // تذييل
-        reportHTML += `
-            <div style="text-align: center; padding-top: 30px; margin-top: 30px; border-top: 1px solid #2a2a3a;">
-                <p style="color: #6b7280; font-size: 12px;">تطوير: محمد احمد فؤاد | واتساب: 01010421571</p>
-                <p style="color: #4b5563; font-size: 11px; margin-top: 8px;">© ${new Date().getFullYear()} النظام المالي المتكامل</p>
-            </div>
-        `;
+        // إنشاء PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4',
+            compress: true
+        });
         
-        reportContainer.innerHTML = reportHTML;
-        document.body.appendChild(reportContainer);
+        const pageWidth = 210;
+        const pageHeight = 297;
+        const margin = 5;
+        const contentWidth = pageWidth - (margin * 2);
         
-        // استخدام html2canvas لتحويل HTML إلى صورة
-        if (typeof html2canvas !== 'undefined') {
-            const canvas = await html2canvas(reportContainer, {
+        // إنشاء حاوية لتحويل HTML
+        const container = document.createElement('div');
+        container.style.cssText = 'position: fixed; left: -9999px; top: 0;';
+        document.body.appendChild(container);
+        
+        for (let i = 0; i < allPages.length; i++) {
+            const pageDiv = document.createElement('div');
+            pageDiv.innerHTML = createReportPage(allPages[i], i + 1, allPages.length);
+            pageDiv.style.cssText = 'width: 750px; background: #0a0a0f;';
+            container.innerHTML = '';
+            container.appendChild(pageDiv);
+            
+            // انتظار تحميل الخطوط
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            const canvas = await html2canvas(pageDiv, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#0a0a0f',
                 logging: false,
-                windowWidth: 800
+                windowWidth: 750
             });
             
-            document.body.removeChild(reportContainer);
-            
-            // إنشاء PDF من الصورة
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-            
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const margin = 10;
-            const contentWidth = pageWidth - (margin * 2);
-            
-            // حساب ارتفاع الصورة نسبة للعرض
-            const imgWidth = contentWidth;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            // تقسيم الصورة على صفحات إذا لزم الأمر
-            let currentY = 0;
-            let pageNum = 1;
-            
-            while (currentY < canvas.height) {
-                if (pageNum > 1) {
-                    pdf.addPage();
-                }
-                
-                // حساب جزء الصورة للصفحة الحالية
-                const sourceY = currentY;
-                const sourceHeight = Math.min(
-                    (pageHeight - margin * 2) * canvas.width / contentWidth,
-                    canvas.height - currentY
-                );
-                
-                // إنشاء canvas مؤقت للجزء الحالي
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = sourceHeight;
-                const ctx = tempCanvas.getContext('2d');
-                ctx.drawImage(
-                    canvas,
-                    0, sourceY, canvas.width, sourceHeight,
-                    0, 0, canvas.width, sourceHeight
-                );
-                
-                const imgData = tempCanvas.toDataURL('image/png');
-                const partHeight = (sourceHeight * imgWidth) / canvas.width;
-                
-                pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, partHeight);
-                
-                currentY += sourceHeight;
-                pageNum++;
+            if (i > 0) {
+                pdf.addPage();
             }
             
-            const fileName = `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.pdf`;
-            pdf.save(fileName);
+            const imgWidth = contentWidth;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const scaledHeight = Math.min(imgHeight, pageHeight - margin * 2);
             
-            showToast('تم تصدير PDF بنجاح مع دعم العربية', 'success');
-        } else {
-            showToast('مكتبة html2canvas غير متاحة', 'error');
+            const imgData = canvas.toDataURL('image/png');
+            pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, scaledHeight);
         }
+        
+        document.body.removeChild(container);
+        
+        const fileName = `تقرير_العملاء_${new Date().toLocaleDateString('ar-EG').replace(/\//g, '-')}.pdf`;
+        pdf.save(fileName);
+        
+        showToast(`تم تصدير PDF بنجاح (${allPages.length} صفحات)`, 'success');
         
     } catch (error) {
         console.error('PDF export error:', error);
