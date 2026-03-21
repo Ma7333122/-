@@ -4160,7 +4160,7 @@ function renderDashboard(clients) {
         statsCards.innerHTML = `
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-emerald-400">لنا على العملاء</h3><i class="fas fa-arrow-down text-emerald-400"></i></div><p class="text-2xl font-bold text-emerald-400 numbers">${formatMoney(totalMoneyOn)}</p></div>
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-amber-400">لهم علينا</h3><i class="fas fa-arrow-up text-amber-400"></i></div><p class="text-2xl font-bold text-amber-400 numbers">${formatMoney(totalMoneyFor)}</p></div>
-            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney <= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney <= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-gray-400">عدد العملاء</h3><i class="fas fa-users text-gray-400"></i></div><p class="text-2xl font-bold numbers">${clients.length}</p></div>`;
     }
 }
@@ -5220,11 +5220,11 @@ function exportToExcel() {
                 alignment: { horizontal: 'center', vertical: 'center' },
                 fill: { fgColor: { rgb: '0A0A0F' } }
             },
-            // عنوان فرعي
+            // عنوان فرعي (أسود)
             subTitle: {
                 font: { name: 'Arial', sz: 14, bold: true, color: { rgb: 'A0A0C0' } },
                 alignment: { horizontal: 'center', vertical: 'center' },
-                fill: { fgColor: { rgb: '14141F' } }
+                fill: { fgColor: { rgb: '000000' } }
             },
             // عنوان القسم
             sectionTitle: {
@@ -5238,11 +5238,11 @@ function exportToExcel() {
                     right: { style: 'medium', color: { rgb: 'B45309' } }
                 }
             },
-            // عنوان فرعي للقسم
+            // عنوان فرعي للقسم (أسود)
             sectionSubTitle: {
                 font: { name: 'Arial', sz: 12, bold: true, color: { rgb: 'FFFFFF' } },
                 alignment: { horizontal: 'right', vertical: 'center' },
-                fill: { fgColor: { rgb: '1E1E2D' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
                     top: { style: 'thin', color: { rgb: '22C55E' } },
                     bottom: { style: 'thin', color: { rgb: '22C55E' } },
@@ -5274,47 +5274,11 @@ function exportToExcel() {
                     right: { style: 'thin', color: { rgb: 'B45309' } }
                 }
             },
-            // صف بيانات زوجي
+            // صف بيانات زوجي (أسود)
             dataRowEven: {
                 font: { name: 'Arial', sz: 10, color: { rgb: 'F0F0FF' } },
                 alignment: { horizontal: 'right', vertical: 'center' },
-                fill: { fgColor: { rgb: '1E1E2D' } },
-                border: {
-                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
-                }
-            },
-            // صف بيانات فردي
-            dataRowOdd: {
-                font: { name: 'Arial', sz: 10, color: { rgb: 'F0F0FF' } },
-                alignment: { horizontal: 'right', vertical: 'center' },
-                fill: { fgColor: { rgb: '14141F' } },
-                border: {
-                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
-                }
-            },
-            // صف بيانات ذهبي
-            dataRowGold: {
-                font: { name: 'Arial', sz: 10, color: { rgb: 'FBBF24' } },
-                alignment: { horizontal: 'center', vertical: 'center' },
-                fill: { fgColor: { rgb: '2A2520' } },
-                border: {
-                    top: { style: 'thin', color: { rgb: 'FBBF24' } },
-                    bottom: { style: 'thin', color: { rgb: 'FBBF24' } },
-                    left: { style: 'thin', color: { rgb: 'FBBF24' } },
-                    right: { style: 'thin', color: { rgb: 'FBBF24' } }
-                }
-            },
-            // خلية مبلغ له (أخضر)
-            moneyFor: {
-                font: { name: 'Arial', sz: 11, bold: true, color: { rgb: '22C55E' } },
-                alignment: { horizontal: 'left', vertical: 'center' },
-                fill: { fgColor: { rgb: '1A2E1A' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
                     top: { style: 'thin', color: { rgb: '22C55E' } },
                     bottom: { style: 'thin', color: { rgb: '22C55E' } },
@@ -5322,11 +5286,47 @@ function exportToExcel() {
                     right: { style: 'thin', color: { rgb: '22C55E' } }
                 }
             },
-            // خلية مبلغ عليه (أحمر)
+            // صف بيانات فردي (أسود)
+            dataRowOdd: {
+                font: { name: 'Arial', sz: 10, color: { rgb: 'F0F0FF' } },
+                alignment: { horizontal: 'right', vertical: 'center' },
+                fill: { fgColor: { rgb: '0A0A0F' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '22C55E' } },
+                    bottom: { style: 'thin', color: { rgb: '22C55E' } },
+                    left: { style: 'thin', color: { rgb: '22C55E' } },
+                    right: { style: 'thin', color: { rgb: '22C55E' } }
+                }
+            },
+            // صف بيانات ذهبي (أسود)
+            dataRowGold: {
+                font: { name: 'Arial', sz: 10, color: { rgb: 'FBBF24' } },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                fill: { fgColor: { rgb: '000000' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: 'FBBF24' } },
+                    bottom: { style: 'thin', color: { rgb: 'FBBF24' } },
+                    left: { style: 'thin', color: { rgb: 'FBBF24' } },
+                    right: { style: 'thin', color: { rgb: 'FBBF24' } }
+                }
+            },
+            // خلية مبلغ له (أخضر على أسود)
+            moneyFor: {
+                font: { name: 'Arial', sz: 11, bold: true, color: { rgb: '22C55E' } },
+                alignment: { horizontal: 'left', vertical: 'center' },
+                fill: { fgColor: { rgb: '000000' } },
+                border: {
+                    top: { style: 'thin', color: { rgb: '22C55E' } },
+                    bottom: { style: 'thin', color: { rgb: '22C55E' } },
+                    left: { style: 'thin', color: { rgb: '22C55E' } },
+                    right: { style: 'thin', color: { rgb: '22C55E' } }
+                }
+            },
+            // خلية مبلغ عليه (أحمر على أسود)
             moneyOn: {
                 font: { name: 'Arial', sz: 11, bold: true, color: { rgb: 'EF4444' } },
                 alignment: { horizontal: 'left', vertical: 'center' },
-                fill: { fgColor: { rgb: '2E1A1A' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
                     top: { style: 'thin', color: { rgb: 'EF4444' } },
                     bottom: { style: 'thin', color: { rgb: 'EF4444' } },
@@ -5334,11 +5334,11 @@ function exportToExcel() {
                     right: { style: 'thin', color: { rgb: 'EF4444' } }
                 }
             },
-            // خلية ذهب (ذهبي)
+            // خلية ذهب (ذهبي على أسود)
             gold: {
                 font: { name: 'Arial', sz: 10, bold: true, color: { rgb: 'FBBF24' } },
                 alignment: { horizontal: 'left', vertical: 'center' },
-                fill: { fgColor: { rgb: '2A2520' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
                     top: { style: 'thin', color: { rgb: 'FBBF24' } },
                     bottom: { style: 'thin', color: { rgb: 'FBBF24' } },
@@ -5358,46 +5358,46 @@ function exportToExcel() {
                     right: { style: 'medium', color: { rgb: '16A34A' } }
                 }
             },
-            // قيمة كبيرة
+            // قيمة كبيرة (أسود)
             bigValue: {
                 font: { name: 'Arial', sz: 16, bold: true, color: { rgb: '22C55E' } },
                 alignment: { horizontal: 'center', vertical: 'center' },
-                fill: { fgColor: { rgb: '1E1E2D' } }
+                fill: { fgColor: { rgb: '000000' } }
             },
             // تذييل
             footer: {
                 font: { name: 'Arial', sz: 10, italic: true, color: { rgb: '6B7280' } },
                 alignment: { horizontal: 'center', vertical: 'center' }
             },
-            // بطاقة إحصائية
+            // بطاقة إحصائية (أسود)
             statCard: {
                 font: { name: 'Arial', sz: 10, color: { rgb: 'A0A0C0' } },
                 alignment: { horizontal: 'center', vertical: 'center' },
-                fill: { fgColor: { rgb: '1E1E2D' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
-                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                    top: { style: 'thin', color: { rgb: '22C55E' } },
+                    bottom: { style: 'thin', color: { rgb: '22C55E' } },
+                    left: { style: 'thin', color: { rgb: '22C55E' } },
+                    right: { style: 'thin', color: { rgb: '22C55E' } }
                 }
             },
-            // قيمة البطاقة
+            // قيمة البطاقة (أسود)
             statValue: {
                 font: { name: 'Arial', sz: 18, bold: true, color: { rgb: '22C55E' } },
                 alignment: { horizontal: 'center', vertical: 'center' },
-                fill: { fgColor: { rgb: '1E1E2D' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
-                    top: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    left: { style: 'thin', color: { rgb: '2A2A3A' } },
-                    right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                    top: { style: 'thin', color: { rgb: '22C55E' } },
+                    bottom: { style: 'thin', color: { rgb: '22C55E' } },
+                    left: { style: 'thin', color: { rgb: '22C55E' } },
+                    right: { style: 'thin', color: { rgb: '22C55E' } }
                 }
             },
-            // اسم العميل
+            // اسم العميل (أسود)
             clientName: {
                 font: { name: 'Arial', sz: 16, bold: true, color: { rgb: 'FBBF24' } },
                 alignment: { horizontal: 'center', vertical: 'center' },
-                fill: { fgColor: { rgb: '1E1E2D' } },
+                fill: { fgColor: { rgb: '000000' } },
                 border: {
                     top: { style: 'medium', color: { rgb: 'FBBF24' } },
                     bottom: { style: 'medium', color: { rgb: 'FBBF24' } },
@@ -5684,12 +5684,12 @@ function exportToExcel() {
                         ws[cellAddress].s = {
                             font: { name: 'Arial', sz: 10, color: { rgb: '9CA3AF' } },
                             alignment: { horizontal: 'right', vertical: 'center' },
-                            fill: { fgColor: { rgb: R % 2 === 0 ? '1E1E2D' : '14141F' } },
+                            fill: { fgColor: { rgb: '000000' } },
                             border: {
-                                top: { style: 'thin', color: { rgb: '2A2A3A' } },
-                                bottom: { style: 'thin', color: { rgb: '2A2A3A' } },
-                                left: { style: 'thin', color: { rgb: '2A2A3A' } },
-                                right: { style: 'thin', color: { rgb: '2A2A3A' } }
+                                top: { style: 'thin', color: { rgb: '6B7280' } },
+                                bottom: { style: 'thin', color: { rgb: '6B7280' } },
+                                left: { style: 'thin', color: { rgb: '6B7280' } },
+                                right: { style: 'thin', color: { rgb: '6B7280' } }
                             }
                         };
                     }
