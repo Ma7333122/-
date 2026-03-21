@@ -4166,7 +4166,7 @@ function renderDashboard(clients) {
         statsCards.innerHTML = `
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-emerald-400">لنا على العملاء</h3><i class="fas fa-arrow-down text-emerald-400"></i></div><p class="text-2xl font-bold text-emerald-400 numbers">${formatMoney(totalMoneyOn)}</p></div>
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-amber-400">لهم علينا</h3><i class="fas fa-arrow-up text-amber-400"></i></div><p class="text-2xl font-bold text-amber-400 numbers">${formatMoney(totalMoneyFor)}</p></div>
-            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '✅ لنا على العملاء' : '⚠️ علينا للعملاء'}</p></div>
+            <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-blue-400">صافي المال</h3><i class="fas fa-chart-line text-blue-400"></i></div><p class="text-2xl font-bold text-blue-400 numbers">${formatMoney(Math.abs(netMoney))}</p><p class="text-xs mt-2 ${netMoney >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${netMoney >= 0 ? '⚠️ علينا للعملاء' : '✅ لنا علي العملاء'}</p></div>
             <div class="stat-card"><div class="flex items-center justify-between mb-2"><h3 class="text-gray-400">عدد العملاء</h3><i class="fas fa-users text-gray-400"></i></div><p class="text-2xl font-bold numbers">${clients.length}</p></div>`;
     }
 }
