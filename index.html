@@ -3764,6 +3764,89 @@ function executeConvertTransaction() {
     }, true);
 }
 
+// ==================== دوال تعديل العميل ====================
+function openEditClientModal() {
+    const client = getCurrentUserClients().find(c => c.id === AppState.currentClientId);
+    if (!client) {
+        showToast('العميل غير موجود', 'error');
+        return;
+    }
+    
+    // ملء الحقول بالبيانات الحالية
+    const nameEl = document.getElementById('edit-client-name');
+    const phoneEl = document.getElementById('edit-client-phone');
+    const addressEl = document.getElementById('edit-client-address');
+    const notesEl = document.getElementById('edit-client-notes');
+    const tagsEl = document.getElementById('edit-client-tags');
+    
+    if (nameEl) nameEl.value = client.name || '';
+    if (phoneEl) phoneEl.value = client.phone || '';
+    if (addressEl) addressEl.value = client.address || '';
+    if (notesEl) notesEl.value = client.notes || '';
+    if (tagsEl) tagsEl.value = (client.tags || []).join(', ');
+    
+    const modal = document.getElementById('edit-client-modal');
+    if (modal) modal.classList.add('active');
+}
+
+function closeEditClientModal() {
+    const modal = document.getElementById('edit-client-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+function editCurrentClient() {
+    openEditClientModal();
+}
+
+function saveEditedClient() {
+    const nameEl = document.getElementById('edit-client-name');
+    const phoneEl = document.getElementById('edit-client-phone');
+    const addressEl = document.getElementById('edit-client-address');
+    const notesEl = document.getElementById('edit-client-notes');
+    const tagsEl = document.getElementById('edit-client-tags');
+    
+    const name = nameEl?.value.trim();
+    
+    if (!name) {
+        showToast('الرجاء إدخال اسم العميل', 'error');
+        return;
+    }
+    
+    const clients = getCurrentUserClients();
+    const client = clients.find(c => c.id === AppState.currentClientId);
+    if (!client) {
+        showToast('العميل غير موجود', 'error');
+        return;
+    }
+    
+    // التحقق من عدم وجود عميل آخر بنفس الاسم
+    const duplicate = clients.find(c => c.name === name && c.id !== AppState.currentClientId);
+    if (duplicate) {
+        showToast('يوجد عميل آخر بنفس الاسم', 'error');
+        return;
+    }
+    
+    // تحديث بيانات العميل
+    client.name = name;
+    client.phone = phoneEl?.value.trim() || '';
+    client.address = addressEl?.value.trim() || '';
+    client.notes = notesEl?.value.trim() || '';
+    client.tags = (tagsEl?.value || '').split(',').map(t => t.trim()).filter(t => t);
+    
+    // حفظ البيانات
+    const userClients = Storage.getUserClients(client.userId);
+    const idx = userClients.findIndex(c => c.id === client.id);
+    if (idx !== -1) {
+        userClients[idx] = client;
+        Storage.saveUserClients(client.userId, userClients);
+    }
+    
+    closeEditClientModal();
+    viewClient(AppState.currentClientId);
+    showToast('تم تعديل بيانات العميل بنجاح', 'success');
+    Storage.logAction('تعديل بيانات عميل', { clientId: client.id, name: client.name });
+}
+
 // ==================== دوال إضافة العملاء ====================
 function checkDuplicateName() {
     const nameEl = document.getElementById('client-name');
